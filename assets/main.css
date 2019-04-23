@@ -1,0 +1,30 @@
+@font-face {
+  font-family: 'VT323';
+  src: url('/assets/VT323-Regular.ttf') format('truetype');
+}
+
+body {
+  width: 100vw;
+  padding: 4em;
+  background: #2A333E;
+  height: 100vh;
+  color: #A7E4AE;
+  font-family: 'VT323';
+}
+
+a, button {
+  color: #A7E4AE;
+  text-decoration: none;
+}
+
+a:hover, a:active, button:hover, button:active {
+  background: #A7E4AE;
+  color: #2A333E !important;
+}
+
+/*
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+*/
