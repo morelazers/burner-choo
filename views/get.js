@@ -8,8 +8,6 @@ const TITLE = 'PEASANT'
 module.exports = (state, emit) => {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
-  // console.log(localStorage)
-
   const container = css`
     img {
       width: 70vw;
@@ -17,7 +15,7 @@ module.exports = (state, emit) => {
     }
   `
 
-  QRCode.toDataURL(state.wallet.signingKey.address, {
+  QRCode.toDataURL(state.wallet.address, {
     margin: 1,
     color: {
       light: '#A7E4AE',
@@ -37,7 +35,3 @@ module.exports = (state, emit) => {
     </body>
   `
 }
-
-/**
- *
- */

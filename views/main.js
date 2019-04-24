@@ -14,10 +14,6 @@ function view (state, emit) {
       text-align: center;
     }
 
-    .wallet-status h1 {
-      font-size: 5rem;
-    }
-
     .vip-status {
       font-size: 2rem;
     }
@@ -31,15 +27,17 @@ function view (state, emit) {
   return html`
     <body class="flex flex-column justify-between pa4">
       <div class="wallet-status">
-          <h1>-${state.CURRENCY_SYMBOL}${state.wallet.balance || 1872}-</h1>
-          <p class="vip-status">VIP=FALSE</p>
+        <div class="f-subheadline pa3">
+          =${state.CURRENCY_SYMBOL}${state.wallet.tokenBalance || 0}=
         </div>
-        <div class="actions flex flex-column tc">
-          <a href="/get">GET</a>
-          <a href="/send">SEND</a>
-          <a href="/gamble">GAMBLE</a>
-          <a href="/vip">VIP_ZONE</a>
-        </div>
+        <p class="vip-status">VIP=FALSE</p>
+      </div>
+      <div class="actions flex flex-column tc">
+        <a href="/get">GET</a>
+        <a href="/send">SEND</a>
+        <a href="/gamble">GAMBLE</a>
+        <a href="/vip">VIP_ZONE</a>
+      </div>
     </body>
   `
 }

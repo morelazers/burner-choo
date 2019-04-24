@@ -4,14 +4,13 @@ const jsqr = require('jsqr')
 
 function store (state, emitter) {
   emitter.on(state.events.DOMTITLECHANGE, function () {
-  console.log(state.title === "SCAN")
-  // emitter.on(state.events.DOMTITLECHANGE, function () {
     if (state.title === "SCAN") {
       setTimeout(() => {
         beginScan(addr => {
+          endScan()
           state.afterScan(addr)
         })
-      }, 500)
+      }, 100)
     }
   })
 }
@@ -23,9 +22,11 @@ function beginScan (cb) {
   const canvas = canvasElement.getContext("2d")
 
   let done = false
+  let streamObj
 
   // Use facingMode: environment to attemt to get the front camera on phones
   navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
+    streamObj = stream
     video.srcObject = stream
     video.setAttribute("playsinline", true) // required to tell iOS safari we don't want fullscreen
     video.play()
@@ -44,13 +45,21 @@ function beginScan (cb) {
         inversionAttempts: "dontInvert",
       })
       if (code && parseResult(code.data).indexOf('0x') === 0) {
+        for (let track of streamObj.getTracks()) {
+          track.stop()
+        }
         cb(parseResult(code.data))
         done = true
-        video.pause()
       }
     }
     requestAnimationFrame(tick)
   }
+}
+
+function endScan () {
+  console.log('ENDING SCAN')
+  const video = document.getElementById("video")
+  console.log(video)
 }
 
 function parseResult (c) {

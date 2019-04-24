@@ -15,11 +15,20 @@ body {
 a, button {
   color: #A7E4AE;
   text-decoration: none;
+  outline: none;
+  border-style: hidden;
+  background: #2A333E;
 }
 
-a:hover, a:active, button:hover, button:active {
+a:hover,
+a:active,
+button:hover,
+button:active,
+button:focus {
   background: #A7E4AE;
   color: #2A333E !important;
+  border-style: hidden;
+  outline: none;
 }
 
 /*

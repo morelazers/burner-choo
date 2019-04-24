@@ -6,8 +6,6 @@ const TITLE = 'TI-83'
 module.exports = (state, emit) => {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
-  console.log({state})
-
   // when tachyons doesn't pull through
   const style = css`
     .phat-caret {
@@ -57,7 +55,10 @@ module.exports = (state, emit) => {
         <div class="flex flex-row">
           <button class="w-33" onclick=${() => emit('pushState', '/')}>BACK</button>
           <span class="w-33"></span>
-          <button class="w-33 proceed" onclick=${() => emit('pushState', '/confirm')}>GO</button>
+          <button class="w-33 proceed" onclick=${() => {
+            emit('nextTx.setPrice', state.calculate.input)
+            state.afterCalculate(state.calculate.input)
+          }}>GO</button>
         </div>
       </div>
     </body>

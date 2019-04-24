@@ -6,8 +6,9 @@ const TITLE = 'SCAN'
 module.exports = (state, emit) => {
   state.afterScan = (addr) => {
     state.afterCalculate = (amount) => {
-      state.afterConfirm = () => {
-        state.sendTokenTransaction(addr, amount)
+      state.wallet.afterConfirm = () => {
+        console.log('After confirm')
+        emit('wallet.sendTokens', addr, amount)
       }
       emit('pushState', '/confirm')
     }
