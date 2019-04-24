@@ -1,5 +1,6 @@
 const css = require('sheetify')
 const choo = require('choo')
+const bnc = require('bnc-assist')
 require('babel-polyfill')
 require('dotenv').config()
 
@@ -19,6 +20,12 @@ app.use((state, emitter) => {
   state.JSON_RPC_URL = JSON_RPC_URL || 'http://localhost:8545'
   state.CURRENCY_SYMBOL = CURRENCY_SYMBOL || '៛'
   state.TOKEN_ADDRESS = TOKEN_ADDRESS || '0xDBA081ff3cc5921a784A788Cf5a49Dd7A8F9B83F'
+  emitter.on('DOMContentLoaded', () => {
+    state.assist = bnc.init({
+      dappId: '6981d7c2-9e6f-420f-9772-228a8c0d4534',
+      networkId: 5777
+    })
+  })
 })
 app.use(require('./stores/events'))
 app.use(require('./stores/provider'))
