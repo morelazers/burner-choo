@@ -5,11 +5,14 @@
 
 body {
   width: 100vw;
-  padding: 4em;
   background: #2A333E;
   height: 100vh;
   color: #A7E4AE;
   font-family: 'VT323';
+}
+
+section {
+  height: 100%;
 }
 
 a, button {

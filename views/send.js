@@ -23,11 +23,11 @@ module.exports = (state, emit) => {
   `
 
   return html`
-    <body class="flex w-100 pa2 align-center justify-center items-center">
+    <section class="flex w-100 pa2 align-center justify-center items-center">
       <div id="qr-preview flex w-100 h-100 align-center justify-center">
         <canvas id="canvas" hidden></canvas>
         <video id="video"></video>
       </div>
-    </body>
+    </section>
   `
 }

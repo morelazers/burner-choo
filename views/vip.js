@@ -18,7 +18,7 @@ function view (state, emit) {
   `
 
   return html`
-    <body class="flex flex-column justify-between pa0">
+    <section class="flex flex-column justify-between pa0">
       <div class="flex flex-column justify-start">
         ${state.vip.list.map(vip =>
           html`
@@ -47,7 +47,7 @@ function view (state, emit) {
       <div class="f2 tc pa4">
         ${state.vip.bottomText}
       </div>
-    </body>
+    </section>
   `
 }
 

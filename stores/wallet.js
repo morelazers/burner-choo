@@ -27,47 +27,63 @@ const DEFAULT_STATE = {
 
 async function store (state, emitter) {
   state.wallet = Object.assign({}, DEFAULT_STATE)
-  // state.wallet.burner = getWallet(state.provider)
-  // state.wallet.address = state.wallet.burner.signingKey.address // for convenience
-
-  // state.wallet.tokenContract = new ethers.Contract(state.TOKEN_ADDRESS, abi, state.provider)
-  // state.wallet.tokenContract = state.wallet.tokenContract.connect(state.wallet.burner)
-  // state.wallet.tokenContract.on(state.wallet.tokenContract.filters.Transfer(null, null), async (f, t, v) => {
-  //   console.log(f, t, v)
-  //   setBalance()
-  // })
-  // setBalance()
-
-  // emitter.on('nextTx.setBeforeParams', (s) => state.wallet.nextTx.beforeParams = s)
-  // emitter.on('nextTx.setPrice', (s) => state.wallet.nextTx.price = s)
-  // emitter.on('nextTx.setJoiningStatement', (s) => state.wallet.nextTx.joiningStatement = s)
-  // emitter.on('nextTx.setParam', (s) => state.wallet.nextTx.param = s)
-  // emitter.on('nextTx.setAfterParams', (s) => state.wallet.nextTx.afterParams = s)
-  // emitter.on('nextTx.setCta', (s) => state.wallet.nextTx.cta = s)
-  // emitter.on('nextTx.confirm', () => state.wallet.afterConfirm())
-
-  // emitter.on('wallet.sendTokens', async (t, v) => {
-  //   const tx = await sendTokenTransaction(t, v)
-  //   console.log(tx)
-  //   emitter.emit('pushState', '/')
-  // })
-
-  // const tx = sendTokenTransaction('0xa0F280E7f5a502ccf0e035646e80D60DEa3C6790', 1)
-  // console.log(tx)
+  state.wallet.burner = getWallet(state.provider)
+  state.wallet.address = state.wallet.burner.signingKey.address // for convenience
+  state.web3.eth.personal.importRawKey(state.wallet.burner.signingKey.privateKey, 'security_first_kids')
+  state.web3.eth.personal.unlockAccount(state.wallet.address, 'security_first_kids', 86400).then(res => {
+    console.log(res)
+  }) // unlock for one day, have fun
 
 
-  // async function setBalance () {
-  //   state.wallet.tokenBalance = await getBalance(state.wallet.tokenContract, state.wallet.address)
-  //   emitter.emit('render')
-  // }
+  state.wallet.tokenContract = new state.web3.eth.Contract(abi, state.TOKEN_ADDRESS)
 
-  // function sendTokenTransaction (to, value) {
-  //   console.log(`Sending ${value} tokens to ${to}`)
-  //   console.log(state.wallet.tokenContract)
-  //   const c = state.assist.Contract(state.wallet.tokenContract)
-  //   console.log(c)
-  //   return c['transfer(address,uint256,bytes)'](to, value, "0x")
-  // }
+  // @todo - rewrite this to use web3 and get rid of the ethers.js stuff
+  state.wallet.tokenContractEthers = new ethers.Contract(state.TOKEN_ADDRESS, abi, state.provider)
+  state.wallet.tokenContractEthers = state.wallet.tokenContractEthers.connect(state.wallet.burner)
+  state.wallet.tokenContractEthers.on(state.wallet.tokenContractEthers.filters.Transfer(null, null), async (f, t, v) => {
+    console.log(f, t, v)
+    setBalance()
+  })
+  setBalance()
+
+  emitter.on('nextTx.setBeforeParams', (s) => state.wallet.nextTx.beforeParams = s)
+  emitter.on('nextTx.setPrice', (s) => state.wallet.nextTx.price = s)
+  emitter.on('nextTx.setJoiningStatement', (s) => state.wallet.nextTx.joiningStatement = s)
+  emitter.on('nextTx.setParam', (s) => state.wallet.nextTx.param = s)
+  emitter.on('nextTx.setAfterParams', (s) => state.wallet.nextTx.afterParams = s)
+  emitter.on('nextTx.setCta', (s) => state.wallet.nextTx.cta = s)
+  emitter.on('nextTx.confirm', () => state.wallet.afterConfirm())
+
+  emitter.on('wallet.sendTokens', async (t, v) => {
+    const tx = await sendTokenTransaction(t, v)
+    console.log(tx)
+    emitter.emit('pushState', '/')
+  })
+
+  emitter.on('DOMContentLoaded', () => {
+    const tx = sendTokenTransaction('0xa0F280E7f5a502ccf0e035646e80D60DEa3C6790', 1)
+    tx.then((s) => {
+      console.log(s)
+    }).catch(e => {
+      console.log(e)
+    })
+  })
+
+
+  async function setBalance () {
+    state.wallet.tokenBalance = await getBalance(state.wallet.tokenContractEthers, state.wallet.address)
+    emitter.emit('render')
+  }
+
+  function sendTokenTransaction (to, value) {
+    console.log(`Sending ${value} tokens to ${to}`)
+    console.log(state)
+    console.log(state.wallet.tokenContract)
+    // state.wallet.tokenContract.abi = state.wallet.tokenContract.interface.abi
+    const c = state.assist.Contract(state.wallet.tokenContract)
+
+    return c.methods['transfer(address,uint256,bytes,string)'](to, value, "0x", "").send({ from: state.wallet.address })
+  }
 
 }
 

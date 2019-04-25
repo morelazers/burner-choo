@@ -27,11 +27,11 @@ module.exports = (state, emit) => {
   })
 
   return html`
-    <body class="flex flex-column justify-around">
+    <section class="flex flex-column justify-around">
       <img src=${state.wallet.qr} />
       <div class="actions flex flex-column tc">
         <a href="/">Back</a>
       </div>
-    </body>
+    </section>
   `
 }

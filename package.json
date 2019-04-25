@@ -11,7 +11,7 @@
     "test-deps": "dependency-check . && dependency-check . --extra --no-dev -i tachyons"
   },
   "dependencies": {
-    "bnc-assist": "^0.5.2",
+    "bnc-assist": "blocknative/assist#enhancement/mobile-tx-notifications",
     "choo": "^6.13.3",
     "choo-service-worker": "^2.4.0",
     "dotenv": "^7.0.0",
@@ -19,7 +19,8 @@
     "jsqr": "^1.2.0",
     "qrcode": "^1.3.3",
     "sheetify": "^7.3.3",
-    "tachyons": "^4.11.1"
+    "tachyons": "^4.11.1",
+    "web3": "1.0.0-beta.36"
   },
   "devDependencies": {
     "babel-core": "^6.0.20",

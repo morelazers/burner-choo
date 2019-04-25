@@ -25,7 +25,7 @@ function view (state, emit) {
   `
 
   return html`
-    <body class="flex flex-column justify-between pa4">
+    <section class="flex flex-column justify-between pa4">
       <div class="wallet-status">
         <div class="f-subheadline pa3">
           =${state.CURRENCY_SYMBOL}${state.wallet.tokenBalance || 0}=
@@ -38,7 +38,7 @@ function view (state, emit) {
         <a href="/gamble">GAMBLE</a>
         <a href="/vip">VIP_ZONE</a>
       </div>
-    </body>
+    </section>
   `
 }
 

@@ -26,7 +26,7 @@ module.exports = (state, emit) => {
   `
 
   return html`
-    <body class="flex flex-column pa0 items-center tc justify-between">
+    <section class="flex flex-column pa0 items-center tc justify-between">
       <div class="flex tc f-subheadline pa5 items-center">
         ${state.CURRENCY_SYMBOL}${state.calculate.input}
         <span class="phat-caret"></span>
@@ -61,6 +61,6 @@ module.exports = (state, emit) => {
           }}>GO</button>
         </div>
       </div>
-    </body>
+    </section>
   `
 }
