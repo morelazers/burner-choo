@@ -5,12 +5,12 @@ const jsqr = require('jsqr')
 function store (state, emitter) {
   emitter.on(state.events.DOMTITLECHANGE, function () {
     if (state.title === "SCAN") {
-      // setTimeout(() => {
-      //   beginScan(addr => {
-      //     endScan()
-      //     state.afterScan(addr)
-      //   })
-      // }, 100)
+      setTimeout(() => {
+        beginScan(addr => {
+          endScan()
+          state.afterScan(addr)
+        })
+      }, 100)
     }
   })
 }

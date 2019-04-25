@@ -27,7 +27,49 @@ app.use((state, emitter) => {
     state.assist = bnc.init({
       dappId: '6981d7c2-9e6f-420f-9772-228a8c0d4534',
       networkId: 5777,
-      web3: state.web3
+      web3: state.web3,
+      style: {
+        darkMode: true,
+        css: `
+          @font-face {
+            font-family: 'VT323';
+            src: url('/assets/VT323-Regular.ttf') format('truetype');
+          }
+          p {
+            font-family: 'VT323';
+            color: #A7E4AE;
+            letter-spacing: 0.1rem;
+            font-size: 1.5rem;
+          }
+          .bn-notifications {
+            height: 3.5rem;
+            justify-content: flex-end;
+          }
+          .bn-notification {
+            background: #2A333E;
+            padding: 5px;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 3.5rem;
+          }
+          .bn-notification span,
+          .bn-notification div,
+          .bn-notification a {
+            margin: 0 5px !important;
+          }
+          .bn-notification-meta {
+            display: none;
+          }
+          #bn-transaction-branding {
+            position: relative !important;
+            background-size: 66px 22px !important;
+            bottom: unset !important;
+            right: unset !important;
+          }
+        `
+      }
     })
   })
 })

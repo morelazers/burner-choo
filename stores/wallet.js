@@ -57,8 +57,10 @@ async function store (state, emitter) {
   emitter.on('wallet.sendTokens', async (t, v) => {
     const tx = await sendTokenTransaction(t, v)
     console.log(tx)
-    emitter.emit('pushState', '/')
+    // emitter.emit('pushState', '/')
+    emitter.emit('nextTx.sent')
   })
+
 
   emitter.on('DOMContentLoaded', () => {
     const tx = sendTokenTransaction('0xa0F280E7f5a502ccf0e035646e80D60DEa3C6790', 1)
@@ -68,7 +70,6 @@ async function store (state, emitter) {
       console.log(e)
     })
   })
-
 
   async function setBalance () {
     state.wallet.tokenBalance = await getBalance(state.wallet.tokenContractEthers, state.wallet.address)
@@ -82,7 +83,16 @@ async function store (state, emitter) {
     // state.wallet.tokenContract.abi = state.wallet.tokenContract.interface.abi
     const c = state.assist.Contract(state.wallet.tokenContract)
 
-    return c.methods['transfer(address,uint256,bytes,string)'](to, value, "0x", "").send({ from: state.wallet.address })
+    return c.methods['transfer(address,uint256,bytes,string)'](to, value, "0x", "").send({
+      from: state.wallet.address
+    }, {
+      messages: {
+        txSent: () => `Sending ${state.CURRENCY_SYMBOL}${value}`,
+        txConfirmed: () => `Sent ${state.CURRENCY_SYMBOL}${value}`,
+        txStall: () => `Something's wrong...`,
+        txConfirmedClient: () => `Sent ${state.CURRENCY_SYMBOL}${value}`
+      }
+    })
   }
 
 }
