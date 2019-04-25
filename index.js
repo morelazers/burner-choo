@@ -41,6 +41,9 @@ app.use((state, emitter) => {
             letter-spacing: 0.1rem;
             font-size: 1.5rem;
           }
+          #blocknative-notifications {
+            padding: 0;
+          }
           .bn-notifications {
             height: 3.5rem;
             justify-content: flex-end;
@@ -68,11 +71,56 @@ app.use((state, emitter) => {
             bottom: unset !important;
             right: unset !important;
           }
+
+          .bn-status-icon {
+            text-align: center;
+            width: 20px;
+            height: auto;
+            background-image: none !important;
+          }
+
+          .bn-progress .bn-status-icon::after {
+            color: #A7E4AE;
+            content: "⋮";
+            animation: loading 0.5s infinite;
+            position: relative;
+            display: inherit;
+          }
+
+          .bn-complete .bn-status-icon::after {
+            color: #A7E4AE;
+            content: "✓";
+            position: relative;
+            display: inherit;
+          }
+
+          .bn-failed .bn-status-icon::after {
+            color: red;
+            content: "✕";
+            position: relative;
+            display: inherit;
+          }
+
+          @keyframes loading {
+            0% {
+              content: "⋮";
+            }
+            25% {
+              content: "⋰";
+            }
+            50% {
+              content: "⋯";
+            }
+            75% {
+              content: "⋱";
+            }
+          }
         `
       }
     })
   })
 })
+//animation: loading 5s infinite;
 app.use(require('./stores/events'))
 app.use(require('./stores/provider'))
 app.use(require('./stores/wallet'))
