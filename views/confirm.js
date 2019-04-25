@@ -7,8 +7,8 @@ module.exports = (state, emit) => {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
   return html`
-    <section class="flex flex-column justify-between pa4">
-      <div class="wallet-status">
+    <section class="flex flex-column justify-between">
+      <div class="wallet-status pa4">
         <p class="f3 pa3">${state.wallet.nextTx.beforeParams}</p>
         <div class="f-subheadline pa3">${state.CURRENCY_SYMBOL}${state.wallet.nextTx.price}</div>
         <p class="f3 pa3">${state.wallet.nextTx.joiningStatement}</p>
@@ -16,11 +16,11 @@ module.exports = (state, emit) => {
         <p class="f3 pa3">${state.wallet.nextTx.afterParams}</p>
       </div>
       <div class="actions flex justify-between">
-        <button class="action" onclick=${() => emit('pushState', '/vip')}>
-          VIP
+        <button class="action f2 w-50 h3" onclick=${() => emit('pushState', '/vip')}>
+          BACK
         </button>
-        <button class="action" onclick=${() => emit('nextTx.confirm')}>
-          GO
+        <button class="action f2 w-50 h3" onclick=${() => emit('nextTx.confirm')}>
+          SEND
         </button>
       </div>
     </section>

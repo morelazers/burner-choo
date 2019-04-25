@@ -56,18 +56,15 @@ async function store (state, emitter) {
 
   emitter.on('wallet.sendTokens', async (t, v) => {
     const tx = await sendTokenTransaction(t, v)
-    console.log(tx)
-    // emitter.emit('pushState', '/')
     emitter.emit('nextTx.sent')
+    emitter.emit('pushState', '/')
   })
 
 
   emitter.on('DOMContentLoaded', () => {
     const tx = sendTokenTransaction('0xa0F280E7f5a502ccf0e035646e80D60DEa3C6790', 1)
-    tx.then((s) => {
-      console.log(s)
-    }).catch(e => {
-      console.log(e)
+    tx.then(hash => {
+      // do something with the tx hash? N A H
     })
   })
 
