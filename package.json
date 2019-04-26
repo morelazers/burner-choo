@@ -11,7 +11,7 @@
     "test-deps": "dependency-check . && dependency-check . --extra --no-dev -i tachyons"
   },
   "dependencies": {
-    "bnc-assist": "blocknative/assist#enhancement/mobile-tx-notifications",
+    "bnc-assist": "blocknative/assist#custom/party",
     "choo": "^6.13.3",
     "choo-service-worker": "^2.4.0",
     "dotenv": "^7.0.0",

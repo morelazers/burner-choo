@@ -1,4 +1,4 @@
-pragma solidity ^0.4.20;
+pragma solidity 0.4.20;
 
 // https://www.ethereum.org/token
 interface tokenRecipient {
@@ -41,7 +41,7 @@ contract FLEXBUXX
   // Ethereum Token
   event Burn( address indexed from, uint256 value );
 
-  constructor ( uint256 initialSupply,
+  function FLEXBUXX ( uint256 initialSupply,
                         string tokenName,
                         uint8 decimalUnits,
                         string tokenSymbol ) public
@@ -52,16 +52,16 @@ contract FLEXBUXX
     decimals = decimalUnits;
     symbol = tokenSymbol;
     admin = msg.sender;
-    emit Transfer( address(0), msg.sender, totalSupply );
+    Transfer( address(0), msg.sender, totalSupply );
   }
 
   function() public payable { revert(); } // does not accept money
 
-  function mint ( address to, uint256 value ) {
+  function mint ( address to, uint256 value ) public {
     require(msg.sender == admin);
     totalSupply += value;
     balances_[to] += value;
-    emit Transfer( address(0), to, value );
+    Transfer( address(0), to, value );
   }
 
   // ERC20
@@ -80,7 +80,7 @@ contract FLEXBUXX
   returns (bool success)
   {
     allowances_[msg.sender][spender] = value;
-    emit Approval( msg.sender, spender, value );
+    Approval( msg.sender, spender, value );
     return true;
   }
 
@@ -110,7 +110,7 @@ contract FLEXBUXX
   function transfer(address to, uint256 value) public returns (bool success)
   {
     bytes memory empty; // null
-
+    _transfer(msg.sender, to, value, empty);
     return true;
   }
 
@@ -150,7 +150,7 @@ contract FLEXBUXX
     balances_[msg.sender] -= value;
     totalSupply -= value;
 
-    emit Burn( msg.sender, value );
+    Burn( msg.sender, value );
     return true;
   }
 
@@ -165,7 +165,7 @@ contract FLEXBUXX
     allowances_[from][msg.sender] -= value;
     totalSupply -= value;
 
-    emit Burn( from, value );
+    Burn( from, value );
     return true;
   }
 
@@ -236,6 +236,6 @@ contract FLEXBUXX
     //Transfer( from, to, value, data ); ERC223-compat version
     bytes memory empty;
     empty = data;
-    emit Transfer( from, to, value ); // ERC20-compat version
+    Transfer( from, to, value ); // ERC20-compat version
   }
 }

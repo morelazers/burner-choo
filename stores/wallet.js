@@ -29,20 +29,19 @@ async function store (state, emitter) {
   state.wallet = Object.assign({}, DEFAULT_STATE)
   state.wallet.burner = getWallet(state.provider)
   state.wallet.address = state.wallet.burner.signingKey.address // for convenience
-  state.web3.eth.personal.importRawKey(state.wallet.burner.signingKey.privateKey, 'security_first_kids')
-  state.web3.eth.personal.unlockAccount(state.wallet.address, 'security_first_kids', 86400).then(res => {
-    console.log(res)
-  }) // unlock for one day, have fun
-
-
+  state.web3.eth.accounts.privateKeyToAccount(state.wallet.burner.signingKey.privateKey)
   state.wallet.tokenContract = new state.web3.eth.Contract(abi, state.TOKEN_ADDRESS)
 
   // @todo - rewrite this to use web3 and get rid of the ethers.js stuff
   state.wallet.tokenContractEthers = new ethers.Contract(state.TOKEN_ADDRESS, abi, state.provider)
   state.wallet.tokenContractEthers = state.wallet.tokenContractEthers.connect(state.wallet.burner)
   state.wallet.tokenContractEthers.on(state.wallet.tokenContractEthers.filters.Transfer(null, null), async (f, t, v) => {
-    console.log(f, t, v)
-    setBalance()
+    if (t.toLowerCase() === state.wallet.address.toLowerCase()) {
+      state.assist.notify('txConfirmedClient', () => `Received ${state.CURRENCY_SYMBOL}${v.toNumber()}!`)
+      setBalance()
+    } else if (f.toLowerCase === state.wallet.address.toLowerCase()) {
+      setBalance()
+    }
   })
   setBalance()
 
@@ -54,49 +53,84 @@ async function store (state, emitter) {
   emitter.on('nextTx.setCta', (s) => state.wallet.nextTx.cta = s)
   emitter.on('nextTx.confirm', () => state.wallet.afterConfirm())
 
-  emitter.on('wallet.sendTokens', async (t, v) => {
-    const tx = await sendTokenTransaction(t, v)
+  emitter.on('wallet.sendTokens', async (t, v, b = "0x") => {
+    const tx = await sendTokenTransaction(t, v, b)
+    console.log(tx)
     emitter.emit('nextTx.sent')
     emitter.emit('pushState', '/')
   })
 
+  console.log(state.wallet)
+
 
   emitter.on('DOMContentLoaded', () => {
-    const tx = sendTokenTransaction('0xa0F280E7f5a502ccf0e035646e80D60DEa3C6790', 1)
-    tx.then(hash => {
-      // do something with the tx hash? N A H
-    })
+    // state.assist.notify('txConfirmedClient', () => `WooHoo`)
+    // const tx = sendTokenTransaction('0x48F73e6A4b292C779795bA9b461970e0D6E81C63', 10)
+    // console.log(tx)
+    // tx.then(hash => {
+    //   console.log(hash)
+    //   // do something with the tx hash? N A H
+    // }).catch(e => {
+    //   console.log(e)
+    // })
   })
 
   async function setBalance () {
-    state.wallet.tokenBalance = await getBalance(state.wallet.tokenContractEthers, state.wallet.address)
-    emitter.emit('render')
+    try {
+      state.wallet.tokenBalance = await getBalance(state.wallet.tokenContractEthers, state.wallet.address)
+      emitter.emit('render')
+    } catch (e) {
+      console.log(e)
+    }
   }
 
-  function sendTokenTransaction (to, value) {
+  async function sendTokenTransaction (to, value, bytes = '0x') {
     console.log(`Sending ${value} tokens to ${to}`)
-    console.log(state)
-    console.log(state.wallet.tokenContract)
-    // state.wallet.tokenContract.abi = state.wallet.tokenContract.interface.abi
-    const c = state.assist.Contract(state.wallet.tokenContract)
 
-    return c.methods['transfer(address,uint256,bytes,string)'](to, value, "0x", "").send({
-      from: state.wallet.address
-    }, {
-      messages: {
-        txSent: () => `Sending ${state.CURRENCY_SYMBOL}${value}`,
-        txConfirmed: () => `Sent ${state.CURRENCY_SYMBOL}${value}`,
-        txStall: () => `Something's wrong...`,
-        txConfirmedClient: () => `Sent ${state.CURRENCY_SYMBOL}${value}`
-      }
+    // const c = state.assist.Contract(state.wallet.tokenContract)
+    // // console.log(c.methods['transfer(address,uint256,bytes,string)'](to, value, bytes, ""))
+    // console.log(state.wallet.address)
+    // return c.methods['transfer(address,uint256,bytes,string)'](to, value, "0x", "").send({
+    //   from: state.wallet.address
+    // }, {
+    //   messages: {
+    //     txSent: () => `Sending ${state.CURRENCY_SYMBOL}${value}`,
+    //     txConfirmed: () => `Sent ${state.CURRENCY_SYMBOL}${value}`,
+    //     txStall: () => `Something's wrong...`,
+    //     txConfirmedClient: () => `Sent ${state.CURRENCY_SYMBOL}${value}`
+    //   }
+    // })
+    // console.log(tx)
+
+    const data = state.wallet.tokenContract.methods['transfer(address,uint256,bytes,string)'](to, value, bytes, "").encodeABI()
+    const signedTx = await state.web3.eth.accounts.signTransaction({
+      to: state.TOKEN_ADDRESS,
+      data: data,
+      gasPrice: ethers.utils.parseUnits('1', 'gwei'),
+      gas: '100000'
+    }, state.wallet.burner.signingKey.privateKey)
+    const tx = await state.assist.sendSignedTransaction(signedTx.rawTransaction, () => {}, {
+      txSent: () => `Sending ${state.CURRENCY_SYMBOL}${value}`,
+      txConfirmed: () => `Sent ${state.CURRENCY_SYMBOL}${value}`,
+      txStall: () => `Something's wrong...`,
+      txConfirmedClient: () => `Sent ${state.CURRENCY_SYMBOL}${value}`
     })
+    return tx
   }
 
 }
 
 async function getBalance (contract, address) {
-  const b = await contract.balanceOf(address)
-  return b.toNumber()
+  try {
+    console.log({contract})
+    console.log('-- GETTING BALANCE --')
+    const b = await contract.balanceOf(address)
+    console.log(`-- BALANCE: ${b} --`)
+    return b.toNumber()
+  } catch (e) {
+    console.log(e)
+    return -1
+  }
 }
 
 function getWallet (provider) {

@@ -4,27 +4,45 @@ module.exports = store
  * Load some dapp-specific information in this file like the ABI, address
  */
 
+const ethers = require('ethers')
+
+const abi = require('../contracts/VIP_PASS.abi')
+
 const DEFAULT_BOTTOM_TEXT = 'Select one of these nerds to replace them as a VIP'
 
 function store (state, emitter) {
   state.vip = {
-    list: [
-      {
-        id: 1,
-        price: 183
-      },
-      {
-        id: 3,
-        price: 5871
-      },
-      {
-        id: 2,
-        price: 18381
-      }
-    ],
+    CONTRACT_ADDRESS: '0x401F73858c0D1dEfFeB94328952Ec412AC37ED64',
+    list: [],
     selected: null,
     bottomText: DEFAULT_BOTTOM_TEXT,
-    timeout: null
+    timeout: null,
+    meVip: false
+  }
+
+  state.vip.contract = new ethers.Contract(state.vip.CONTRACT_ADDRESS, abi, state.provider)
+  state.vip.contract = state.vip.contract.connect(state.wallet.burner)
+  state.vip.contract.on(state.vip.contract.filters.NewVip(null, null), async (newVip) => {
+    if (newVip.toLowerCase() === state.wallet.address.toLowerCase()) {
+      state.assist.notify('txConfirmedClient', () => `You're now a VIP!`)
+    }
+    getVipStatus()
+  })
+  getVipStatus()
+
+  async function getVipStatus () {
+    for (let i = 0; i < 5; i++) {
+      let vip = await state.vip.contract.VIPS(i)
+      if (vip.price.toNumber() === 0) continue
+      state.vip.list[i] = {}
+      state.vip.list[i].id = i
+      state.vip.list[i].price = vip.price.toNumber()
+      state.vip.list[i].holder = vip.owner.toLowerCase()
+    }
+    state.vip.list = state.vip.list.sort((a, b) => a.price - b.price)
+    const meVip = await state.vip.contract.isVip(state.wallet.address)
+    state.vip.meVip = meVip
+    emitter.emit('render')
   }
 
   emitter.on('vipSelected', id => {

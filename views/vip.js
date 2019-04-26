@@ -20,28 +20,34 @@ function view (state, emit) {
   return html`
     <section class="flex flex-column justify-between pa0">
       <div class="flex flex-column justify-start">
-        ${state.vip.list.map(vip =>
-          html`
-            <button class="flex flex-row pa1 justify-between f2 pv3 ph4 ${vip.bad ? 'bad' : ''}" onclick=${() => {
-              if (state.wallet.tokenBalance < vip.price) {
-                // maybe make it go red or something
-                vip.bad = true
-                emit('render')
-                emit('vip.notEnoughBalance')
-              } else {
-                emit('vipSelected', vip.id)
-                emit('nextTx.setBeforeParams', "You're paying")
-                emit('nextTx.setPrice', vip.price)
-                emit('nextTx.setJoiningStatement', "to replace")
-                emit('nextTx.setParam', "VIP_" + vip.id) // argh nested backticks !
-                emit('nextTx.setAfterParams', "How rude of you.")
-                emit('pushState', '/confirm')
-              }
-            }}>
-              <span class="">VIP_${vip.id}</span>
-              <span class="">${state.CURRENCY_SYMBOL}${vip.price}</span>
-            </button>
-          `
+        ${state.vip.list.map(vip => {
+            if (vip.owner === state.wallet.address) return
+            return html`
+              <button class="flex flex-row pa1 justify-between f2 pv3 ph4 ${vip.bad ? 'bad' : ''}" onclick=${() => {
+                if (state.wallet.tokenBalance < vip.price) {
+                  // maybe make it go red or something
+                  vip.bad = true
+                  emit('render')
+                  emit('vip.notEnoughBalance')
+                } else {
+                  emit('vipSelected', vip.id)
+                  emit('nextTx.setBeforeParams', "You're paying")
+                  emit('nextTx.setPrice', vip.price)
+                  emit('nextTx.setJoiningStatement', "to replace")
+                  emit('nextTx.setParam', "VIP_" + vip.id) // argh nested backticks !
+                  emit('nextTx.setAfterParams', "How rude of you.")
+                  state.wallet.afterConfirm = () => {
+                    emit('wallet.sendTokens', state.vip.CONTRACT_ADDRESS, vip.price, "0x" + vip.id)
+                    emit('pushState', '/')
+                  }
+                  emit('pushState', '/confirm')
+                }
+              }}>
+                <span class="">VIP_${vip.id}</span>
+                <span class="">${state.CURRENCY_SYMBOL}${vip.price}</span>
+              </button>
+            `
+          }
         )}
       </div>
       <div class="f2 tc pa4">

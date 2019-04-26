@@ -9,10 +9,6 @@ module.exports = (state, emit) => {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
   const container = css`
-    img {
-      width: 70vw;
-      height: auto;
-    }
   `
 
   QRCode.toDataURL(state.wallet.address, {
@@ -27,9 +23,9 @@ module.exports = (state, emit) => {
   })
 
   return html`
-    <section class="flex flex-column justify-around">
-      <img src=${state.wallet.qr} />
-      <div class="actions flex flex-column tc">
+    <section class="flex flex-column justify-around items-center pa4">
+      <img class="w-100" src=${state.wallet.qr} />
+      <div class="actions flex flex-column tc w-100">
         <a href="/">Back</a>
       </div>
     </section>

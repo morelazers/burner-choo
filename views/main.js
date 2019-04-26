@@ -22,6 +22,15 @@ function view (state, emit) {
       font-size: 5rem;
       color: #A7E4AE;
     }
+
+    .disabled {
+      opacity: 0.5;
+    }
+    .disabled:hover,
+    .disabled:active {
+      background: unset;
+      color: unset;
+    }
   `
 
   return html`
@@ -30,13 +39,13 @@ function view (state, emit) {
         <div class="f-subheadline pa3">
           =${state.CURRENCY_SYMBOL}${state.wallet.tokenBalance || 0}=
         </div>
-        <p class="vip-status">VIP=FALSE</p>
+        <p class="vip-status">VIP=${state.vip.meVip ? 'TRUE' : 'FALSE'}</p>
       </div>
       <div class="actions flex flex-column tc">
         <a href="/get">GET</a>
         <a href="/send">SEND</a>
         <a href="/gamble">GAMBLE</a>
-        <a href="/vip">VIP_ZONE</a>
+        <a href="${state.vip.meVip ? '#' : '/vip'}" class="${state.vip.meVip ? 'disabled' : ''}">VIP_ZONE</a>
       </div>
     </section>
   `

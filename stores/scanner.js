@@ -2,6 +2,7 @@ module.exports = store
 
 const jsqr = require('jsqr')
 
+let streamObj
 function store (state, emitter) {
   emitter.on(state.events.DOMTITLECHANGE, function () {
     if (state.title === "SCAN") {
@@ -11,6 +12,8 @@ function store (state, emitter) {
           state.afterScan(addr)
         })
       }, 100)
+    } else {
+      endScan()
     }
   })
 }
@@ -22,7 +25,7 @@ function beginScan (cb) {
   const canvas = canvasElement.getContext("2d")
 
   let done = false
-  let streamObj
+  let animation
 
   // Use facingMode: environment to attemt to get the front camera on phones
   navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
@@ -30,11 +33,14 @@ function beginScan (cb) {
     video.srcObject = stream
     video.setAttribute("playsinline", true) // required to tell iOS safari we don't want fullscreen
     video.play()
-    requestAnimationFrame(tick)
+    animation = requestAnimationFrame(tick)
   })
 
   function tick() {
-    if (done) return
+    if (done) {
+      cancelAnimationFrame(animation)
+      return
+    }
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
       canvasElement.hidden = true
       canvasElement.height = video.videoHeight
@@ -58,8 +64,13 @@ function beginScan (cb) {
 
 function endScan () {
   console.log('ENDING SCAN')
-  const video = document.getElementById("video")
-  console.log(video)
+  try {
+    for (let track of streamObj.getTracks()) {
+      track.stop()
+    }
+  } catch (e) {
+    // stream prob already stopped
+  }
 }
 
 function parseResult (c) {
