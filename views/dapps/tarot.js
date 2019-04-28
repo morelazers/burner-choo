@@ -8,13 +8,17 @@ module.exports = (state, emit) => {
 
   const container = css`
     .tarot-card {
-      width: 80%;
+      width: 50%;
       image-rendering: pixelated;
-      border-radius: 25px;
+      border-radius: 15px;
     }
 
     .tarot-card.glow {
       animation: pulse 1s infinite alternate;
+    }
+
+    .tarot-card.glow.slow {
+      animation: pulse-slow 2s infinite alternate;
     }
 
     .read-button {
@@ -27,6 +31,7 @@ module.exports = (state, emit) => {
     }
 
     .read-button.pending {
+      color: #A7E4AE;
       background: transparent;
     }
 
@@ -38,6 +43,11 @@ module.exports = (state, emit) => {
     @keyframes pulse {
       from { box-shadow: 0px 0px 20px 5px #A7E4AE; }
       to { box-shadow: 0px 0px 40px 20px #A7E4AE; }
+    }
+
+    @keyframes pulse-slow {
+      from { box-shadow: 0px 0px 10px 5px #A7E4AE; }
+      to { box-shadow: 0px 0px 20px 10px #A7E4AE; }
     }
   `
 
@@ -52,7 +62,7 @@ module.exports = (state, emit) => {
 
 function initialView (state, emit) {
   return html`
-    <section class="flex flex-column justify-around items-center pa4">
+    <section class="flex flex-column justify-around items-center pa5">
       <div class="f1">T A R O T</div>
       <img class="tarot-card" src="/assets/dapps/tarot/tarot__back.png" />
       <div class="actions">
@@ -66,7 +76,7 @@ function initialView (state, emit) {
               state.dapps.tarot.price,
               "0x0",
               {
-                txSent: () => `Calculating Moon Maths...`,
+                txSent: () => `Focus on your query...`,
                 txConfirmedClient: () => {
                   emit('tarot.getReading')
                   return `Celestially Aligned`
@@ -84,7 +94,7 @@ function initialView (state, emit) {
 
 function readingView (state, emit) {
   return html`
-    <section class="flex flex-column justify-around items-center pa4">
+    <section class="flex flex-column justify-around items-center pa5">
       <div class="f1">T A R O T</div>
       <img class="tarot-card glow" src="/assets/dapps/tarot/tarot__back.png" />
       <div class="actions">
@@ -100,17 +110,19 @@ function activeCard (state, emit, cardIndex) {
   const card = state.dapps.tarot.myReading[cardIndex]
   console.log(card)
   return html`
-    <section class="flex flex-column justify-around items-center pa4">
+    <section class="flex flex-column justify-around items-center pa5">
     <div class="flex flex-row justify-between w-100 era-buttons">
       <button class="f3 ${cardIndex === 0 ? 'active' : ''}" onclick=${() => emit('tarot.activeCard', 0)}>${state.dapps.tarot.eras[0]}</button>
       <button class="f3 ${cardIndex === 1 ? 'active' : ''}" onclick=${() => emit('tarot.activeCard', 1)}>${state.dapps.tarot.eras[1]}</button>
       <button class="f3 ${cardIndex === 2 ? 'active' : ''}" onclick=${() => emit('tarot.activeCard', 2)}>${state.dapps.tarot.eras[2]}</button>
     </div>
-    <img class="tarot-card" src="/assets/dapps/tarot/tarot__${state.dapps.tarot.images[card]}.png" />
-      <div class="f2">${state.dapps.tarot.cards[card]}</div>
-      <div>
-        <p>${state.dapps.tarot.readings[card]}</p>
+    <img class="tarot-card glow slow" src="/assets/dapps/tarot/tarot__${state.dapps.tarot.images[card]}.png" />
+    <div>
+      <div class="f2 underline">${state.dapps.tarot.cards[card]}</div>
+      <div class="tj">
+        ${state.dapps.tarot.readings[card]}
       </div>
+    </div>
     </section>
   `
 }

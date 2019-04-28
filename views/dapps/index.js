@@ -12,10 +12,15 @@ function view (state, emit) {
   `
 
   return html`
-    <section class="flex flex-column justify-around pa5">
+    <section class="flex flex-row flex-wrap justify-between pa5">
       ${state.dapps.list.map(dapp => {
         return html`
-          <a href=/dapps/${dapp.link}>${dapp.name}</a>
+          <a href=/dapps/${dapp.link}>
+            <div class="w4 h-50 flex flex-column justify-center items-center">
+              <img class="dapp-img w-100 ba" src="${dapp.icon}" />
+              <div class="tc">${dapp.name}</div>
+            </div>
+          </a>
         `
       })}
     </section>
