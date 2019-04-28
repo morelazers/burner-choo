@@ -5,19 +5,21 @@ const jsqr = require('jsqr')
 let streamObj
 function store (state, emitter) {
   emitter.on(state.events.DOMTITLECHANGE, function () {
-    if (state.title === "SCAN") {
+    if (state.title === "SEND") {
       setTimeout(() => {
+        // begins a scan if you land on '/SCAN'
         beginScan(addr => {
           endScan()
           state.afterScan(addr)
         })
-      }, 100)
+      }, 1000)
     } else {
       endScan()
     }
   })
 }
 
+// starts the webcam stream to scan a thing
 function beginScan (cb) {
   console.log('BEGINNING TO SCAN')
   const video = document.getElementById("video")

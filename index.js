@@ -7,6 +7,8 @@ require('dotenv').config()
 
 const { JSON_RPC_URL, CURRENCY_SYMBOL, TOKEN_ADDRESS } = process.env
 
+const dapps = require('./config')
+
 css('tachyons')
 css('./assets/main.css')
 
@@ -23,20 +25,40 @@ app.use((state, emitter) => {
   // -- XDAI TEST CONTRACTS --
   // state.JSON_RPC_URL = JSON_RPC_URL || 'https://xdai.flexdapps.com/'
   // state.TOKEN_ADDRESS = TOKEN_ADDRESS || '0xB7A4375BF67BF865CA8e2336C50fc77B393375fd'
+  // state.NETWORK_ID = 100
 
+  // -- KOVAN CONTRACTS --
+  // state.JSON_RPC_URL = 'https://xdai.flexdapps.com/'
+  // state.TOKEN_ADDRESS = '0x6692df992562c701e7eb51255084715cce7bfe59'
+  // state.NETWORK_ID = 42
+
+
+  // -- GOERLI CONTRACTS --
+  state.JSON_RPC_URL = 'https://xdai.flexdapps.com/'
+  state.TOKEN_ADDRESS = '0xe0728a9d55ebd03bfcc6e9faa59e6dfe96741636'
+  state.NETWORK_ID = 5
 
   // -- LOCAL TEST CONTRACTS
-  state.JSON_RPC_URL = 'http://localhost:8545'
-  state.TOKEN_ADDRESS = '0xDBA081ff3cc5921a784A788Cf5a49Dd7A8F9B83F'
+  // state.JSON_RPC_URL = 'https://localhost:9009'
+  // state.TOKEN_ADDRESS = '0xDBA081ff3cc5921a784A788Cf5a49Dd7A8F9B83F'
+  // state.NETWORK_ID = 5777
 
   state.CURRENCY_SYMBOL = CURRENCY_SYMBOL || '៛'
 
   state.web3 = new Web3(state.JSON_RPC_URL)
   console.log(state.web3)
+  state.web3.eth.extend({
+    property: 'personal',
+    methods: [{
+      name: 'newParityAccount',
+      call: 'parity_newAccountFromSecret',
+      params: 2
+    }]
+  })
   emitter.on('DOMContentLoaded', () => {
     state.assist = bnc.init({
       dappId: '6981d7c2-9e6f-420f-9772-228a8c0d4534',
-      networkId: 100,
+      networkId: state.NETWORK_ID,
       web3: state.web3,
       mobileBlocked: false,
       style: {
@@ -139,12 +161,41 @@ app.use(require('./stores/calculate'))
 app.use(require('./stores/scanner'))
 app.use(require('./stores/vip'))
 
+// should glob the dapps folder
+app.use(require('./stores/dapps/config'))
+
+// @todo fix
+// for (let dapp of dapps) {
+//   const path = './stores/dapps/' + dapp
+//   app.use(require(path))
+// }
+app.use(require('./stores/dapps/regatta'))
+app.use(require('./stores/dapps/picture-wall'))
+app.use(require('./stores/dapps/tarot'))
+
 app.route('/', require('./views/main'))
 app.route('/get', require('./views/get'))
 app.route('/send', require('./views/send'))
 app.route('/confirm', require('./views/confirm'))
 app.route('/calculate', require('./views/calculate'))
+
+// @todo remove this when we release the non-specific version
 app.route('/vip', require('./views/vip'))
+
+// there needs to be something here which globs the `dapps` folder to grab
+// all the extra files - it should probably have a subroute too like /dapps/my-dapp
+// remove these lines if you don't want to have any custom dapps
+app.route('/dapps', require('./views/dapps/index'))
+
+// for some reason this does not work
+// for (let dapp of dapps) {
+  // const path = './views/dapps/' + dapp
+  // app.route(`/${dapp}`, require(path))
+// }
+
+app.route('/dapps/regatta', require('./views/dapps/regatta'))
+app.route('/dapps/picture-wall', require('./views/dapps/picture-wall'))
+app.route('/dapps/tarot', require('./views/dapps/tarot'))
 
 const element = app.start()
 document.body.appendChild(element)

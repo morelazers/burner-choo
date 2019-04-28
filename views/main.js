@@ -10,7 +10,6 @@ function view (state, emit) {
 
   const styles = css`
     .wallet-status {
-      line-height: 1rem;
       text-align: center;
     }
 
@@ -36,15 +35,16 @@ function view (state, emit) {
   return html`
     <section class="flex flex-column justify-between pa5">
       <div class="wallet-status">
-        <div class="f-subheadline pa3">
-          =${state.CURRENCY_SYMBOL}${state.wallet.tokenBalance || 0}=
+        <div class="f-subheadline">
+          =${state.CURRENCY_SYMBOL}${state.wallet.tokenBalance.toLocaleString() || 0}=
         </div>
-        <p class="vip-status">VIP=${state.vip.meVip ? 'TRUE' : 'FALSE'}</p>
+        <div class="vip-status">VIP${state.vip.meVip ? '_' + state.vip.meIndex : ''}=${state.vip.meVip ? 'TRUE' : 'FALSE'}</div>
+        <div class="vip-status">DEBUG_BAL=${Number(state.wallet.ethBalance) ? Number(state.wallet.ethBalance).toFixed(5) : 0}</div>
       </div>
       <div class="actions flex flex-column tc">
         <a href="/get">GET</a>
         <a href="/send">SEND</a>
-        <a href="/gamble">GAMBLE</a>
+        <a href="/dapps">APPS</a>
         <a href="${state.vip.meVip ? '#' : '/vip'}" class="${state.vip.meVip ? 'disabled' : ''}">VIP_ZONE</a>
       </div>
     </section>

@@ -37,7 +37,20 @@ function view (state, emit) {
                   emit('nextTx.setParam', "VIP_" + vip.id) // argh nested backticks !
                   emit('nextTx.setAfterParams', "How rude of you.")
                   state.wallet.afterConfirm = () => {
-                    emit('wallet.sendTokens', state.vip.CONTRACT_ADDRESS, vip.price, "0x" + vip.id)
+                    emit(
+                      'wallet.sendTokens',
+                      state.vip.CONTRACT_ADDRESS,
+                      vip.price,
+                      ("0x" + vip.id),
+                      {
+                        txSend: () => (
+                          "Buying VIP_PASS for " +
+                          state.CURRENCY_SYMBOL +
+                          state.vip.price.toLocaleString()
+                        ),
+                        txConfirmedClient: () => `Welcome to the VIP_ZONE`
+                      }
+                    )
                     emit('pushState', '/')
                   }
                   emit('pushState', '/confirm')
