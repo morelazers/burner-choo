@@ -43,7 +43,7 @@ function store (state, emitter) {
     if (oldVip.toLowerCase() === state.wallet.address.toLowerCase()) {
       state.assist.notify('txFailed', () => `VIP STATUS REVOKED.`)
     } else {
-      state.assist.notify('txConfirmedClient', () => `New VIP for ${state.CURRENCY_SYMBOL}${newPrice}`)
+      state.assist.notify('txConfirmedClient', () => `New VIP for ${state.CURRENCY_SYMBOL}${newPrice.toLocaleString()}`)
     }
 
     // refresh the wallet on an event happening

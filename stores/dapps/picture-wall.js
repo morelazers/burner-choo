@@ -4,7 +4,7 @@ function store (state, emitter) {
 
   // set up the initial state of our dapp
   state.dapps.pictureWall = {
-
+    selectedImg: null
   }
 
 

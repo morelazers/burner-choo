@@ -45,7 +45,7 @@ function view (state, emit) {
         <a href="/get">GET</a>
         <a href="/send">SEND</a>
         <a href="/dapps">APPS</a>
-        <a href="${state.vip.meVip ? '#' : '/vip'}" class="${state.vip.meVip ? 'disabled' : ''}">VIP_ZONE</a>
+        <a href="/vip">VIP_${state.vip.meVip ? 'PASS' : 'ZONE'}</a>
       </div>
     </section>
   `

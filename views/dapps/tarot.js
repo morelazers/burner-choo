@@ -108,7 +108,6 @@ function readingView (state, emit) {
 
 function activeCard (state, emit, cardIndex) {
   const card = state.dapps.tarot.myReading[cardIndex]
-  console.log(card)
   return html`
     <section class="flex flex-column justify-around items-center pa5">
     <div class="flex flex-row justify-between w-100 era-buttons">

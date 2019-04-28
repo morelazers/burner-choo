@@ -35,7 +35,7 @@ module.exports = (state, emit) => {
   return html`
     <section class="flex flex-column pa0 items-center tc justify-between">
       <div class="flex tc f-subheadline pa5 items-center">
-        ${state.CURRENCY_SYMBOL}${state.calculate.input}
+        ${state.CURRENCY_SYMBOL}${state.calculate.input.toLocaleString()}
         <span class="phat-caret"></span>
       </div>
       <div class="keypad w-100 flex flex-column f1">

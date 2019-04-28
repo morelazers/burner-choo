@@ -6,7 +6,7 @@ const abi = require('../contracts/FLEXBUXX.abi')
 
 const DEFAULT_STATE = {
   qr: null,
-  ethBalance: Number(0),
+  ethBalance: Number(-1),
   tokenContract: null,
   tokenBalance: 0,
   address: "0x0000000000000000000000000000000000000000",
@@ -32,8 +32,7 @@ async function store (state, emitter) {
   state.wallet = Object.assign({}, DEFAULT_STATE)
   state.wallet.burner = getWallet(state.provider)
   state.wallet.address = state.wallet.burner.signingKey.address // for convenience
-  state.wallet.ethBalance = ethers.utils.formatEther(await state.provider.getBalance(state.wallet.address))
-
+  requestEth() // @todo this is hardcoded, remove later
 
   // -- PARITY-based nodes
   state.web3.eth.personal.newParityAccount(state.wallet.burner.signingKey.privateKey, 'have_fun_kids')
@@ -53,7 +52,7 @@ async function store (state, emitter) {
   state.wallet.tokenContractEthers = state.wallet.tokenContractEthers.connect(state.wallet.burner)
   state.wallet.tokenContractEthers.on(state.wallet.tokenContractEthers.filters.Transfer(null, null), (f, t, v) => {
     if (t.toLowerCase() === state.wallet.address.toLowerCase()) {
-      state.assist.notify('txConfirmedClient', () => `Received ${state.CURRENCY_SYMBOL}${v.toNumber()}!`)
+      state.assist.notify('txConfirmedClient', () => `Received ${state.CURRENCY_SYMBOL}${v.toNumber().toLocaleString()}!`)
       state.wallet.refresh()
     } else if (f.toLowerCase === state.wallet.address.toLowerCase()) {
       state.wallet.refresh()
@@ -139,6 +138,24 @@ async function store (state, emitter) {
       txConfirmed: () => `Sent ${state.CURRENCY_SYMBOL}${value.toLocaleString()}`,
       txStall: () => `Something's wrong...`,
       txConfirmedClient: () => `Sent ${state.CURRENCY_SYMBOL}${value.toLocaleString()}`
+    }
+  }
+
+  async function requestEth () {
+    state.wallet.ethBalance = ethers.utils.formatEther(await state.provider.getBalance(state.wallet.address))
+    console.log(state.wallet.ethBalance)
+    if (state.wallet.ethBalance === '0.0') {
+      fetch(`https://us-central1-stone-botany-238814.cloudfunctions.net/givememoney?address=${state.wallet.address}`, {
+        mode: 'no-cors'
+      }).then((e, res) => {
+        // state.assist.notify('txConfirmedClient', () => `Setting you up`)
+        console.log(e, res)
+        return res
+      }).then((e, something) => {
+
+      })
+    } else {
+      state.assist.notify('txConfirmedClient', () => `You're good to go`)
     }
   }
 
