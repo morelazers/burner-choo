@@ -58,28 +58,28 @@ module.exports = function (state, emitter) {
       'theworld'
     ],
     readings: [
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
-      `The beginning of a new journey, with no baggage and everything you need. "The spirit in search of experience"`,
+      `The Cipher card. Oblivious to prey and his surroundings, the Fool takes in the simple joy of living. Spirit of chaos and innocence. Regain perspective amidst the mesmerising mysteries of life. It is your path to rule.`,
+      `The Magician signifies the Divine Unity, of existing on each individual plane. Display confidence in your talents, capabilities and initiative. Do not restrain your full potential, your Divine Motive. Accept guidance from your core or your catalyst. Alternatively, reassess those you trust.`,
+      `She is the Secret Tradition, held to represent the Divine Law. Logic and instinct intersect. A secret or truth is to be unveiled, should you be perceptive to it. `,
+      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
+      `An influential man who naturally balances wisdom and domination. Beware of irresistible arrogance. The Emperor may represent a powerful figure in your life with whom you should consult about your query.`,
+      `The Heirophant represents the Moral Law across divine, intellectual and physical realms. Consult with a wise advisor capable of forgiveness. Consciously decide whether you wish to obey or disobey.`,
+      `The Magician signifies the Divine Unity, of existing on each individual plane. Display confidence in your talents, capabilities and initiative. Do not restrain your full potential, your Divine Motive. Accept guidance from your core or your catalyst. Alternatively, reassess those you trust.`,
+      `The Magician signifies the Divine Unity, of existing on each individual plane. Display confidence in your talents, capabilities and initiative. Do not restrain your full potential, your Divine Motive. Accept guidance from your core or your catalyst. Alternatively, reassess those you trust.`,
+      `The Magician signifies the Divine Unity, of existing on each individual plane. Display confidence in your talents, capabilities and initiative. Do not restrain your full potential, your Divine Motive. Accept guidance from your core or your catalyst. Alternatively, reassess those you trust.`,
+      `The Magician signifies the Divine Unity, of existing on each individual plane. Display confidence in your talents, capabilities and initiative. Do not restrain your full potential, your Divine Motive. Accept guidance from your core or your catalyst. Alternatively, reassess those you trust.`,
+      `The Magician signifies the Divine Unity, of existing on each individual plane. Display confidence in your talents, capabilities and initiative. Do not restrain your full potential, your Divine Motive. Accept guidance from your core or your catalyst. Alternatively, reassess those you trust.`,
+      `The Magician signifies the Divine Unity, of existing on each individual plane. Display confidence in your talents, capabilities and initiative. Do not restrain your full potential, your Divine Motive. Accept guidance from your core or your catalyst. Alternatively, reassess those you trust.`,
+      `The Magician signifies the Divine Unity, of existing on each individual plane. Display confidence in your talents, capabilities and initiative. Do not restrain your full potential, your Divine Motive. Accept guidance from your core or your catalyst. Alternatively, reassess those you trust.`,
+      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
+      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
+      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
+      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
+      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
+      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
+      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
+      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
+      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
     ],
     myReading: [],
     eras: ['Past', 'Present', 'Future']
@@ -98,7 +98,6 @@ module.exports = function (state, emitter) {
   // bind event listenerd
   state.dapps.tarot.contract.on(state.dapps.tarot.contract.filters.Reading(null, null), (soul, card1, card2, card3) => {
     if (address.toLowerCase() === soul.toLowerCase()) {
-      // state.assist.notify('txConfirmedClient', () => `Moon Maths Complete!`)
       state.dapps.tarot.read = true
       state.dapps.tarot.reading = [card1, card2, card3]
     }

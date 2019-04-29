@@ -1,24 +1,28 @@
 module.exports = store
 
+const html = require('choo/html')
+
 /**
  * Load some dapp-specific information in this file like the ABI, address
  */
-
 const ethers = require('ethers')
 
 // @todo - we should create an alias so this doesn't have to be nested ../../
-const abi = require('../contracts/VIP_PASS.abi')
+const abi = require('../../contracts/VIP_PASS.abi')
 
-const DEFAULT_BOTTOM_TEXT = 'Select one of these nerds to replace them as a VIP'
+const DEFAULT_BOTTOM_TEXT = html`
+  <div class="tc">
+    <p>Select one of these nerds to replace them as a VIP.</p>
+    <p>You'll receive a grace period of at least 15 minutes in the VIP_ZONE.</p>
+  </div>`
 
 function store (state, emitter) {
 
   // the initial config for your dapp
-
   state.vip = {
     // CONTRACT_ADDRESS: '0x401F73858c0D1dEfFeB94328952Ec412AC37ED64', // XDAI
-    CONTRACT_ADDRESS: '0x24dfd3d315261364833c47a5b984bfa6b62c92cd', // GOERLI
     // CONTRACT_ADDRESS: '0x842E889a5c4F9B018157f857bA0c3953Cf3f00BF', // LOCAL
+    CONTRACT_ADDRESS: '0xec2e3eaee6f179eb66834f76b05f94dde4bb38db', // GOERLI
     list: [],
     selected: null,
     bottomText: DEFAULT_BOTTOM_TEXT,
@@ -35,14 +39,11 @@ function store (state, emitter) {
   state.vip.contract = state.vip.contract.connect(state.wallet.burner)
 
   // bind event listenerd
-  state.vip.contract.on(state.vip.contract.filters.NewVip(null, null), (oldVip, newVip, oldPrice, newPrice) => {
-    console.log({oldVip})
-    console.log({newPrice})
-
+  state.vip.contract.on(state.vip.contract.filters.NewVip(), (oldVip, newVip, oldPrice, newPrice) => {
     // add some notifications when an event happens
     if (oldVip.toLowerCase() === state.wallet.address.toLowerCase()) {
-      state.assist.notify('txFailed', () => `VIP STATUS REVOKED.`)
-    } else {
+      state.assist.notify('txFailed', () => `VIP STATUS REVOKED`)
+    } else if (newVip.toLowerCase() !== state.wallet.address.toLowerCase()) {
       state.assist.notify('txConfirmedClient', () => `New VIP for ${state.CURRENCY_SYMBOL}${newPrice.toLocaleString()}`)
     }
 
@@ -63,6 +64,7 @@ function store (state, emitter) {
       state.vip.list[i].id = i
       state.vip.list[i].price = vip.price.toNumber()
       state.vip.list[i].holder = vip.owner.toLowerCase()
+      state.vip.list[i].protectedUntil = vip.protectedUntil.toNumber()
       if (state.vip.list[i].holder.toLowerCase() === state.wallet.address.toLowerCase()) {
         state.vip.meIndex = i
       }
@@ -83,10 +85,22 @@ function store (state, emitter) {
   emitter.on('vip.notEnoughBalance', () => {
     state.vip.bottomText = "You don't have enough FLEXBUXX to replace that nerd"
     emitter.emit('render')
+    resetTextLater()
+  })
+
+  emitter.on('vip.onCooldown', (v, t) => {
+    const secondsToWait = v - t
+    state.vip.bottomText = `This VIP still has at least ${Math.ceil(secondsToWait)} seconds in the VIP area`
+    emitter.emit('render')
+    resetTextLater()
+  })
+
+  function resetTextLater () {
     clearTimeout(state.timeout)
     state.timeout = setTimeout(() => {
+      console.log('-- RESETTING TEXT --')
       state.vip.bottomText = DEFAULT_BOTTOM_TEXT
       emitter.emit('render')
     }, 3000)
-  })
+  }
 }

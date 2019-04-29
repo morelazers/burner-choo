@@ -4,14 +4,12 @@
  * It would make sense to be able to launch the QR scanner from anywhere in the
  * wallet, and then set the state.afterScan variable from that point.
  *
- * It currently doesn't make sense to only start the scanner if the title of your
- * page is SCAN
+ * It currently doesn't make sense to only start the scanner if the title of
+ * your page is SCAN
  */
 
+const html = require('choo/html')
 const css = require('sheetify')
-
-// grab the scanner module from ./modules
-const scanner = require('./modules/scanner.js')
 
 const TITLE = 'SEND'
 
@@ -38,5 +36,13 @@ module.exports = (state, emit) => {
     }
   `
 
-  return scanner
+  console.log('-- PRINTING THE SCANNER VIEW --')
+  return html`
+    <section class="flex w-100 pa2 align-center justify-center items-center">
+      <div id="qr-preview flex w-100 h-100 align-center justify-center">
+        <canvas id="canvas" hidden></canvas>
+        <video id="video"></video>
+      </div>
+    </section>
+  `
 }

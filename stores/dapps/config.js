@@ -7,9 +7,14 @@ function store (state, emitter) {
   state.dapps = {
     list: [
       {
+        name: 'VIP_ZONE',
+        link: 'vip',
+        icon: '/assets/dapps/vip/icon.png'
+      },
+      {
         name: 'Regatta',
         link: 'regatta',
-        icon: '/assets/dapps/tarot/icon.png'
+        icon: '/assets/dapps/regatta/icon.png'
       },
       {
         name: 'Tarot',

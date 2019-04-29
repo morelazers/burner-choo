@@ -16,7 +16,7 @@ module.exports = (state, emit) => {
         <p class="f3 pa3">${state.wallet.nextTx.afterParams}</p>
       </div>
       <div class="actions flex justify-between">
-        <button class="action f2 w-50 h3" onclick=${() => emit('pushState', '/')}>
+        <button class="action f2 w-50 h3" onclick=${() => emit('replaceState', '/')}>
           CANCEL
         </button>
         <button class="action f2 w-50 h3" onclick=${() => emit('nextTx.confirm')}>

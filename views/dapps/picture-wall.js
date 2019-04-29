@@ -13,11 +13,14 @@ module.exports = (state, emit) => {
 
   return html`
     <section class="flex flex-column justify-around items-center pa4">
-      <div>Welcome to the Picture Wall!</div>
-      <p>I will fill this out later</p>
-      <input type="file" id="picture-input" accept="image/*" onchange="${getFile}">
+      <div>
+        <div class="f1">PICTURE WALL</div>
+        <p>Buy and sell pictures of limited supply.</p>
+        <p>Everything you see here can only be purchased 5 times, and anything you sell has the same restriction.</p>
+      </div>
+      <input type="file" id="picture-input" accept="image/*" onchange="${getFile}" />
       <div class="actions">
-        <button class="post-file" onclick=${uploadFile}>POST</button>
+        <a class="post-file" onclick=${uploadFile}>POST</a>
       </div>
     </section>
   `
@@ -38,11 +41,7 @@ module.exports = (state, emit) => {
       redirect: 'follow',
       mode: 'cors'
     }).then(res => {
-      console.log(res.headers)
-      console.log(res.headers.values())
-      console.log(res.headers.get('Ipfs-Hash'))
-    }).then(rr => {
-      // console.log(rr)
+      const hash = res.headers.get('Ipfs-Hash')
     })
   }
 }
