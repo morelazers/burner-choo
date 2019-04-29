@@ -31,17 +31,26 @@ module.exports = (state, emit) => {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
   const style = css`
-    #video {
-      object-fit: none;
+    .video {
+      object-fit: cover;
+    }
+    .absolute-center {
+      position: fixed;
+      width: 75%;
+      top: 50%;
+      left: 50%;
+      /* bring your own prefixes */
+      transform: translate(-50%, -50%);
     }
   `
 
   console.log('-- PRINTING THE SCANNER VIEW --')
   return html`
-    <section class="flex w-100 pa2 align-center justify-center items-center">
-      <div id="qr-preview flex w-100 h-100 align-center justify-center">
+    <section class="flex">
+      <div id="qr-preview">
         <canvas id="canvas" hidden></canvas>
-        <video id="video"></video>
+        <video id="video" class="video h-100 w-100"></video>
+        <img class="absolute-center" src="/assets/qr-overlay.png" />
       </div>
     </section>
   `

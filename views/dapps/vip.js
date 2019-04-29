@@ -35,7 +35,7 @@ function view (state, emit) {
       display: inherit;
     }
 
-    .status-icon.ready ::after {
+    .status-icon.ready::after {
       content: "✓";
       position: relative;
       display: inherit;
@@ -82,8 +82,8 @@ function view (state, emit) {
                   emit('nextTx.setBeforeParams', "You're paying")
                   emit('nextTx.setPrice', vip.price)
                   emit('nextTx.setJoiningStatement', "to replace")
-                  emit('nextTx.setParam', "VIP_" + vip.id) // argh nested backticks !
-                  emit('nextTx.setAfterParams', "How rude of you.")
+                  emit('nextTx.setParam', "VIP_" + vip.id + ',') // argh nested backticks !
+                  emit('nextTx.setAfterParams', "how rude of you.")
                   state.wallet.afterConfirm = () => {
                     emit(
                       'wallet.sendTokens',

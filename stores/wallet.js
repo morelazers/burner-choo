@@ -17,7 +17,7 @@ const DEFAULT_STATE = {
   },
   nextTx: {
     beforeParams: `You're sending`,
-    price: '0',
+    price: -1,
     joiningStatement: '',
     param: '',
     afterParams: ``,

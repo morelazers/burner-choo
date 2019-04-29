@@ -6,14 +6,20 @@ const TITLE = 'CONFIRM'
 module.exports = (state, emit) => {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
+  console.log(state.wallet)
+
+  if (state.wallet.nextTx.price === -1) {
+    emit('replaceState', '/')
+  }
+
   return html`
     <section class="flex flex-column justify-between">
       <div class="wallet-status pa4">
-        <p class="f3 pa3">${state.wallet.nextTx.beforeParams}</p>
+        <div class="f3 pa3">${state.wallet.nextTx.beforeParams}</div>
         <div class="f-subheadline pa3">${state.CURRENCY_SYMBOL}${state.wallet.nextTx.price.toLocaleString()}</div>
-        <p class="f3 pa3">${state.wallet.nextTx.joiningStatement}</p>
+        <div class="f3 pa3">${state.wallet.nextTx.joiningStatement}</div>
         <div class="f-subheadline pa3">${state.wallet.nextTx.param}</div>
-        <p class="f3 pa3">${state.wallet.nextTx.afterParams}</p>
+        <div class="f3 pa3">${state.wallet.nextTx.afterParams}</div>
       </div>
       <div class="actions flex justify-between">
         <button class="action f2 w-50 h3" onclick=${() => emit('replaceState', '/')}>

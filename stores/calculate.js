@@ -2,7 +2,8 @@ module.exports = store
 
 function store (state, emitter) {
   state.calculate = {
-    input: ""
+    input: '',
+    formattedInput: ''
   }
   emitter.on('numPress', function (arg) {
     if (arg === 'DEL') {
@@ -14,6 +15,7 @@ function store (state, emitter) {
     } else {
       state.calculate.input += arg
     }
+    state.calculate.formattedInput = Number(state.calculate.input).toLocaleString()
     emitter.emit('render')
   })
 }
