@@ -20,6 +20,21 @@ function store (state, emitter) {
         name: 'Picture Wall',
         link: 'picture-wall',
         icon: '/assets/dapps/tarot/icon.png'
+      },
+      {
+        name: 'King',
+        link: 'king',
+        icon: '/assets/dapps/tarot/icon.png'
+      },
+      {
+        name: 'Ponies',
+        link: 'ponies',
+        icon: '/assets/dapps/tarot/icon.png'
+      },
+      {
+        name: 'Rich',
+        link: 'rich',
+        icon: '/assets/dapps/tarot/icon.png'
       }
     ]
   }
