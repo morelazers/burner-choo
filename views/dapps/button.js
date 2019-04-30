@@ -54,32 +54,33 @@ module.exports = (state, emit) => {
   return html`
   <section class="flex flex-column justify-around items-center pa5">
   <div class="f1">B U T T O N</div>
-  <img class="push-button glow slow" src="/assets/dapps/button/red_button.png" onclick=${handleButtonPress(state, emit)} />
+  <img class="push-button glow slow" src="/assets/dapps/button/red_button.png" onclick=${handleButtonPress} />
   <div class="actions">
     <button
       class="push-button-text active"
-      onclick=${handleButtonPress(state, emit)}
+      onclick=${handleButtonPress}
     >
       PUSH FOR ${state.CURRENCY_SYMBOL}${state.dapps.button.price.toLocaleString()}
     </button>
   </div>
 </section>
   `
-}
 
-function handleButtonPress(state, emit) {
-  emit('button.pay')
-  emit(
-      'wallet.sendTokens',
-        state.dapps.button.CONTRACT_ADDRESS,
-        state.dapps.button.price,
-        "0x0",
-        {
-          txSent: () => `Pushing the button...`,
-          txConfirmedClient: () => {
-            //emit('tarot.getReading')
-            return `Click`
+
+  function handleButtonPress() {
+    emit('button.pay')
+    emit(
+        'wallet.sendTokens',
+          state.dapps.button.CONTRACT_ADDRESS,
+          state.dapps.button.price,
+          "0x0",
+          {
+            txSent: () => `Pushing the button...`,
+            txConfirmedClient: () => {
+              //emit('tarot.getReading')
+              return `Click`
+            }
           }
-        }
-      )
+        )
+  }
 }
