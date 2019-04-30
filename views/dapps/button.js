@@ -54,7 +54,7 @@ module.exports = (state, emit) => {
   return html`
   <section class="flex flex-column justify-around items-center pa5">
   <div class="f1">B U T T O N</div>
-  <img class="push-button glow slow" src="/assets/dapps/button/red_button.png" onclick=${handleButtonPress} />
+  <img class="push-button glow slow" src="/assets/dapps/button/red_button.png" onclick=${handleButtonPress(state, emit)} />
   <div class="actions">
     <button
       class="push-button-text active"
