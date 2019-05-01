@@ -33,7 +33,7 @@ function view (state, emit) {
   `
 
   return html`
-    <section class="flex flex-column justify-between pa5">
+    <section class="flex flex-column justify-between pa4 pt5">
       <div class="wallet-status">
         <div class="f-subheadline">
           =${state.CURRENCY_SYMBOL}${state.wallet.tokenBalance.toLocaleString() || 0}=

@@ -25,6 +25,11 @@ function store (state, emitter) {
         name: 'Picture Wall',
         link: 'picture-wall',
         icon: '/assets/dapps/tarot/icon.png'
+      },
+      {
+        name: 'Poop Noise',
+        link: 'poop',
+        icon: '/assets/dapps/poop/icon.png'
       }
     ]
   }

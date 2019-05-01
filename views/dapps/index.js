@@ -1,4 +1,5 @@
 const html = require('choo/html')
+const raw = require('choo/html/raw')
 const css = require('sheetify')
 
 const TITLE = 'DAPPS'
@@ -12,15 +13,17 @@ function view (state, emit) {
   `
 
   return html`
-    <section class="flex flex-row flex-wrap justify-around content-start pa4">
-      ${state.dapps.list.map(dapp => {
+    <section class="flex flex-row flex-wrap justify-around content-start pa3 pt5">
+      ${state.dapps.list.map((dapp, i) => {
         return html`
-          <a class="w4 h-25 flex flex-column justify-center mb5" href=/dapps/${dapp.link}>
-            <div class="flex flex-column justify-center items-center">
-              <img class="dapp-img w-100 ba" src="${dapp.icon}" />
-              <div class="tc">${dapp.name}</div>
-            </div>
-          </a>
+          ${i % 2 == 0 ? raw`<div class="flex flex-row w-100">` : ''}
+            <a class="w4 flex flex-column justify-center mb5" href=/dapps/${dapp.link}>
+              <div class="flex flex-column justify-center items-center">
+                <img class="dapp-img w-100 ba" src="${dapp.icon}" />
+                <div class="tc">${dapp.name}</div>
+              </div>
+            </a>
+          ${i % 2 == 0 ? raw`</div>` : ''}
         `
       })}
     </section>

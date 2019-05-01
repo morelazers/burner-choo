@@ -19,6 +19,7 @@ module.exports = (state, emit) => {
   state.afterScan = (addr) => {
     state.afterCalculate = (amount) => {
       state.calculate.input = ''
+      state.calculate.formattedInput = ''
       state.wallet.afterConfirm = () => {
         console.log('After confirm')
         emit('wallet.sendTokens', addr, amount)

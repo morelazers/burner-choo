@@ -42,9 +42,9 @@ function store (state, emitter) {
   state.vip.contract.on(state.vip.contract.filters.NewVip(), (oldVip, newVip, oldPrice, newPrice) => {
     // add some notifications when an event happens
     if (oldVip.toLowerCase() === state.wallet.address.toLowerCase()) {
-      state.assist.notify('txFailed', () => `VIP STATUS REVOKED`)
+      state.assist.notify('error', `VIP STATUS REVOKED`)
     } else if (newVip.toLowerCase() !== state.wallet.address.toLowerCase()) {
-      state.assist.notify('txConfirmedClient', () => `New VIP for ${state.CURRENCY_SYMBOL}${newPrice.toLocaleString()}`)
+      state.assist.notify('success', `New VIP for ${state.CURRENCY_SYMBOL}${newPrice.toLocaleString()}`)
     }
 
     // refresh the wallet on an event happening

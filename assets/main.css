@@ -3,6 +3,16 @@
   src: url('/assets/VT323-Regular.ttf') format('truetype');
 }
 
+html {
+  font-size: 17px;
+}
+@media (max-width: 900px) {
+  html { font-size: 15px; }
+}
+@media (max-width: 400px) {
+  html { font-size: 13px; }
+}
+
 body {
   width: 100vw;
   background: #2A333E;

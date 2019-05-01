@@ -64,16 +64,16 @@ module.exports = function (state, emitter) {
       `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
       `An influential man who naturally balances wisdom and domination. Beware of irresistible arrogance. The Emperor may represent a powerful figure in your life with whom you should consult about your query.`,
       `The Heirophant represents the Moral Law across divine, intellectual and physical realms. Consult with a wise advisor capable of forgiveness. Consciously decide whether you wish to obey or disobey.`,
-      `The Magician signifies the Divine Unity, of existing on each individual plane. Display confidence in your talents, capabilities and initiative. Do not restrain your full potential, your Divine Motive. Accept guidance from your core or your catalyst. Alternatively, reassess those you trust.`,
-      `The Magician signifies the Divine Unity, of existing on each individual plane. Display confidence in your talents, capabilities and initiative. Do not restrain your full potential, your Divine Motive. Accept guidance from your core or your catalyst. Alternatively, reassess those you trust.`,
-      `The Magician signifies the Divine Unity, of existing on each individual plane. Display confidence in your talents, capabilities and initiative. Do not restrain your full potential, your Divine Motive. Accept guidance from your core or your catalyst. Alternatively, reassess those you trust.`,
-      `The Magician signifies the Divine Unity, of existing on each individual plane. Display confidence in your talents, capabilities and initiative. Do not restrain your full potential, your Divine Motive. Accept guidance from your core or your catalyst. Alternatively, reassess those you trust.`,
-      `The Magician signifies the Divine Unity, of existing on each individual plane. Display confidence in your talents, capabilities and initiative. Do not restrain your full potential, your Divine Motive. Accept guidance from your core or your catalyst. Alternatively, reassess those you trust.`,
-      `The Magician signifies the Divine Unity, of existing on each individual plane. Display confidence in your talents, capabilities and initiative. Do not restrain your full potential, your Divine Motive. Accept guidance from your core or your catalyst. Alternatively, reassess those you trust.`,
-      `The Magician signifies the Divine Unity, of existing on each individual plane. Display confidence in your talents, capabilities and initiative. Do not restrain your full potential, your Divine Motive. Accept guidance from your core or your catalyst. Alternatively, reassess those you trust.`,
-      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
-      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
-      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
+      `The inevitable pull of the illogical Heart. Power of attraction and addictive proximity. Signifies an irreversible decision. Consult with your heart. `,
+      `Gallop towards progress in a chariot drawn by sphinxes. You will be victorious owing to the celestial forces beyond you. Travel or impulsive adventures may be ahead. Utilise your new power with discipline and care. `,
+      `Justice grips gilded scales representing mercy and punishment. While the judicial system can be fooled, divine justice can never be escaped. Harmonious interactions with the legal system may be bestowed upon you. Alternatively, the opposite.`,
+      `The Sage of solitude. His lantern navigates his narrow, dark path through the Unknown. He seeks enlightenment as he does not know his way yet. Be patient. Listen to your elders. Reevaluate your ignorance and utilise your past experiences.`,
+      `Cyclic inevitability of destiny and chance. Prepare for a change in your circumstances. Know the wheel will keep turning, despite anything you do.`,
+      `	Strength as a signifier of mastery. In principle, your force and energy reserves can counter any attack, pain or danger. Determination, skill and reliability is required.`,
+      `Surrender to your newfound, perhaps subversive perspective or change in circumstances. Contemplate your sacrifice. Care for your body. `,
+      `	Transformation is inevitable. A harsh outcome may await you. No one is immune. What is durable will last longest, what is lost is cleared for new beginnings.`,
+      `Alchemical control of volatile factors results in a successful conclusion. Restore your self-control and adaptability. Alternatively, corruption and undesirable combinations of events.`,
+      `	Seduced by the Devil’s hands, you grip for physical and material pleasures. Consistent hedonism may result in destruction. Alternatively, release from fear, restraint and temptation.`,
       `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
       `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
       `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
@@ -105,11 +105,6 @@ module.exports = function (state, emitter) {
 
   getReading()
 
-  emitter.on('tarot.pay', () => {
-    state.dapps.tarot.reading = true
-    emitter.emit('render') // re-render so we can show the loading animation
-  })
-
   emitter.on('tarot.read', () => {
     state.dapps.tarot.read = true
     emitter.emit('tarot.activeCard', 0)
@@ -123,6 +118,28 @@ module.exports = function (state, emitter) {
 
   emitter.on('tarot.getReading', () => {
     getReading()
+  })
+
+  emitter.on('tarot.pay', () => {
+    if (state.wallet.tokenBalance >= state.dapps.tarot.price) {
+      state.dapps.tarot.reading = true
+      emitter.emit('render') // re-render so we can show the loading animation
+      emit(
+        'wallet.sendTokens',
+        state.dapps.tarot.CONTRACT_ADDRESS,
+        state.dapps.tarot.price,
+        "0x0",
+        {
+          txSent: () => `Focus on your query...`,
+          txConfirmedClient: () => {
+            emit('tarot.getReading')
+            return `Celestially Aligned`
+          }
+        }
+      )
+    } else {
+      state.assist.notify('error', `The future ain't free`)
+    }
   })
 
   async function getReading () {

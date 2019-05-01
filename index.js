@@ -21,7 +21,7 @@ if (process.env.NODE_ENV !== 'production') {
 
 app.use((state, emitter) => {
   console.log(process.env)
-
+//needs more whitespace
   // -- XDAI TEST CONTRACTS --
   // state.JSON_RPC_URL = JSON_RPC_URL || 'https://xdai.flexdapps.com/'
   // state.EVENT_SERVER = 'ws://10.2.47.201:9009/'
@@ -40,7 +40,7 @@ app.use((state, emitter) => {
   // state.EVENT_SERVER = 'wss://10.2.47.201:9009/'
   state.EVENT_SERVER = 'wss://events.flexdapps.com:9009/'
   state.TOKEN_ADDRESS = '0xe0728a9d55ebd03bfcc6e9faa59e6dfe96741636'
-  state.NETWORK_ID = 5
+  state.NETWORK_ID = 10
 
   // -- LOCAL TEST CONTRACTS
   // state.JSON_RPC_URL = 'https://localhost:9009'
@@ -50,7 +50,6 @@ app.use((state, emitter) => {
   state.CURRENCY_SYMBOL = CURRENCY_SYMBOL || '៛'
 
   state.web3 = new Web3(state.JSON_RPC_URL)
-  console.log(state.web3)
   state.web3.eth.extend({
     property: 'personal',
     methods: [{
@@ -67,6 +66,7 @@ app.use((state, emitter) => {
       mobileBlocked: false,
       style: {
         darkMode: true,
+        notificationsPosition: 'top',
         css: `
           @font-face {
             font-family: 'VT323';
@@ -107,6 +107,10 @@ app.use((state, emitter) => {
             background-size: 66px 22px !important;
             bottom: unset !important;
             right: unset !important;
+            align-self: unset !important;
+          }
+          a#bn-transaction-branding {
+            align-self: unset !important;
           }
 
           .bn-status-icon {
@@ -177,6 +181,7 @@ app.use(require('./stores/dapps/vip'))
 app.use(require('./stores/dapps/regatta'))
 app.use(require('./stores/dapps/picture-wall'))
 app.use(require('./stores/dapps/tarot'))
+app.use(require('./stores/dapps/poop'))
 
 app.route('/', require('./views/main'))
 app.route('/get', require('./views/get'))
@@ -195,12 +200,13 @@ app.route('/dapps', require('./views/dapps/index'))
 // for (let dapp of dapps) {
   // const path = './views/dapps/' + dapp
   // app.route(`/${dapp}`, require(path))
-  // }
+// }
 
 app.route('/dapps/vip', require('./views/dapps/vip'))
 app.route('/dapps/regatta', require('./views/dapps/regatta'))
 app.route('/dapps/picture-wall', require('./views/dapps/picture-wall'))
 app.route('/dapps/tarot', require('./views/dapps/tarot'))
+app.route('/dapps/poop', require('./views/dapps/poop'))
 
 const element = app.start()
 document.body.appendChild(element)
