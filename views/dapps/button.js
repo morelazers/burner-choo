@@ -51,8 +51,6 @@ module.exports = (state, emit) => {
   }
   `
 
-  console.log(`pushed: ${state.dapps.button.pushed}, waiting: ${state.dapps.button.waiting}`)
-
   if (state.dapps.button.pushed) {
     if (state.dapps.button.waiting) {
       return waitingView(state, emit)
@@ -103,8 +101,6 @@ function handleButtonPush() {
 
 function waitingView (state, emit) {
 
-  console.log("waitingView")
-
   return html`
   <section class="flex flex-column justify-around items-center pa5">
   <div class="f1">B U T T O N</div>
@@ -122,8 +118,6 @@ function waitingView (state, emit) {
 }
 
 function resultsView (state, emit) {
-  
-  console.log("resultsView")
 
   return html`
   <section class="flex flex-column justify-around items-center pa5">
