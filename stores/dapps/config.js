@@ -7,9 +7,14 @@ function store (state, emitter) {
   state.dapps = {
     list: [
       {
+        name: 'VIP_ZONE',
+        link: 'vip',
+        icon: '/assets/dapps/vip/icon.png'
+      },
+      {
         name: 'Regatta',
         link: 'regatta',
-        icon: '/assets/dapps/tarot/icon.png'
+        icon: '/assets/dapps/regatta/icon.png'
       },
       {
         name: 'Tarot',
@@ -20,6 +25,11 @@ function store (state, emitter) {
         name: 'Picture Wall',
         link: 'picture-wall',
         icon: '/assets/dapps/tarot/icon.png'
+      },
+      {
+        name: 'Poop Noise',
+        link: 'poop',
+        icon: '/assets/dapps/poop/icon.png'
       },
       {
         name: 'Button',

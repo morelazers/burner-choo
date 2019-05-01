@@ -21,22 +21,26 @@ if (process.env.NODE_ENV !== 'production') {
 
 app.use((state, emitter) => {
   console.log(process.env)
-
+//needs more whitespace
   // -- XDAI TEST CONTRACTS --
   // state.JSON_RPC_URL = JSON_RPC_URL || 'https://xdai.flexdapps.com/'
+  // state.EVENT_SERVER = 'ws://10.2.47.201:9009/'
   // state.TOKEN_ADDRESS = TOKEN_ADDRESS || '0xB7A4375BF67BF865CA8e2336C50fc77B393375fd'
   // state.NETWORK_ID = 100
 
   // -- KOVAN CONTRACTS --
   // state.JSON_RPC_URL = 'https://xdai.flexdapps.com/'
+  // state.EVENT_SERVER = 'ws://10.2.47.201:9009/'
   // state.TOKEN_ADDRESS = '0x6692df992562c701e7eb51255084715cce7bfe59'
   // state.NETWORK_ID = 42
 
 
   // -- GOERLI CONTRACTS --
   state.JSON_RPC_URL = 'https://xdai.flexdapps.com/'
+  // state.EVENT_SERVER = 'wss://10.2.47.201:9009/'
+  state.EVENT_SERVER = 'wss://events.flexdapps.com:9009/'
   state.TOKEN_ADDRESS = '0xe0728a9d55ebd03bfcc6e9faa59e6dfe96741636'
-  state.NETWORK_ID = 5
+  state.NETWORK_ID = 10
 
   // -- LOCAL TEST CONTRACTS
   // state.JSON_RPC_URL = 'https://localhost:9009'
@@ -46,7 +50,6 @@ app.use((state, emitter) => {
   state.CURRENCY_SYMBOL = CURRENCY_SYMBOL || '៛'
 
   state.web3 = new Web3(state.JSON_RPC_URL)
-  console.log(state.web3)
   state.web3.eth.extend({
     property: 'personal',
     methods: [{
@@ -63,6 +66,7 @@ app.use((state, emitter) => {
       mobileBlocked: false,
       style: {
         darkMode: true,
+        notificationsPosition: 'top',
         css: `
           @font-face {
             font-family: 'VT323';
@@ -103,6 +107,10 @@ app.use((state, emitter) => {
             background-size: 66px 22px !important;
             bottom: unset !important;
             right: unset !important;
+            align-self: unset !important;
+          }
+          a#bn-transaction-branding {
+            align-self: unset !important;
           }
 
           .bn-status-icon {
@@ -159,19 +167,21 @@ app.use(require('./stores/provider'))
 app.use(require('./stores/wallet'))
 app.use(require('./stores/calculate'))
 app.use(require('./stores/scanner'))
-app.use(require('./stores/vip'))
+
 
 // should glob the dapps folder
 app.use(require('./stores/dapps/config'))
 
 // @todo fix
 // for (let dapp of dapps) {
-//   const path = './stores/dapps/' + dapp
-//   app.use(require(path))
-// }
+  //   const path = './stores/dapps/' + dapp
+  //   app.use(require(path))
+  // }
+app.use(require('./stores/dapps/vip'))
 app.use(require('./stores/dapps/regatta'))
 app.use(require('./stores/dapps/picture-wall'))
 app.use(require('./stores/dapps/tarot'))
+app.use(require('./stores/dapps/poop'))
 app.use(require('./stores/dapps/button'))
 app.use(require('./stores/dapps/king'))
 
@@ -182,7 +192,6 @@ app.route('/confirm', require('./views/confirm'))
 app.route('/calculate', require('./views/calculate'))
 
 // @todo remove this when we release the non-specific version
-app.route('/vip', require('./views/vip'))
 
 // there needs to be something here which globs the `dapps` folder to grab
 // all the extra files - it should probably have a subroute too like /dapps/my-dapp
@@ -195,9 +204,11 @@ app.route('/dapps', require('./views/dapps/index'))
   // app.route(`/${dapp}`, require(path))
 // }
 
+app.route('/dapps/vip', require('./views/dapps/vip'))
 app.route('/dapps/regatta', require('./views/dapps/regatta'))
 app.route('/dapps/picture-wall', require('./views/dapps/picture-wall'))
 app.route('/dapps/tarot', require('./views/dapps/tarot'))
+app.route('/dapps/poop', require('./views/dapps/poop'))
 app.route('/dapps/button', require('./views/dapps/button'))
 app.route('/dapps/king', require('./views/dapps/king'))
 
