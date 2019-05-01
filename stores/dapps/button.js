@@ -19,7 +19,6 @@ function store (state, emitter) {
 
   // create your contract instance
   state.dapps.button.contract = new ethers.Contract(state.dapps.button.CONTRACT_ADDRESS, abi, state.provider)
-  state.dapps.button.contract = state.dapps.button.contract.connect(state.wallet.burner)
 
   // bind event listenerd
   state.dapps.button.contract.on(state.dapps.button.contract.filters.Pushed(null, null), (pusher, boom) => {

@@ -22,6 +22,7 @@ function store (state, emitter) {
   state.dapps.king.contract = new ethers.Contract(state.dapps.king.CONTRACT_ADDRESS, abi, state.provider)
   state.dapps.king.contract = state.dapps.king.contract.connect(state.wallet.burner)
 
+  console.log('updating the info')
   updateInfo()
 
   emitter.on('king.pay', () => {
@@ -36,9 +37,10 @@ function store (state, emitter) {
   })
 
   async function updateInfo () {
+    console.log('yes')
     state.dapps.king.prize = await state.dapps.king.contract.prize()
     console.log(`prize: ${state.dapps.king.prize}`)
-    state.dapps.king.prize
+    emitter.emit('render')
 
     //TODO Ask Tom
   }
