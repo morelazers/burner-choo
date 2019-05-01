@@ -30,16 +30,6 @@ function store (state, emitter) {
         name: 'Poop Noise',
         link: 'poop',
         icon: '/assets/dapps/poop/icon.png'
-      },
-      {
-        name: 'Button',
-        link: 'button',
-        icon: '/assets/dapps/tarot/icon.png'
-      },
-      {
-        name: 'King',
-        link: 'king',
-        icon: '/assets/dapps/tarot/icon.png'
       }
     ]
   }
