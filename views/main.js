@@ -33,7 +33,7 @@ function view (state, emit) {
   `
 
   return html`
-    <section class="flex flex-column justify-between pa5">
+    <section class="flex flex-column justify-between pa4 pt5">
       <div class="wallet-status">
         <div class="f-subheadline">
           =${state.CURRENCY_SYMBOL}${state.wallet.tokenBalance.toLocaleString() || 0}=
@@ -45,7 +45,6 @@ function view (state, emit) {
         <a href="/get">GET</a>
         <a href="/send">SEND</a>
         <a href="/dapps">APPS</a>
-        <a href="/vip">VIP_${state.vip.meVip ? 'PASS' : 'ZONE'}</a>
       </div>
     </section>
   `

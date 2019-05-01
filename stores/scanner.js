@@ -3,16 +3,18 @@ module.exports = store
 const jsqr = require('jsqr')
 
 let streamObj
+let animation
+let done = false
+
 function store (state, emitter) {
   emitter.on(state.events.DOMTITLECHANGE, function () {
     if (state.title === "SEND") {
       setTimeout(() => {
-        // begins a scan if you land on '/SCAN'
         beginScan(addr => {
           endScan()
           state.afterScan(addr)
         })
-      }, 1000)
+      }, 100)
     } else {
       endScan()
     }
@@ -26,11 +28,11 @@ function beginScan (cb) {
   const canvasElement = document.getElementById("canvas")
   const canvas = canvasElement.getContext("2d")
 
-  let done = false
-  let animation
+  done = false
 
   // Use facingMode: environment to attemt to get the front camera on phones
   navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
+    console.log('-- GOT USER MEDIA --')
     streamObj = stream
     video.srcObject = stream
     video.setAttribute("playsinline", true) // required to tell iOS safari we don't want fullscreen
@@ -39,7 +41,10 @@ function beginScan (cb) {
   })
 
   function tick() {
+    console.log('-- TICKING --')
+    console.log({done})
     if (done) {
+      console.log('-- CANCELLING ANIMATION --')
       cancelAnimationFrame(animation)
       return
     }
@@ -65,13 +70,16 @@ function beginScan (cb) {
 }
 
 function endScan () {
-  console.log('ENDING SCAN')
+  console.log('-- ENDING SCAN --')
   try {
+    cancelAnimationFrame(animation)
+    done = true
     for (let track of streamObj.getTracks()) {
       track.stop()
     }
   } catch (e) {
     // stream prob already stopped
+    console.log('!! COULD NOT STOP STREAM !!')
   }
 }
 

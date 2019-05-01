@@ -70,19 +70,6 @@ function initialView (state, emit) {
           class="read-button active"
           onclick=${() => {
             emit('tarot.pay')
-            emit(
-              'wallet.sendTokens',
-              state.dapps.tarot.CONTRACT_ADDRESS,
-              state.dapps.tarot.price,
-              "0x0",
-              {
-                txSent: () => `Focus on your query...`,
-                txConfirmedClient: () => {
-                  emit('tarot.getReading')
-                  return `Celestially Aligned`
-                }
-              }
-            )
           }}
         >
           READ FOR ${state.CURRENCY_SYMBOL}${state.dapps.tarot.price.toLocaleString()}
@@ -98,9 +85,7 @@ function readingView (state, emit) {
       <div class="f1">T A R O T</div>
       <img class="tarot-card glow" src="/assets/dapps/tarot/tarot__back.png" />
       <div class="actions">
-        <button class="read-button pending">
-          ASKING THE STARS
-        </button>
+        <button class="read-button pending"></button>
       </div>
     </section>
   `
@@ -109,19 +94,23 @@ function readingView (state, emit) {
 function activeCard (state, emit, cardIndex) {
   const card = state.dapps.tarot.myReading[cardIndex]
   return html`
-    <section class="flex flex-column justify-around items-center pa5">
-    <div class="flex flex-row justify-between w-100 era-buttons">
-      <button class="f3 ${cardIndex === 0 ? 'active' : ''}" onclick=${() => emit('tarot.activeCard', 0)}>${state.dapps.tarot.eras[0]}</button>
-      <button class="f3 ${cardIndex === 1 ? 'active' : ''}" onclick=${() => emit('tarot.activeCard', 1)}>${state.dapps.tarot.eras[1]}</button>
-      <button class="f3 ${cardIndex === 2 ? 'active' : ''}" onclick=${() => emit('tarot.activeCard', 2)}>${state.dapps.tarot.eras[2]}</button>
-    </div>
-    <img class="tarot-card glow slow" src="/assets/dapps/tarot/tarot__${state.dapps.tarot.images[card]}.png" />
-    <div>
-      <div class="f2 underline">${state.dapps.tarot.cards[card]}</div>
-      <div class="tj">
-        ${state.dapps.tarot.readings[card]}
+    <section class="flex flex-column justify-between items-center pa4 pt5">
+      <div class="flex flex-column items-center justify-start h-75 w-100">
+        <div class="flex flex-row justify-between w-100 era-buttons">
+          <button class="f3 ${cardIndex === 0 ? 'active' : ''}" onclick=${() => emit('tarot.activeCard', 0)}>${state.dapps.tarot.eras[0]}</button>
+          <button class="f3 ${cardIndex === 1 ? 'active' : ''}" onclick=${() => emit('tarot.activeCard', 1)}>${state.dapps.tarot.eras[1]}</button>
+          <button class="f3 ${cardIndex === 2 ? 'active' : ''}" onclick=${() => emit('tarot.activeCard', 2)}>${state.dapps.tarot.eras[2]}</button>
+        </div>
+        <div class="h-100 w-100 flex flex-column justify-center items-center">
+          <img class="tarot-card glow slow" src="/assets/dapps/tarot/tarot__${state.dapps.tarot.images[card]}.png" />
+        </div>
       </div>
-    </div>
+      <div>
+        <div class="f2 underline">${state.dapps.tarot.cards[card]}</div>
+        <div class="tj">
+          ${state.dapps.tarot.readings[card]}
+        </div>
+      </div>
     </section>
   `
 }
