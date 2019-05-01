@@ -8,6 +8,8 @@ const TITLE = 'PEASANT'
 module.exports = (state, emit) => {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
+  let pictureWall = state.dapps.pictureWall
+
   const container = css`
   `
 
@@ -30,18 +32,8 @@ module.exports = (state, emit) => {
   }
 
   function uploadFile () {
-    const file = state.dapps.pictureWall.selectedImg
+    const file = pictureWall.selectedImg
     if (!file) return
-    fetch('https://ipfs.enzypt.io/ipfs/', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'multipart/form-data'
-      },
-      body: file,
-      redirect: 'follow',
-      mode: 'cors'
-    }).then(res => {
-      const hash = res.headers.get('Ipfs-Hash')
-    })
+    emit('pictureWall.upload', file)
   }
 }
