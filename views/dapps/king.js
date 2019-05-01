@@ -69,6 +69,9 @@ function initialView (state, emit) {
   return html`
   <section class="flex flex-column justify-around items-center pa5">
   <div class="f1">K I N G</div>
+  <div>
+    Prize pool: ${state.CURRENCY_SYMBOL}${state.dapps.king.prize.toLocaleString()}
+  </div>
   <img class="push-button" src="/assets/dapps/king/king.png" onclick=${handleButtonPush} />
   <div class="actions">
     <button
