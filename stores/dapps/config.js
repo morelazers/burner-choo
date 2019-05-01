@@ -22,16 +22,6 @@ function store (state, emitter) {
         icon: '/assets/dapps/tarot/icon.png'
       },
       {
-        name: 'King',
-        link: 'king',
-        icon: '/assets/dapps/tarot/icon.png'
-      },
-      {
-        name: 'Ponies',
-        link: 'ponies',
-        icon: '/assets/dapps/tarot/icon.png'
-      },
-      {
         name: 'Button',
         link: 'button',
         icon: '/assets/dapps/tarot/icon.png'
