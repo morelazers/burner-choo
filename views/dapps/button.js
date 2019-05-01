@@ -51,14 +51,31 @@ module.exports = (state, emit) => {
   }
   `
 
+  console.log(`pushed: ${state.dapps.button.pushed}, waiting: ${state.dapps.button.waiting}`)
+
+  if (state.dapps.button.pushed) {
+    if (state.dapps.button.waiting) {
+      return waitingView(state, emit)
+    } else {
+      return resultsView(state, emit)
+    }
+  } else {
+    return initialView(state, emit)
+  }
+}
+
+
+
+function initialView (state, emit) {
+
   return html`
   <section class="flex flex-column justify-around items-center pa5">
   <div class="f1">B U T T O N</div>
-  <img class="push-button glow slow" src="/assets/dapps/button/red_button.png" onclick=${handleButtonPress} />
+  <img class="push-button" src="/assets/dapps/button/red_button.png" onclick=${handleButtonPush} />
   <div class="actions">
     <button
       class="push-button-text active"
-      onclick=${handleButtonPress}
+      onclick=${handleButtonPush}
     >
       PUSH FOR ${state.CURRENCY_SYMBOL}${state.dapps.button.price.toLocaleString()}
     </button>
@@ -66,21 +83,60 @@ module.exports = (state, emit) => {
 </section>
   `
 
-
-  function handleButtonPress() {
-    emit('button.pay')
-    emit(
-        'wallet.sendTokens',
-          state.dapps.button.CONTRACT_ADDRESS,
-          state.dapps.button.price,
-          "0x0",
-          {
-            txSent: () => `Pushing the button...`,
-            txConfirmedClient: () => {
-              //emit('tarot.getReading')
-              return `Click`
-            }
-          }
-        )
+function handleButtonPush() {
+  emit('button.pay')
+  emit(
+    'wallet.sendTokens',
+    state.dapps.button.CONTRACT_ADDRESS,
+    state.dapps.button.price,
+    "0x0",
+    {
+      txSent: () => `Pushing the button...`,
+      txConfirmedClient: () => {
+        emit('button.pushed')
+        return `Pushed`
+      }
+    }
+    ) 
   }
+}
+
+function waitingView (state, emit) {
+
+  console.log("waitingView")
+
+  return html`
+  <section class="flex flex-column justify-around items-center pa5">
+  <div class="f1">B U T T O N</div>
+  <img class="push-button glow" src="/assets/dapps/button/red_button.png" />
+  <div class="actions">
+    <button
+      class="push-button-text pending"
+    >
+      PUSHING
+    </button>
+  </div>
+</section>
+  `
+
+}
+
+function resultsView (state, emit) {
+  
+  console.log("resultsView")
+
+  return html`
+  <section class="flex flex-column justify-around items-center pa5">
+  <div class="f1">B U T T O N</div>
+  <img class="push-button glow slow" src="/assets/dapps/button/red_button.png" />
+  <div class="actions">
+    <button
+      class="push-button-text pending"
+    >
+      PUSHED
+    </button>
+  </div>
+</section>
+  `
+
 }
