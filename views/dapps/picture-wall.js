@@ -32,6 +32,17 @@ module.exports = (state, emit) => {
       filter: blur(15px);
       clip-path: inset(0px 0px 0px 0px);
     }
+
+    #footer {
+      background: #2A333E;
+      padding: 0 1rem;
+      bottom: 0;
+      width: 100%;
+    }
+
+    #footer a {
+      background: none;
+    }
   `
 
   console.log({pictureWall})
@@ -69,6 +80,9 @@ module.exports = (state, emit) => {
       // const purchaseButton = html`<div class="" onclick=${() => emit('pictureWall.purchase', el) }>PURCHASE FOR ${state.CURRENCY_SYMBOL}${pictureWall.IMAGE_PRICE}</div>`
 
       const purchase = () => {
+        if (mePurchased) {
+          return
+        } 
         emit('pictureWall.purchase', el)
       }
 
@@ -77,7 +91,7 @@ module.exports = (state, emit) => {
           <div class='bb pa1 f3 tc'>
             ${mePurchased ? `ALREADY OWNED` : raw(`PURCHASE FOR ${state.CURRENCY_SYMBOL}100 - ${3 - sales} remaining`)}
           </div>
-          <img src="https://ipfs.enzypt.io/ipfs/${el}" class="${mePurchased ? '' : 'blur'} w-100" />
+          <img id='image-buy' src="https://ipfs.enzypt.io/ipfs/${el}" class="${mePurchased ? '' : 'blur'} w-100" />
         </div>
       `
     })
@@ -90,9 +104,12 @@ module.exports = (state, emit) => {
           <p>Everything you see here can only be purchased 3 times, and anything you sell has the same restriction.</p>
         </div>
         ${elements}
-        <button class="fixed add-img" onclick=${() => {
-          emit('pictureWall.posting', true)
-        }}>+</button>
+          <div id='footer' class="bt actions fixed">
+            <a class="pa2" onclick=${() => emit('replaceState', '/')}>BACK</a>
+            </div>
+            <button class="fixed add-img" onclick=${() => {
+              emit('pictureWall.posting', true)
+            }}>+</button>
       </section>
     `
   }
@@ -106,6 +123,6 @@ module.exports = (state, emit) => {
     const file = pictureWall.selectedImg
     if (!file) return
     emit('pictureWall.upload', file)
-    emit('render')
+    emit('render') 
   }
 }
