@@ -69,6 +69,9 @@ function initialView (state, emit) {
   return html`
   <section class="flex flex-column justify-around items-center pa5">
   <div class="f1">B U T T O N</div>
+  <div>
+  ${state.dapps.button.pushes} button pushes
+  </div>
   <img class="push-button" src="/assets/dapps/button/red_button.png" onclick=${handleButtonPush} />
   <div class="actions">
     <button

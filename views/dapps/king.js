@@ -70,7 +70,12 @@ function initialView (state, emit) {
   <section class="flex flex-column justify-around items-center pa5">
   <div class="f1">Chain of Thrones</div>
   <div>
-    Prize pool: ${state.CURRENCY_SYMBOL}${state.dapps.king.prize.toLocaleString()}
+  Claim the throne and hold it for 30 minutes.
+  If no one else tries to claim the throne then the prize is yours.
+  </div>
+  
+  <div>
+    Prize: ${state.CURRENCY_SYMBOL}${state.dapps.king.prize.toLocaleString()}
   </div>
   <img class="push-button" src="/assets/dapps/king/throne.png" onclick=${handleButtonPush} />
   <div class="actions">
@@ -84,21 +89,8 @@ function initialView (state, emit) {
 </section>
   `
 
-function handleButtonPush() {
-  emit('king.pay')
-  emit(
-    'wallet.sendTokens',
-    state.dapps.button.CONTRACT_ADDRESS,
-    state.dapps.button.price,
-    "0x0",
-    {
-      txSent: () => `Claiming the throne`,
-      txConfirmedClient: () => {
-        emit('king.crowned')
-        return `Crowned`
-      }
-    }
-    ) 
+  function handleButtonPush() {
+    emit('king.pay')
   }
 }
 

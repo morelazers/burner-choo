@@ -8,7 +8,8 @@ const DEFAULT_STATE = {
   CONTRACT_ADDRESS: '0x9f0C0acDfD8225Ee6188617122CeF1b16f3EFE6B',
   price: 230,
   pushed: false,
-  waiting: false
+  waiting: false,
+  pushes: 0
 }
 
 function store (state, emitter) {
@@ -27,8 +28,11 @@ function store (state, emitter) {
       button.boom = boom;
       button.waiting = false;
       emitter.emit('render')
+      getInfo()
     }
   })
+
+  getInfo()
 
   emitter.on('button.pay', () => {
     button.pushed = true
@@ -53,5 +57,11 @@ function store (state, emitter) {
     button.pushed = false
     button.waiting = false
   })
+
+  async function getInfo () {
+      const pushes = await button.contract.pushes();
+      button.pushes = pushes.toNumber();    
+      console.log(`pushes ${button.pushes}`)
+  }
 
 }

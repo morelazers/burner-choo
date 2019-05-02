@@ -105,16 +105,8 @@ module.exports = [
       "signature": "0xe3ac5d26"
     },
     {
-      "inputs": [
-        {
-          "name": "_fb",
-          "type": "address"
-        }
-      ],
-      "payable": false,
-      "stateMutability": "view",
-      "type": "function",
       "constant": true,
+      "inputs": [],
       "name": "admin",
       "outputs": [
         {
@@ -122,47 +114,35 @@ module.exports = [
           "type": "address"
         }
       ],
-      "signature": "0x63a846f8"
+      "payable": false,
+      "stateMutability": "view",
+      "type": "function",
+      "signature": "0xf851a440"
+    },
+    {
+      "inputs": [
+        {
+          "name": "_fb",
+          "type": "address"
+        }
+      ],
+      "payable": false,
+      "stateMutability": "nonpayable",
+      "type": "constructor",
+      "signature": "constructor"
     },
     {
       "anonymous": false,
       "inputs": [
         {
           "indexed": false,
-          "name": "_fb",
+          "name": "newKing",
           "type": "address"
         }
       ],
       "name": "NewKing",
-      "type": "constructor",
-      "payable": false,
-      "stateMutability": "nonpayable",
-      "signature": "constructor"
-    },
-    {
-      "constant": false,
-      "inputs": [
-        {
-          "name": "pushed",
-          "type": "address",
-          "indexed": false
-        },
-        {
-          "name": "value",
-          "type": "uint256"
-        },
-        {
-          "name": "_dc",
-          "type": "bytes"
-        }
-      ],
-      "name": "NewKing",
-      "outputs": [],
-      "payable": false,
-      "stateMutability": "nonpayable",
       "type": "event",
-      "anonymous": false,
-      "signature": "0x12e7141643d191c2c6134ef825c68fd158d6514d18797d294200e5a37f2351ef"
+      "signature": "0x6cd8d790853c0b38da6686db770a36ba2c38653bf63c343f3bb93c738c2f89da"
     },
     {
       "constant": false,

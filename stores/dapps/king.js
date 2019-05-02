@@ -1,50 +1,68 @@
-const abi = require('../../contracts/KING.abi')
+module.exports = store
 
 const ethers = require('ethers')
 
+const abi = require('../../contracts/KING.abi')
 
-module.exports = store
+const DEFAULT_STATE = {
+  CONTRACT_ADDRESS: '0xA1c6F1c705C48847804436c7790bffbEe62E1733',
+  price: 758,
+  requested: false,
+  waiting: false,
+  prize: 0
+}
+
 
 function store (state, emitter) {
 
   // set up the initial state of our dapp
-  state.dapps.king = {
-    CONTRACT_ADDRESS: '0x9f0C0acDfD8225Ee6188617122CeF1b16f3EFE6B',
-    price: 758,
-    requested: false,
-    waiting: false,
-    prize: 0
-  }
+  state.dapps.king = DEFAULT_STATE
 
-  const address = state.wallet.address
+  let king = state.dapps.king;
 
   // create your contract instance
-  state.dapps.king.contract = new ethers.Contract(state.dapps.king.CONTRACT_ADDRESS, abi, state.provider)
-  state.dapps.king.contract = state.dapps.king.contract.connect(state.wallet.burner)
+  king.contract = new ethers.Contract(king.CONTRACT_ADDRESS, abi, state.provider)
+  
+  // bind event listenerd
+  king.contract.on(king.contract.filters.NewKing(), (newKing) => {
+    king.king = newKing;
 
-  console.log('updating the info')
-  updateInfo()
+    if (state.wallet.address.toLowerCase() === newKing.toLowerCase()) {
+      king.waiting = false;
+    }
+  })
+
+  getInfo()
 
   emitter.on('king.pay', () => {
-    state.dapps.king.requested = true
-    state.dapps.king.waiting = true
+    king.requested = true
+    king.waiting = true
     emitter.emit('render')
+
+    emitter.emit(
+      'wallet.sendTokens',
+      king.CONTRACT_ADDRESS,
+      king.price,
+      "0x0",
+      {
+        txSent: () => `Claiming the throne`,
+        txConfirmedClient: () => {
+          emit('king.crowned')
+          return `Crowned`
+        }
+      }
+      )
   })
 
   emitter.on('king.crowned', () => {
-    state.dapps.king.waiting = false
+    king.waiting = false
     emitter.emit('render')
   })
 
-  async function updateInfo () {
-    try {
-    state.dapps.king.prize = await state.dapps.king.contract.prize()
-    } catch (e) {
-      console.log(`Update Info Error: ${e}`)
-    }
-    emitter.emit('render')
-
-    //TODO Ask Tom
+  async function getInfo () {
+    const prize = await king.contract.prize();
+    king.prize = prize.toNumber();    
+    console.log(`prize ${king.prize}`)
   }
 
 }
