@@ -6,6 +6,7 @@ const TITLE = 'REGATTA'
 module.exports = (state, emit) => {
   if (state.title !== TITLE) {
     emit(state.events.DOMTITLECHANGE, TITLE)
+    emit('regatta.navigate')
   }
 
   let regatta = state.dapps.regatta

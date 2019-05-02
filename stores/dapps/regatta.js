@@ -137,7 +137,7 @@ const nomenclature = {
 nomenclature.init()
 
 const DEFAULT_STATE = {
-  CONTRACT_ADDRESS: '0xf275265a9fa4c1d254cdaa26a57a8153245b4eb3',
+  CONTRACT_ADDRESS: '0x3bf065495b8dab9914a970831bca88741027bdff',
   COURSE_LENGTH: 50,
   balance: 0,
   enterRace: -1,
@@ -191,6 +191,10 @@ function store (state, emitter) {
    *
    *
    */
+
+  emitter.on('regatta.navigate', () => {
+    emitter.emit('regatta.clear')
+  })
 
   emitter.on('regatta.cancel', () => {
     emitter.emit('regatta.clear')
@@ -257,7 +261,7 @@ function store (state, emitter) {
       ['uint256', 'uint8', 'uint8', 'bool'],
       [progress.block_finish, regatta.chosenBoat, regatta.chosenWeather, regatta.squidRepellent]
     )
-    console.log(regatta.status)
+    // console.log(regatta.status)
     if (regatta.status === 'waiting' || regatta.status === 'starting' || regatta.status === 'finished') {
       emitter.emit(
         'wallet.sendTokens',
@@ -277,7 +281,9 @@ function store (state, emitter) {
 
   async function getBalance () {
     const bal = await regatta.contract.get_balance()
+    // console.log(bal)
     regatta.myBalance = bal.toNumber()
+    // console.log(regatta.myBalance)
   }
 
   async function getProgress () {
@@ -340,6 +346,8 @@ function store (state, emitter) {
   function bindListeners () {
     regatta.contract = new ethers.Contract(regatta.CONTRACT_ADDRESS, abi, state.provider)
     regatta.contract.on(regatta.contract.filters.CashOut(), (addr) => {
+      console.log('-- CASH OUT --')
+      console.log({addr})
       if (addr.toLowerCase() === state.wallet.address.toLowerCase()) {
         state.assist.notify('success', `Regatta winnings claimed`)
       }
@@ -349,7 +357,24 @@ function store (state, emitter) {
         state.assist.notify('success', `Someone entered the regatta`)
       }
     })
-    regatta.refreshInterval = setInterval(() => getProgress(), 1000)
+
+    regatta.contract.on(regatta.contract.filters.Declare(), (race) => {
+      console.log('-- DECLARE --')
+    })
+
+    regatta.contract.on(regatta.contract.filters.Finish(), (race, block, judge, paid, finish, winners) => {
+      console.log('-- FINISH --')
+      console.log({race})
+      console.log({block})
+      console.log({judge})
+      console.log({paid})
+      console.log({finish})
+      console.log({winners})
+    })
+    regatta.refreshInterval = setInterval(() => {
+      getProgress()
+      getBalance()
+    }, 1000)
     regatta.myName = nomenclature.generate(state.wallet.address)
   }
 

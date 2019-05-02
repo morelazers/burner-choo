@@ -161,6 +161,21 @@ module.exports = [
 				"indexed": false,
 				"name": "judge",
 				"type": "address"
+			},
+			{
+				"indexed": false,
+				"name": "paid",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "finish",
+				"type": "uint256"
+			},
+			{
+				"indexed": false,
+				"name": "winners",
+				"type": "uint256"
 			}
 		],
 		"name": "Finish",
