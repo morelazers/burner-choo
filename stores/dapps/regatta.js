@@ -134,6 +134,8 @@ const nomenclature = {
   }
 }
 
+nomenclature.init()
+
 const DEFAULT_STATE = {
   CONTRACT_ADDRESS: '0xf275265a9fa4c1d254cdaa26a57a8153245b4eb3',
   COURSE_LENGTH: 50,
@@ -158,13 +160,10 @@ const DEFAULT_STATE = {
 
 function store (state, emitter) {
 
-  nomenclature.init()
-
   // set up the initial state of our dapp
   state.dapps.regatta = Object.assign({}, DEFAULT_STATE)
 
   let regatta = state.dapps.regatta
-  regatta.myName = nomenclature.generate(state.wallet.address)
   bindListeners()
   getBalance()
 
@@ -351,6 +350,7 @@ function store (state, emitter) {
       }
     })
     regatta.refreshInterval = setInterval(() => getProgress(), 1000)
+    regatta.myName = nomenclature.generate(state.wallet.address)
   }
 
 }
