@@ -5,7 +5,7 @@ const ethers = require('ethers')
 const abi = require('../../contracts/BUTTON.abi')
 
 const DEFAULT_STATE = {
-  CONTRACT_ADDRESS: '0x9f0C0acDfD8225Ee6188617122CeF1b16f3EFE6B',
+  CONTRACT_ADDRESS: '0x4B0e57Db77747d6C76717087479Cd7E77cf387B1',
   price: 230,
   pushed: false,
   waiting: false,

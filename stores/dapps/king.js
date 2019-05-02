@@ -5,7 +5,7 @@ const ethers = require('ethers')
 const abi = require('../../contracts/KING.abi')
 
 const DEFAULT_STATE = {
-  CONTRACT_ADDRESS: '0xA1c6F1c705C48847804436c7790bffbEe62E1733',
+  CONTRACT_ADDRESS: '0xC3dE6a71F473aF8F850A465b7E7dAFC6aB6fB24a',
   price: 758,
   requested: false,
   waiting: false,

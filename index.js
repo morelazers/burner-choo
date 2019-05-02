@@ -39,7 +39,7 @@ app.use((state, emitter) => {
   state.JSON_RPC_URL = 'https://xdai.flexdapps.com:7361/'
   // state.EVENT_SERVER = 'wss://10.2.47.201:9009/'
   state.EVENT_SERVER = 'wss://events.flexdapps.com:9009/'
-  state.TOKEN_ADDRESS = '0xe0728a9d55ebd03bfcc6e9faa59e6dfe96741636'
+  state.TOKEN_ADDRESS = '0x5eb7e67ec2ce404ebabafed0a79bab10d030c58a'
   state.NETWORK_ID = 10
 
   // -- LOCAL TEST CONTRACTS
