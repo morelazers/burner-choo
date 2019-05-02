@@ -118,13 +118,16 @@ async function store (state, emitter) {
     const txMessages = Object.assign(getDefaultTokenMessages(value), messages)
     const c = state.assist.Contract(state.wallet.tokenContract)
     console.log(`Sending ${value} tokens to ${to}`)
+    const nonce = await state.provider.getTransactionCount(state.wallet.address)
+    console.log(`Account nonce: ${nonce}`)
     console.log('Unlocking account')
     await unlockAccount()
     console.log('Account unlocked, wrapping contract')
     return c.methods['transfer(address,uint256,bytes)'](to, value, bytes).send({
       from: state.wallet.address,
       gasPrice: ethers.utils.parseUnits('1', 'gwei'),
-      gas: '500000'
+      gas: '500000',
+      nonce: nonce
     }, {
       messages: txMessages
     })
@@ -132,7 +135,7 @@ async function store (state, emitter) {
 
   // unlocks the account for a single transaction
   async function unlockAccount() {
-    return state.web3.eth.personal.unlockAccount(state.wallet.address, 'have_fun_kids_______8', '0x1')
+    return state.web3.eth.personal.unlockAccount(state.wallet.address, 'have_fun_kids_______8', '0x12345678')
   }
 
   // gets the default token sending messages (should allow tokens to set a
