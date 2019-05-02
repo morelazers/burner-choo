@@ -37,9 +37,11 @@ function store (state, emitter) {
   })
 
   async function updateInfo () {
-    console.log('yes')
+    try {
     state.dapps.king.prize = await state.dapps.king.contract.prize()
-    console.log(`prize: ${state.dapps.king.prize}`)
+    } catch (e) {
+      console.log(`Update Info Error: ${e}`)
+    }
     emitter.emit('render')
 
     //TODO Ask Tom

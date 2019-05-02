@@ -68,17 +68,17 @@ function initialView (state, emit) {
 
   return html`
   <section class="flex flex-column justify-around items-center pa5">
-  <div class="f1">K I N G</div>
+  <div class="f1">Chain of Thrones</div>
   <div>
     Prize pool: ${state.CURRENCY_SYMBOL}${state.dapps.king.prize.toLocaleString()}
   </div>
-  <img class="push-button" src="/assets/dapps/king/king.png" onclick=${handleButtonPush} />
+  <img class="push-button" src="/assets/dapps/king/throne.png" onclick=${handleButtonPush} />
   <div class="actions">
     <button
       class="push-button-text active"
       onclick=${handleButtonPush}
     >
-      BECOME KING FOR ${state.CURRENCY_SYMBOL}${state.dapps.king.price.toLocaleString()}
+      CLAIM THE THRONE FOR ${state.CURRENCY_SYMBOL}${state.dapps.king.price.toLocaleString()}
     </button>
   </div>
 </section>
@@ -92,7 +92,7 @@ function handleButtonPush() {
     state.dapps.button.price,
     "0x0",
     {
-      txSent: () => `Awaiting coronation...`,
+      txSent: () => `Claiming the throne`,
       txConfirmedClient: () => {
         emit('king.crowned')
         return `Crowned`
@@ -106,13 +106,13 @@ function waitingView (state, emit) {
 
   return html`
   <section class="flex flex-column justify-around items-center pa5">
-  <div class="f1">K I N G</div>
-  <img class="push-button glow" src="/assets/dapps/king/king.png" />
+  <div class="f1">Chain of Thrones</div>
+  <img class="push-button glow" src="/assets/dapps/king/throne.png" />
   <div class="actions">
     <button
       class="push-button-text pending"
     >
-      WAITING
+      CLAIMING
     </button>
   </div>
 </section>
@@ -124,13 +124,13 @@ function resultsView (state, emit) {
 
   return html`
   <section class="flex flex-column justify-around items-center pa5">
-  <div class="f1">K I N G</div>
-  <img class="push-button glow slow" src="/assets/dapps/king/king.png" />
+  <div class="f1">Chain of Thrones</div>
+  <img class="push-button glow slow" src="/assets/dapps/king/throne.png" />
   <div class="actions">
     <button
       class="push-button-text pending"
     >
-      CROWNED
+      CLAIMED
     </button>
   </div>
 </section>

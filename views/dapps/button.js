@@ -83,19 +83,6 @@ function initialView (state, emit) {
 
 function handleButtonPush() {
   emit('button.pay')
-  emit(
-    'wallet.sendTokens',
-    state.dapps.button.CONTRACT_ADDRESS,
-    state.dapps.button.price,
-    "0x0",
-    {
-      txSent: () => `Pushing the button...`,
-      txConfirmedClient: () => {
-        emit('button.pushed')
-        return `Pushed`
-      }
-    }
-    ) 
   }
 }
 
@@ -118,6 +105,7 @@ function waitingView (state, emit) {
 }
 
 function resultsView (state, emit) {
+  emit('button.reset')
 
   return html`
   <section class="flex flex-column justify-around items-center pa5">

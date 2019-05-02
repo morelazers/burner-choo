@@ -34,12 +34,12 @@ function store (state, emitter) {
       {
         name: 'Chain of Thrones',
         link: 'king',
-        icon: '/assets/dapps/tarot/icon.png'
+        icon: '/assets/dapps/king/icon.png'
       },
       {
         name: 'Button',
         link: 'button',
-        icon: '/assets/dapps/poop/icon.png'
+        icon: '/assets/dapps/button/icon.png'
       }
     ]
   }
