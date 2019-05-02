@@ -117,8 +117,13 @@ function view (state, emit) {
           }
         )}
       </div>
-      <div class="f3 tc pa4">
-        ${state.vip.bottomText}
+      <div class="flex flex-column w-100 items-center">
+        <div class="f3 tc pa4">
+          ${state.vip.bottomText}
+        </div>
+        <div class="actions">
+          <a onclick=${() => emit('replaceState', '/')}>BACK</a>
+        </div>
       </div>
     </section>
   `
@@ -132,7 +137,12 @@ function vipView (state, emit) {
         <div class="f2 tc">F L E X</div>
       </div>
       <img class="bdg w-100" src="/assets/dapps/vip/bdg.gif" />
-      <p class="tc">Show this to the VIP_ZONE patron to enter</p>
+      <div>
+        <p class="tc">Show this to the VIP_ZONE patron to enter</p>
+        <div class="actions">
+          <a onclick=${() => emit('replaceState', '/')}>BACK</a>
+        </div>
+      </div>
     </section>
   `
 }

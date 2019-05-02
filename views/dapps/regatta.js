@@ -43,9 +43,10 @@ module.exports = (state, emit) => {
           ${regatta.niceStatus}
         </div>
         <div class="actions flex flex-column tc w-100">
-          <button class="f2" onclick=${() => {
+          <a onclick=${() => {
             if (canEnter) emit('regatta.enter')
-          }}>${canEnter ? 'ENTER RACE' : 'PLEASE WAIT'}</button>
+          }}>${canEnter ? 'ENTER RACE' : 'PLEASE WAIT'}</a>
+          <a onclick=${() => emit('replaceState', '/dapps')}>BACK</a>
         </div>
       </section>
     `
@@ -72,7 +73,7 @@ module.exports = (state, emit) => {
           </div>
           <div class="actions">
             <a onclick=${() => emit('regatta.selectBoat', regatta.selectedBoat)}>SELECT</a>
-            <a onclick=${() => emit('regatta.cancel', '/')}>CANCEL</a>
+            <a onclick=${() => emit('regatta.cancel')}>CANCEL</a>
           </div>
         </div>
       </section>
@@ -100,7 +101,7 @@ module.exports = (state, emit) => {
           </div>
           <div class="actions">
             <a onclick=${() => emit('regatta.selectWeather', regatta.selectedWeather)}>SELECT</a>
-            <a onclick=${() => emit('regatta.cancel', '/')}>CANCEL</a>
+            <a onclick=${() => emit('regatta.cancel')}>CANCEL</a>
           </div>
         </div>
       </section>
@@ -116,7 +117,7 @@ module.exports = (state, emit) => {
           <div class="actions flex flex-column justify-center">
             <a onclick=${() => emit('regatta.getRepellent', true)} class="">Yes (${state.CURRENCY_SYMBOL}${regatta.repellentPrice})</a>
             <a onclick=${() => emit('regatta.getRepellent', false)} class="">No</a>
-            <a onclick=${() => emit('regatta.cancel', '/')}>CANCEL</a>
+            <a onclick=${() => emit('regatta.cancel')}>CANCEL</a>
           </div>
           <p>You might need it...</p>
         </div>
@@ -134,7 +135,7 @@ module.exports = (state, emit) => {
         ${cheerOn}
         <img class="" src="/assets/dapps/regatta/boat-${regatta.boatSlugs[regatta.chosenBoat]}-${regatta.weatherSlugs[regatta.chosenWeather]}.png" />
         <div class="actions">
-          <a href="/dapps">BACK</a>
+          <a onclick=${() => emit('replaceState', '/')}>BACK</a>
         </div>
       </section>
     `
