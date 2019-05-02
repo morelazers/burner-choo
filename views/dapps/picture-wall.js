@@ -75,10 +75,10 @@ module.exports = (state, emit) => {
     const elements = Object.keys(pictureWall.images).reverse().map((el) => {
       const img = pictureWall.images[el]
       const sales = img.buyers.length
-      
+
       const mePurchased = (img.buyers.indexOf(state.wallet.address.toLowerCase()) !== -1 || img.seller.toLowerCase() === state.wallet.address.toLowerCase())
       // const purchaseButton = html`<div class="" onclick=${() => emit('pictureWall.purchase', el) }>PURCHASE FOR ${state.CURRENCY_SYMBOL}${pictureWall.IMAGE_PRICE}</div>`
-      
+
       const purchase = () => {
         if (mePurchased) {
           return
