@@ -47,8 +47,6 @@ module.exports = (state, emit) => {
       <section class="flex flex-column justify-around items-center pa4">
         <div>
           <div class="f1">PICTURE WALL</div>
-          <p>Buy and sell pictures of limited supply.</p>
-          <p>Everything you see here can only be purchased 3 times, and anything you sell has the same restriction.</p>
         </div>
         <input type="file" id="picture-input" accept="image/*" onchange="${getFile}" />
         <div class="actions flex flex-column items-center">
@@ -78,7 +76,12 @@ module.exports = (state, emit) => {
     })
 
     return html`
-      <section class="flex flex-column items-center pa4 h-100 overflow-scroll pb5">
+      <section class="flex flex-column items-center pa4 h-100 overflow-scroll pb6 pt5">
+        <div>
+          <div class="f1">PICTURE WALL</div>
+          <p>Buy and sell pictures of limited supply for ${state.CURRENCY_SYMBOL}${pictureWall.IMAGE_PRICE}.</p>
+          <p>Everything you see here can only be purchased 3 times, and anything you sell has the same restriction.</p>
+        </div>
         ${elements}
         <button class="fixed add-img" onclick=${() => {
           emit('pictureWall.posting', true)

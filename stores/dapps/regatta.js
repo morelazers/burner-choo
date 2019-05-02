@@ -29,7 +29,6 @@ function store (state, emitter) {
 
   // set up the initial state of our dapp
   state.dapps.regatta = Object.assign({}, DEFAULT_STATE)
-  console.log(state.dapps.regatta)
 
   let regatta = state.dapps.regatta
   bindListeners()
