@@ -74,8 +74,9 @@ module.exports = (state, emit) => {
 
       return html`
         <div class="mb5 ba w-100" onclick="${() => purchase()}">
-        <div class='bb pa1 f3 tc'>PURCHASE FOR ${state.CURRENCY_SYMBOL}100 - ${3 - sales} remaining.
-        </div>
+          <div class='bb pa1 f3 tc'>
+            ${mePurchased ? `ALREADY OWNED` : raw(`PURCHASE FOR ${state.CURRENCY_SYMBOL}100 - ${3 - sales} remaining`)}
+          </div>
           <img src="https://ipfs.enzypt.io/ipfs/${el}" class="${mePurchased ? '' : 'blur'} w-100" />
         </div>
       `
