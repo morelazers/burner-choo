@@ -1,4 +1,5 @@
 const html = require('choo/html')
+const raw = require('choo/html/raw')
 const css = require('sheetify')
 
 const TITLE = 'REGATTA'
@@ -6,10 +7,9 @@ const TITLE = 'REGATTA'
 module.exports = (state, emit) => {
   if (state.title !== TITLE) {
     emit(state.events.DOMTITLECHANGE, TITLE)
-    emit('regatta.clear')
   }
 
-  const regatta = state.dapps.regatta
+  let regatta = state.dapps.regatta
 
   const container = css`
     .hidden {
@@ -19,6 +19,8 @@ module.exports = (state, emit) => {
       image-rendering: pixelated;
     }
   `
+
+  const canEnter = (regatta.status === 'waiting' || regatta.status === 'starting' || regatta.status === 'finished')
 
   if (regatta.enterRace === -1) {
     return enterRace()
@@ -37,12 +39,13 @@ module.exports = (state, emit) => {
     return html`
       <section class="flex flex-column justify-around items-center pa4 pt5">
         <div class="f2">R E G A T T A</div>
-
-        <div>Something about how much money you have</div>
-        <button>Withdraw ${state.CURRENCY_SYMBOL}${regatta.balance}</button>
-
+        <div>
+          ${regatta.niceStatus}
+        </div>
         <div class="actions flex flex-column tc w-100">
-          <button class="f2" onclick=${() => emit('regatta.enter')}>ENTER RACE</button>
+          <button class="f2" onclick=${() => {
+            if (canEnter) emit('regatta.enter')
+          }}>${canEnter ? 'ENTER RACE' : 'PLEASE WAIT'}</button>
         </div>
       </section>
     `
@@ -69,6 +72,7 @@ module.exports = (state, emit) => {
           </div>
           <div class="actions">
             <a onclick=${() => emit('regatta.selectBoat', regatta.selectedBoat)}>SELECT</a>
+            <a onclick=${() => emit('regatta.cancel', '/')}>CANCEL</a>
           </div>
         </div>
       </section>
@@ -80,7 +84,7 @@ module.exports = (state, emit) => {
       <section class="flex flex-column justify-around items-center pa4 pt5">
         <div class="f2">${regatta.boatNames[regatta.chosenBoat]}</div>
         <div class="flex flex-column justify-around items-center w-100 h-100">
-          <p>What's your sailing style?</p>
+          <p class="f3">What's your sailing style?</p>
           <div class="flex flex-row w-100 justify-around items-center">
             <button onclick=${() => emit('regatta.weatherSelection', -1)} class="pt1 f3">◀</button>
             ${regatta.weatherNames.map((name, i) => {
@@ -96,6 +100,7 @@ module.exports = (state, emit) => {
           </div>
           <div class="actions">
             <a onclick=${() => emit('regatta.selectWeather', regatta.selectedWeather)}>SELECT</a>
+            <a onclick=${() => emit('regatta.cancel', '/')}>CANCEL</a>
           </div>
         </div>
       </section>
@@ -105,12 +110,13 @@ module.exports = (state, emit) => {
   function chooseSquidRepellent () {
     return html`
       <section class="flex flex-column justify-around items-center pa4 pt5">
-        <div class="f2">${regatta.boatNames[regatta.chosenBoat]} with ${regatta.weatherNames[regatta.chosenBoat]}.</div>
+        <div class="f2"><span class="underline">${regatta.boatNames[regatta.chosenBoat]}</span> with <span class="underline>${regatta.weatherNames[regatta.chosenBoat]}</span>.</div>
         <div class="flex flex-column justify-around items-center w-100 h-100">
           <p>Would you like squid repellent?</p>
           <div class="actions flex flex-column">
             <a onclick=${() => emit('regatta.getRepellent', true)} class="">Yes (${state.CURRENCY_SYMBOL}${regatta.repellentPrice})</a>
             <a onclick=${() => emit('regatta.getRepellent', false)} class="">No</a>
+            <a onclick=${() => emit('regatta.cancel', '/')}>CANCEL</a>
           </div>
           <p>You might need it...</p>
         </div>
@@ -119,9 +125,14 @@ module.exports = (state, emit) => {
   }
 
   function race () {
+
+    const cheerOn = raw(`<div class="f2">Nice work, time to cheer on your <span class="underline">${regatta.boatNames[regatta.chosenBoat]}</span> with <span class="underline">${regatta.weatherNames[regatta.chosenBoat]}</span>.</div>`)
+    const raceOver = raw(`<div class="f2">Wow, that was a close one!</div>`)
+
     return html`
       <section class="flex flex-column justify-around items-center pa4 pt5">
-        <div class="f2">Nice work, time to cheer on your <span class="underline">${regatta.boatNames[regatta.chosenBoat]}</span> with <span class="underline">${regatta.weatherNames[regatta.chosenBoat]}</span>.</div>
+        ${regatta.status === 'running' ? cheerOn : ''}
+        ${regatta.status === 'finished' ? raceOver : ''}
         <img class="" src="/assets/dapps/regatta/boat-${regatta.boatSlugs[regatta.chosenBoat]}-${regatta.weatherSlugs[regatta.chosenBoat]}.png" />
         <div class="actions">
           <a href="/dapps">BACK</a>

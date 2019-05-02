@@ -2,7 +2,8 @@ module.exports = store
 
 const DEFAULT_STATE = {
   selectedImg: null,
-  hashes: []
+  hashes: [],
+  images: []
 }
 
 function store (state, emitter) {
@@ -45,7 +46,8 @@ function store (state, emitter) {
     const images = fetch('https://xdai-ipfs.flexdapps.com')
       .then(res => res.json())
       .then(items => {
-        pictureWall.images = images
+        pictureWall.images = items
+        emitter.emit('render')
       })
   }
 

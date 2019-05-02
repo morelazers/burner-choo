@@ -62,10 +62,10 @@ module.exports = (state, emit) => {
 
 function initialView (state, emit) {
   return html`
-    <section class="flex flex-column justify-around items-center pa5">
+    <section class="flex flex-column justify-around items-center pa4 pt5">
       <div class="f1">T A R O T</div>
       <img class="tarot-card" src="/assets/dapps/tarot/tarot__back.png" />
-      <div class="actions">
+      <div class="actions flex flex-column">
         <button
           class="read-button active"
           onclick=${() => {
@@ -74,6 +74,7 @@ function initialView (state, emit) {
         >
           READ FOR ${state.CURRENCY_SYMBOL}${state.dapps.tarot.price.toLocaleString()}
         </button>
+        <button class="read-button ma4" onclick=${() => emit('replaceState', '/')}>BACK</button>
       </div>
     </section>
   `
