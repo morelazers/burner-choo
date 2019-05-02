@@ -131,7 +131,7 @@ module.exports = (state, emit) => {
 
   function race () {
 
-    const cheerOn = raw(`<div class="f2">Nice work, time to cheer on your <span class="underline">${regatta.boatNames[regatta.chosenBoat]}</span> with <span class="underline">${regatta.weatherNames[regatta.chosenWeather]}</span>.</div>`)
+    const cheerOn = raw(`<div class="f2">Nice work, time to cheer on your <span class="underline">${regatta.boatNames[regatta.chosenBoat]}</span> with <span class="underline">${regatta.weatherNames[regatta.chosenWeather]}</span>, ${regatta.myName}</div>`)
     const raceOver = raw(`<div class="f2">Wow, that was a close one!</div>`)
 
     return html`

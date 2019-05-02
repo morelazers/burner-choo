@@ -82,7 +82,7 @@ module.exports = (state, emit) => {
       const purchase = () => {
         if (mePurchased) {
           return
-        } 
+        }
         emit('pictureWall.purchase', el)
       }
 
@@ -123,6 +123,6 @@ module.exports = (state, emit) => {
     const file = pictureWall.selectedImg
     if (!file) return
     emit('pictureWall.upload', file)
-    emit('render') 
+    emit('render')
   }
 }

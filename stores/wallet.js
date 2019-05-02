@@ -135,7 +135,7 @@ async function store (state, emitter) {
 
   // unlocks the account for a single transaction
   async function unlockAccount() {
-    return state.web3.eth.personal.unlockAccount(state.wallet.address, 'have_fun_kids_______8', '0x12345678')
+    return state.web3.eth.personal.unlockAccount(state.wallet.address, 'have_fun_kids_______8', '0x1')
   }
 
   // gets the default token sending messages (should allow tokens to set a

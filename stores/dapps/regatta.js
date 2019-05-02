@@ -3,6 +3,137 @@ module.exports = store
 const ethers = require('ethers')
 const abi = require('../../contracts/REGATTA.abi')
 
+const nomenclature = {
+  titles: [
+      "HMS",
+      "RMS",
+      "SS",
+      "Good Ship",
+      "Mighty",
+      "HMAS",
+      "MS",
+      "Old",
+      "New",
+      "Cursed",
+      "Leaky",
+      "Steamboat",
+      "Princess",
+      "Spirit of",
+  ],
+  names: [
+      "Shippington",
+      "Boater",
+      "Sinky",
+      "Floater",
+      "Shiply",
+      "Zoomyzoom",
+      "Gofastplease",
+      "Hope",
+      "Shame",
+      "Watermelon",
+      "Fireman",
+      "Sea-you-later",
+      "Pirate",
+      "Ahoy",
+      "Cheeseburger",
+      "Bananas",
+      "Spoonboy",
+      "Internet",
+      "Ethereum",
+      "Pun-name",
+      "Time Traveller",
+      "Bean Factory",
+      "I am sad",
+      "Hoot-hoot",
+      "Jon Snow",
+      "Bounty",
+      "Endeavour",
+      "Tony Abbott",
+      "Spiderman",
+      "Scissorhands",
+      "Lizardfinger",
+      "Iron Fish",
+      "Sail Gently Into That Good Night",
+      "Hank Scorpio",
+      "Titanic",
+      "Gary Dent",
+      "Safety",
+      "Avengers",
+      "Sandbar",
+      "Chocolate",
+      "Orangey",
+      "Disappointment",
+      "Untitled",
+      "Fingerbun",
+      "Dingo",
+      "Kangaroo",
+      "Wallaby",
+      "Wombat",
+      "Rosella",
+      "Tim-Tam",
+      "Lamington",
+      "Vegemite",
+      "Pavlova",
+      "Crikey!",
+      "Saddlebags",
+      "Emu",
+      "Spoonfed",
+      "Salsa",
+      "Not-a-knife",
+      "Speedy",
+      "Scurvy",
+      "Nemo",
+      "Unsinkable",
+      "Lizardbreath",
+      "Buttercup",
+      "Pinafore",
+      "Foghorn",
+      "Pontypool",
+      "Anne",
+      "MissingNo.",
+      "Beagle",
+      "Smeagol",
+      "Adventure",
+      "Problematic",
+      "Arr Matey",
+      "Queen Anne's Revenge",
+      "Jazz Hands",
+      "Misery",
+      "Spirit",
+      "Hope",
+      "Hopeless",
+      "Lightning",
+      "Thunder",
+      "Bouyancy",
+      "Cymru",
+      "Black Pearl",
+      "Airbender",
+      "Lifeboat",
+      "Seafoam",
+      "Waverunner",
+      "Chastity",
+      "Reason",
+      "Charity",
+      "Longing",
+      "Mystery",
+  ],
+  list: [],
+  generate(address){
+    let index = Number(address)
+    index = index % nomenclature.list.length
+    return nomenclature.list[index]
+  },
+  init () {
+    let titles = nomenclature.titles;
+    let names = nomenclature.names;
+    for (let t = 0; t < titles.length; t++) {
+      for (let n = 0; n < names.length; n++) {
+        nomenclature.list.push(titles[t]+" "+names[n])
+      }
+    }
+  }
+}
+
 const DEFAULT_STATE = {
   CONTRACT_ADDRESS: '0xf275265a9fa4c1d254cdaa26a57a8153245b4eb3',
   COURSE_LENGTH: 50,
@@ -27,10 +158,13 @@ const DEFAULT_STATE = {
 
 function store (state, emitter) {
 
+  nomenclature.init()
+
   // set up the initial state of our dapp
   state.dapps.regatta = Object.assign({}, DEFAULT_STATE)
 
   let regatta = state.dapps.regatta
+  regatta.myName = nomenclature.generate(state.wallet.address)
   bindListeners()
   getBalance()
 
