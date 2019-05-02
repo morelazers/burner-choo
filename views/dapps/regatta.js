@@ -110,10 +110,10 @@ module.exports = (state, emit) => {
   function chooseSquidRepellent () {
     return html`
       <section class="flex flex-column justify-around items-center pa4 pt5">
-        <div class="f2"><span class="underline">${regatta.boatNames[regatta.chosenBoat]}</span> with <span class="underline>${regatta.weatherNames[regatta.chosenBoat]}</span>.</div>
+        <div class="f2"><span class="underline">${regatta.boatNames[regatta.chosenBoat]}</span> with <span class="underline">${regatta.weatherNames[regatta.chosenWeather]}</span>.</div>
         <div class="flex flex-column justify-around items-center w-100 h-100">
           <p>Would you like squid repellent?</p>
-          <div class="actions flex flex-column">
+          <div class="actions flex flex-column justify-center">
             <a onclick=${() => emit('regatta.getRepellent', true)} class="">Yes (${state.CURRENCY_SYMBOL}${regatta.repellentPrice})</a>
             <a onclick=${() => emit('regatta.getRepellent', false)} class="">No</a>
             <a onclick=${() => emit('regatta.cancel', '/')}>CANCEL</a>
@@ -126,14 +126,13 @@ module.exports = (state, emit) => {
 
   function race () {
 
-    const cheerOn = raw(`<div class="f2">Nice work, time to cheer on your <span class="underline">${regatta.boatNames[regatta.chosenBoat]}</span> with <span class="underline">${regatta.weatherNames[regatta.chosenBoat]}</span>.</div>`)
+    const cheerOn = raw(`<div class="f2">Nice work, time to cheer on your <span class="underline">${regatta.boatNames[regatta.chosenBoat]}</span> with <span class="underline">${regatta.weatherNames[regatta.chosenWeather]}</span>.</div>`)
     const raceOver = raw(`<div class="f2">Wow, that was a close one!</div>`)
 
     return html`
       <section class="flex flex-column justify-around items-center pa4 pt5">
-        ${regatta.status === 'running' ? cheerOn : ''}
-        ${regatta.status === 'finished' ? raceOver : ''}
-        <img class="" src="/assets/dapps/regatta/boat-${regatta.boatSlugs[regatta.chosenBoat]}-${regatta.weatherSlugs[regatta.chosenBoat]}.png" />
+        ${cheerOn}
+        <img class="" src="/assets/dapps/regatta/boat-${regatta.boatSlugs[regatta.chosenBoat]}-${regatta.weatherSlugs[regatta.chosenWeather]}.png" />
         <div class="actions">
           <a href="/dapps">BACK</a>
         </div>

@@ -125,17 +125,22 @@ function store (state, emitter) {
       ['uint256', 'uint8', 'uint8', 'bool'],
       [progress.block_finish, regatta.chosenBoat, regatta.chosenWeather, regatta.squidRepellent]
     )
-    emitter.emit(
-      'wallet.sendTokens',
-      regatta.CONTRACT_ADDRESS,
-      regatta.entryPrice,
-      bytes,
-      {
-        txSent: () => `Entering for ${state.CURRENCY_SYMBOL}${regatta.entryPrice}`,
-        txConfirmedClient: () => `Let's go!`,
-        txError: () => `Hm, wait for the next race`
-      }
-    )
+    console.log(regatta.status)
+    if (regatta.status === 'waiting' || regatta.status === 'starting' || regatta.status === 'finished') {
+      emitter.emit(
+        'wallet.sendTokens',
+        regatta.CONTRACT_ADDRESS,
+        regatta.entryPrice,
+        bytes,
+        {
+          txSent: () => `Entering for ${state.CURRENCY_SYMBOL}${regatta.entryPrice}`,
+          txConfirmedClient: () => `Let's go!`,
+          txError: () => `Hm, wait for the next race`
+        }
+      )
+    } else {
+      state.assist.notify('error', 'Too slow, try the next race')
+    }
   }
 
   async function getBalance () {
