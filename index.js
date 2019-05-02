@@ -36,7 +36,7 @@ app.use((state, emitter) => {
 
 
   // -- GOERLI CONTRACTS --
-  state.JSON_RPC_URL = 'https://xdai.flexdapps.com/'
+  state.JSON_RPC_URL = 'https://xdai.flexdapps.com:7361/'
   // state.EVENT_SERVER = 'wss://10.2.47.201:9009/'
   state.EVENT_SERVER = 'wss://events.flexdapps.com:9009/'
   state.TOKEN_ADDRESS = '0xe0728a9d55ebd03bfcc6e9faa59e6dfe96741636'
@@ -184,6 +184,7 @@ app.use(require('./stores/dapps/tarot'))
 app.use(require('./stores/dapps/poop'))
 app.use(require('./stores/dapps/button'))
 app.use(require('./stores/dapps/king'))
+app.use(require('./stores/dapps/pony'))
 
 app.route('/', require('./views/main'))
 app.route('/get', require('./views/get'))
@@ -211,6 +212,7 @@ app.route('/dapps/tarot', require('./views/dapps/tarot'))
 app.route('/dapps/poop', require('./views/dapps/poop'))
 app.route('/dapps/king', require('./views/dapps/king'))
 app.route('/dapps/button', require('./views/dapps/button'))
+app.route('/dapps/pony', require('./views/dapps/pony'))
 
 const element = app.start()
 document.body.appendChild(element)
