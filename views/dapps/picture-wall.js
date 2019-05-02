@@ -52,7 +52,7 @@ module.exports = (state, emit) => {
           <p class='f3'>Every image can only be purchased 3 times, so take incriminating photos of your fellow partygoers and they'll have to pay you to make them disappear.</p>
         </div>
         <input class='f3 underline tc' type="file" id="picture-input" accept="image/*" onchange="${getFile}" />
-        <div class="actions">
+        <div class="actions flex flex-column items-center">
           <a class="post-file" onclick=${uploadFile}>POST</a>
           <a onclick=${() => emit('pictureWall.posting', false)}>CANCEL</a>
         </div>
@@ -64,10 +64,10 @@ module.exports = (state, emit) => {
     const elements = Object.keys(pictureWall.images).reverse().map((el) => {
       const img = pictureWall.images[el]
       const sales = img.buyers.length
-      
+
       const mePurchased = (img.buyers.indexOf(state.wallet.address.toLowerCase()) !== -1 || img.seller.toLowerCase() === state.wallet.address.toLowerCase())
       // const purchaseButton = html`<div class="" onclick=${() => emit('pictureWall.purchase', el) }>PURCHASE FOR ${state.CURRENCY_SYMBOL}${pictureWall.IMAGE_PRICE}</div>`
-      
+
       const purchase = () => {
         emit('pictureWall.purchase', el)
       }

@@ -138,8 +138,9 @@ module.exports = (state, emit) => {
       <section class="flex flex-column justify-around items-center pa4 pt5">
         ${cheerOn}
         <img class="pixelate my-boat" src="/assets/dapps/regatta/boat-${regatta.boatSlugs[regatta.chosenBoat]}-${regatta.weatherSlugs[regatta.chosenWeather]}.png" />
+        <p>If you win, you'll receive winnings automatically a bit later, it's safe to exit the app</p>
         <div class="actions">
-          <a onclick=${() => emit('replaceState', '/')}>BACK</a>
+          <a onclick=${() => emit('regatta.cancel')}>BACK</a>
         </div>
       </section>
     `
