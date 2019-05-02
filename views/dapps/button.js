@@ -54,7 +54,11 @@ module.exports = (state, emit) => {
     if (state.dapps.button.waiting) {
       return waitingView(state, emit)
     } else {
-      return resultsView(state, emit)
+      if (state.dapps.button.boom) {
+        return boomResultsView(state, emit)
+      } else {
+        return nonBoomResultsView(state, emit)
+      }      
     }
   } else {
     return initialView(state, emit)
@@ -105,7 +109,7 @@ function waitingView (state, emit) {
 
 }
 
-function resultsView (state, emit) {
+function boomResultsView (state, emit) {
  return html 
     `
   <section class="flex flex-column justify-around items-center pa5">
@@ -126,3 +130,25 @@ function resultsView (state, emit) {
     emit('button.pay')
   }
 }
+
+function nonBoomResultsView (state, emit) {
+  return html 
+     `
+   <section class="flex flex-column justify-around items-center pa5">
+   <div class="f1">B U T T O N</div>
+   <div class="f2">THE BUTTON DID NOTHING!!</div>
+   <div class="actions">
+     <button
+       class="push-button-text active"
+       onclick=${handleButtonPush}
+     >
+       TRY AGAIN FOR ${state.CURRENCY_SYMBOL}${state.dapps.button.price.toLocaleString()}
+     </button>
+   </div>
+ </section>
+   `
+  
+   function handleButtonPush() {
+     emit('button.pay')
+   }
+ }
