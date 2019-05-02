@@ -94,15 +94,8 @@ function waitingView (state, emit) {
   return html`
   <section class="flex flex-column justify-around items-center pa5">
   <div class="f1">B U T T O N</div>
-  <div class="f3">
+  <div class="f2">
   ${state.dapps.button.pushes} button pushes
-  </div>
-  <div class="actions">
-    <button
-      class="push-button-text pending"
-    >
-      PUSHING
-    </button>
   </div>
 </section>
   `

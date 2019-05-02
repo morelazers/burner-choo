@@ -29,6 +29,7 @@ function store (state, emitter) {
 
     if (state.wallet.address.toLowerCase() === newKing.toLowerCase()) {
       king.waiting = false;
+      emitter.emit('render')
     }
   })
 
@@ -52,11 +53,6 @@ function store (state, emitter) {
         }
       }
       )
-  })
-
-  emitter.on('king.crowned', () => {
-    king.waiting = false
-    emitter.emit('render')
   })
 
   async function getInfo () {
