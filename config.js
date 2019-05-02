@@ -1,4 +1,5 @@
 module.exports = [
   'regatta',
-  'picture-wall'
+  'picture-wall',
+  'button'
 ]
