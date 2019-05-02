@@ -40,11 +40,6 @@ function store (state, emitter) {
         name: 'Button',
         link: 'button',
         icon: '/assets/dapps/button/icon.png'
-      },
-      {
-        name: 'Pony',
-        link: 'pony',
-        icon: '/assets/dapps/pony/icon.png'
       }
     ]
   }
