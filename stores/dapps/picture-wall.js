@@ -56,8 +56,12 @@ function store (state, emitter) {
   })
 
   emitter.on('pictureWall.purchase', hash => {
+    if (pictureWall.images[hash].sales >= 3) {
+      return state.assist.notify('error', `Purchased 3 times already`)
+    }
     if (state.wallet.tokenBalance >= pictureWall.IMAGE_PRICE) {
       // cool we can purchase the image
+      console.log(`Purchasing ${hash}`)
       const seller = pictureWall.images[hash].seller
       emitter.emit(
         'wallet.sendTokens',
@@ -75,6 +79,8 @@ function store (state, emitter) {
           }
         }
       )
+    } else {
+      state.assist.notify('error', `Not enough ${state.CURRENCY_SYMBOL}`)
     }
   })
 

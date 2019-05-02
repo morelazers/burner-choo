@@ -131,15 +131,16 @@ module.exports = (state, emit) => {
 
   function race () {
 
-    const cheerOn = raw(`<div class="f2">Nice work, time to cheer on your <span class="underline">${regatta.boatNames[regatta.chosenBoat]}</span> with <span class="underline">${regatta.weatherNames[regatta.chosenWeather]}</span>.</div>`)
+    const cheerOn = raw(`<div class="f2">Nice work, time to cheer on your <span class="underline">${regatta.boatNames[regatta.chosenBoat]}</span> with <span class="underline">${regatta.weatherNames[regatta.chosenWeather]}</span>, ${regatta.myName}</div>`)
     const raceOver = raw(`<div class="f2">Wow, that was a close one!</div>`)
 
     return html`
       <section class="flex flex-column justify-around items-center pa4 pt5">
         ${cheerOn}
         <img class="pixelate my-boat" src="/assets/dapps/regatta/boat-${regatta.boatSlugs[regatta.chosenBoat]}-${regatta.weatherSlugs[regatta.chosenWeather]}.png" />
+        <p>If you win, you'll receive winnings automatically a bit later, it's safe to exit the app</p>
         <div class="actions">
-          <a onclick=${() => emit('replaceState', '/')}>BACK</a>
+          <a onclick=${() => emit('regatta.cancel')}>BACK</a>
         </div>
       </section>
     `
