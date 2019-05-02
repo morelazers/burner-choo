@@ -51,8 +51,9 @@ module.exports = (state, emit) => {
           <p>Everything you see here can only be purchased 3 times, and anything you sell has the same restriction.</p>
         </div>
         <input type="file" id="picture-input" accept="image/*" onchange="${getFile}" />
-        <div class="actions">
+        <div class="actions flex flex-column items-center">
           <a class="post-file" onclick=${uploadFile}>POST</a>
+          <a onclick=${() => emit('pictureWall.posting', false)}>CANCEL</a>
         </div>
       </section>
     `
