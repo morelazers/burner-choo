@@ -22,19 +22,19 @@ function store (state, emitter) {
 
   // bind event listenerd
   button.contract.on(button.contract.filters.Pushed(), (pusher, boom) => {
+
     if (state.wallet.address.toLowerCase() === pusher.toLowerCase()) {
-      
-      console.log(`Boom: ${boom}`)
+
       button.boom = boom;
       button.waiting = false;
       emitter.emit('render')
-      getInfo()
     }
   })
 
   getInfo()
 
   emitter.on('button.pay', () => {
+    getInfo()
     button.pushed = true
     button.waiting = true
     emitter.emit('render')
@@ -52,11 +52,6 @@ function store (state, emitter) {
       }
       ) 
     })
-
-  emitter.on('button.reset', () => {
-    button.pushed = false
-    button.waiting = false
-  })
 
   async function getInfo () {
       const pushes = await button.contract.pushes();

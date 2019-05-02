@@ -8,9 +8,8 @@ module.exports = (state, emit) => {
 
   const container = css`
   .push-button {
-    width: 50%;
-    image-rendering: pixelated;
-    border-radius: 15px;
+    width: 100%;
+    border-radius: 5px;
   }
 
   .push-button.glow {
@@ -69,9 +68,6 @@ function initialView (state, emit) {
   return html`
   <section class="flex flex-column justify-around items-center pa5">
   <div class="f1">B U T T O N</div>
-  <div>
-  ${state.dapps.button.pushes} button pushes
-  </div>
   <img class="push-button" src="/assets/dapps/button/red_button.png" onclick=${handleButtonPush} />
   <div class="actions">
     <button
@@ -84,8 +80,8 @@ function initialView (state, emit) {
 </section>
   `
 
-function handleButtonPush() {
-  emit('button.pay')
+  function handleButtonPush() {
+    emit('button.pay')
   }
 }
 
@@ -94,7 +90,9 @@ function waitingView (state, emit) {
   return html`
   <section class="flex flex-column justify-around items-center pa5">
   <div class="f1">B U T T O N</div>
-  <img class="push-button glow" src="/assets/dapps/button/red_button.png" />
+  <div class="f3">
+  ${state.dapps.button.pushes} button pushes
+  </div>
   <div class="actions">
     <button
       class="push-button-text pending"
@@ -108,20 +106,23 @@ function waitingView (state, emit) {
 }
 
 function resultsView (state, emit) {
-  emit('button.reset')
-
-  return html`
+ return html 
+    `
   <section class="flex flex-column justify-around items-center pa5">
   <div class="f1">B U T T O N</div>
-  <img class="push-button glow slow" src="/assets/dapps/button/red_button.png" />
+  <img src="/assets/dapps/button/boom.png" />
   <div class="actions">
     <button
-      class="push-button-text pending"
+      class="push-button-text active"
+      onclick=${handleButtonPush}
     >
-      PUSHED
+      PUSH AGAIN FOR ${state.CURRENCY_SYMBOL}${state.dapps.button.price.toLocaleString()}
     </button>
   </div>
 </section>
   `
-
+ 
+  function handleButtonPush() {
+    emit('button.pay')
+  }
 }
