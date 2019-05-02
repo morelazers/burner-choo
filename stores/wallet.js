@@ -142,7 +142,7 @@ async function store (state, emitter) {
       txSent: () => `Sending ${state.CURRENCY_SYMBOL}${value.toLocaleString()}`,
       txConfirmed: () => `Sent ${state.CURRENCY_SYMBOL}${value.toLocaleString()}`,
       txStall: () => `Something's wrong...`,
-      txConfirmedClient: () => `Sent ${state.CURRENCY_SYMBOL}${value.toLocaleString()}`
+      txConfirmed: () => `Sent ${state.CURRENCY_SYMBOL}${value.toLocaleString()}`
     }
   }
 

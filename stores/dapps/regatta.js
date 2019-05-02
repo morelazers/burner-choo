@@ -134,7 +134,7 @@ function store (state, emitter) {
         bytes,
         {
           txSent: () => `Entering for ${state.CURRENCY_SYMBOL}${regatta.entryPrice}`,
-          txConfirmedClient: () => `Let's go!`,
+          txConfirmed: () => `Let's go!`,
           txError: () => `Hm, wait for the next race`
         }
       )

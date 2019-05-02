@@ -24,6 +24,13 @@ module.exports = (state, emit) => {
       font-size: 4rem;
       line-height: 75px;
     }
+    .image-center {
+      z-index: 999;
+    }
+    .blur {
+      -webkit-filter: blur(15px); /* Safari 6.0 - 9.0 */
+      filter: blur(15px);
+    }
   `
 
   console.log({pictureWall})
@@ -41,7 +48,7 @@ module.exports = (state, emit) => {
         <div>
           <div class="f1">PICTURE WALL</div>
           <p>Buy and sell pictures of limited supply.</p>
-          <p>Everything you see here can only be purchased 5 times, and anything you sell has the same restriction.</p>
+          <p>Everything you see here can only be purchased 3 times, and anything you sell has the same restriction.</p>
         </div>
         <input type="file" id="picture-input" accept="image/*" onchange="${getFile}" />
         <div class="actions">
@@ -52,15 +59,28 @@ module.exports = (state, emit) => {
   }
 
   function viewImages () {
+    const elements = Object.keys(pictureWall.images).reverse().map((el) => {
+      const img = pictureWall.images[el]
+      const sales = img.buyers.length
+      console.log(img.buyers)
+      const mePurchased = (img.buyers.indexOf(state.wallet.address.toLowerCase()) !== -1 || img.seller.toLowerCase() === state.wallet.address.toLowerCase())
+      const purchaseButton = html`<div class="" onclick=${() => emit('pictureWall.purchase', el) }>PURCHASE FOR ${state.CURRENCY_SYMBOL}${pictureWall.IMAGE_PRICE}</div>`
+      return html`
+        <div class="h-100 w-100">
+          <div class="image-center f1">
+            ${3 - sales} Remaining
+          </div>
+          ${mePurchased ? '' : purchaseButton}
+          <img src="https://ipfs.enzypt.io/ipfs/${el}" class="${mePurchased ? '' : 'blur'}" />
+        </div>
+      `
+    })
+
     return html`
       <section class="flex flex-column items-center pa4 h-100 overflow-scroll pb5">
-        ${raw(Object.keys(pictureWall.images).map((el) => {
-          const sales = pictureWall.images[el]
-          return '<img src="https://ipfs.enzypt.io/ipfs/' + el + '" />'
-        }))}
+        ${elements}
         <button class="fixed add-img" onclick=${() => {
-          pictureWall.posting = true
-          emit('render')
+          emit('pictureWall.posting', true)
         }}>+</button>
       </section>
     `
@@ -71,7 +91,7 @@ module.exports = (state, emit) => {
   }
 
   function uploadFile () {
-    pictureWall.posting = false
+    emit('pictureWall.posting', false)
     const file = pictureWall.selectedImg
     if (!file) return
     emit('pictureWall.upload', file)

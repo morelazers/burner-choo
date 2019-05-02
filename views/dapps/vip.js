@@ -96,7 +96,7 @@ function view (state, emit) {
                           state.CURRENCY_SYMBOL +
                           vip.price.toLocaleString()
                         },
-                        txConfirmedClient: () => {
+                        txConfirmed: () => {
                           state.wallet.refresh()
                           return "Welcome to the VIP_ZONE"
                         }

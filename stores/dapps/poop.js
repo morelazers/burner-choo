@@ -35,7 +35,7 @@ function store (state, emitter) {
       '0x0',
       {
         txSent: () => `Cracking one out`,
-        txConfirmedClient: () => {
+        txConfirmed: () => {
           poop.farting = false
           emitter.emit('render')
           return `You cheeky sod`

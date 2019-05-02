@@ -131,7 +131,7 @@ module.exports = function (state, emitter) {
         "0x0",
         {
           txSent: () => `Focus on your query...`,
-          txConfirmedClient: () => {
+          txConfirmed: () => {
             emit('tarot.getReading')
             return `Celestially Aligned`
           }
