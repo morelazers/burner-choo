@@ -1,7 +1,6 @@
 const html = require('choo/html')
 const raw = require('choo/html/raw')
 const css = require('sheetify')
-
 const TITLE = 'REGATTA'
 
 module.exports = (state, emit) => {
@@ -17,6 +16,10 @@ module.exports = (state, emit) => {
     }
     .pixelate {
       image-rendering: pixelated;
+    }
+
+    #myboat {
+      width: 80%;
     }
   `
 
@@ -38,14 +41,15 @@ module.exports = (state, emit) => {
   function enterRace () {
     return html`
       <section class="flex flex-column justify-around items-center pa4 pt5">
-        <div class="f2">R E G A T T A</div>
-        <div>
-          ${regatta.niceStatus}
-        </div>
+      <div class='flex items-center flex-column'>
+        <h1>Welcome to Crypto Regatta</h1>
+        <h2>A Blockchain Game by Andrew <i>Danger</i> Parker</h2>
+      </div>
+        <h1>${regatta.niceStatus}</h1>
         <div class="actions flex flex-column tc w-100">
           <a onclick=${() => {
             if (canEnter) emit('regatta.enter')
-          }}>${canEnter ? 'ENTER RACE' : 'PLEASE WAIT'}</a>
+          }}>${canEnter ? 'ENTER' : 'loading'}</a>
           <a onclick=${() => emit('replaceState', '/dapps')}>BACK</a>
         </div>
       </section>
@@ -55,25 +59,25 @@ module.exports = (state, emit) => {
   function chooseBoat () {
     return html`
       <section class="flex flex-column items-center pa4 pt5">
-        <div class="f2">R E G A T T A</div>
+        <h2>Crypto Regatta</h2>
         <div class="flex flex-column justify-around items-center w-100 h-100">
-          <p class="f3">Pick your boat!</p>
+          <h1>Pick your boat!</h1>
           <div class="flex flex-row w-100 justify-around items-center">
             <button onclick=${() => emit('regatta.boatSelection', -1)} class="pt1 f3">◀</button>
             ${regatta.boatNames.map((name, i) => {
               return html`
-                <div class="flex flex-column tc ma3${regatta.selectedBoat !== i ? ' hidden' : ''}">
-                  <div class="f3">${state.CURRENCY_SYMBOL}${regatta.boatPrices[i]}</div>
+                <div class="flex flex-column items-center tc ma3${regatta.selectedBoat !== i ? ' hidden' : ''}">
+                  <h2>${state.CURRENCY_SYMBOL}${regatta.boatPrices[i]}</h2>
                   <img class="ba pa1 pa3 ma2 pixelate" src="/assets/dapps/regatta/boat-${regatta.boatSlugs[i]}-sun.png" />
-                  <div>${name}</div>
+                  <h2>${name}</h2>
                 </div>
               `
             })}
             <button onclick=${() => emit('regatta.boatSelection', +1)} class="pt1 f3">▶</button>
           </div>
-          <div class="actions">
+          <div class="actions w-100 flex flex-column justify-start items-center">
             <a onclick=${() => emit('regatta.selectBoat', regatta.selectedBoat)}>SELECT</a>
-            <a onclick=${() => emit('regatta.cancel')}>CANCEL</a>
+            <a onclick=${() => emit('regatta.cancel')}>Back</a>
           </div>
         </div>
       </section>
@@ -83,25 +87,25 @@ module.exports = (state, emit) => {
   function chooseWeather () {
     return html`
       <section class="flex flex-column justify-around items-center pa4 pt5">
-        <div class="f2">${regatta.boatNames[regatta.chosenBoat]}</div>
+        <h1>${regatta.boatNames[regatta.chosenBoat]}</h1>
         <div class="flex flex-column justify-around items-center w-100 h-100">
-          <p class="f3">What's your sailing style?</p>
+          <h2>What's your sailing style?</h2>
           <div class="flex flex-row w-100 justify-around items-center">
             <button onclick=${() => emit('regatta.weatherSelection', -1)} class="pt1 f3">◀</button>
             ${regatta.weatherNames.map((name, i) => {
               return html`
-                <div class="flex flex-column tc ma3${regatta.selectedWeather !== i ? ' hidden' : ''}">
-                  <div class="f3">${name}</div>
+                <div class="flex flex-column items-center tc ma3${regatta.selectedWeather !== i ? ' hidden' : ''}">
+                  <h2>${name}</h2>
                   <img class="ba pa1 pa3 ma2 pixelate" src="/assets/dapps/regatta/boat-${regatta.boatSlugs[regatta.chosenBoat]}-${regatta.weatherSlugs[i]}.png" />
-                  <div>${regatta.weatherDescriptions[i]}</div>
+                  <h2>${regatta.weatherDescriptions[i]}</h2>
                 </div>
               `
             })}
             <button onclick=${() => emit('regatta.weatherSelection', +1)} class="pt1 f3">▶</button>
           </div>
-          <div class="actions">
+          <div class="actions w-100 flex flex-column justify-start items-center">
             <a onclick=${() => emit('regatta.selectWeather', regatta.selectedWeather)}>SELECT</a>
-            <a onclick=${() => emit('regatta.cancel')}>CANCEL</a>
+            <a onclick=${() => emit('regatta.cancel')}>Back</a>
           </div>
         </div>
       </section>
@@ -113,13 +117,13 @@ module.exports = (state, emit) => {
       <section class="flex flex-column justify-around items-center pa4 pt5">
         <div class="f2"><span class="underline">${regatta.boatNames[regatta.chosenBoat]}</span> with <span class="underline">${regatta.weatherNames[regatta.chosenWeather]}</span>.</div>
         <div class="flex flex-column justify-around items-center w-100 h-100">
-          <p>Would you like squid repellent?</p>
+          <h2>Would you like squid repellent?</h2>
           <div class="actions flex flex-column justify-center">
             <a onclick=${() => emit('regatta.getRepellent', true)} class="">Yes (${state.CURRENCY_SYMBOL}${regatta.repellentPrice})</a>
             <a onclick=${() => emit('regatta.getRepellent', false)} class="">No</a>
             <a onclick=${() => emit('regatta.cancel')}>CANCEL</a>
           </div>
-          <p>You might need it...</p>
+          <h3>You might need it...</h3>
         </div>
       </section>
     `
@@ -133,7 +137,7 @@ module.exports = (state, emit) => {
     return html`
       <section class="flex flex-column justify-around items-center pa4 pt5">
         ${cheerOn}
-        <img class="" src="/assets/dapps/regatta/boat-${regatta.boatSlugs[regatta.chosenBoat]}-${regatta.weatherSlugs[regatta.chosenWeather]}.png" />
+        <img id='myboat' src="/assets/dapps/regatta/boat-${regatta.boatSlugs[regatta.chosenBoat]}-${regatta.weatherSlugs[regatta.chosenWeather]}.png" />
         <div class="actions">
           <a onclick=${() => emit('replaceState', '/')}>BACK</a>
         </div>
