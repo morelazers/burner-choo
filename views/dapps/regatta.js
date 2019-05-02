@@ -18,7 +18,7 @@ module.exports = (state, emit) => {
       image-rendering: pixelated;
     }
 
-    #myboat {
+    .my-boat {
       width: 80%;
     }
   `
@@ -49,7 +49,7 @@ module.exports = (state, emit) => {
         <div class="actions flex flex-column tc w-100">
           <a onclick=${() => {
             if (canEnter) emit('regatta.enter')
-          }}>${canEnter ? 'ENTER' : 'loading'}</a>
+          }}>${canEnter ? 'ENTER' : 'LOADING'}</a>
           <a onclick=${() => emit('replaceState', '/dapps')}>BACK</a>
         </div>
       </section>
@@ -77,7 +77,7 @@ module.exports = (state, emit) => {
           </div>
           <div class="actions w-100 flex flex-column justify-start items-center">
             <a onclick=${() => emit('regatta.selectBoat', regatta.selectedBoat)}>SELECT</a>
-            <a onclick=${() => emit('regatta.cancel')}>Back</a>
+            <a onclick=${() => emit('regatta.cancel')}>BACK</a>
           </div>
         </div>
       </section>
@@ -105,7 +105,7 @@ module.exports = (state, emit) => {
           </div>
           <div class="actions w-100 flex flex-column justify-start items-center">
             <a onclick=${() => emit('regatta.selectWeather', regatta.selectedWeather)}>SELECT</a>
-            <a onclick=${() => emit('regatta.cancel')}>Back</a>
+            <a onclick=${() => emit('regatta.cancel')}>BACK</a>
           </div>
         </div>
       </section>
@@ -137,7 +137,7 @@ module.exports = (state, emit) => {
     return html`
       <section class="flex flex-column justify-around items-center pa4 pt5">
         ${cheerOn}
-        <img id='myboat' src="/assets/dapps/regatta/boat-${regatta.boatSlugs[regatta.chosenBoat]}-${regatta.weatherSlugs[regatta.chosenWeather]}.png" />
+        <img class="pixelate my-boat" src="/assets/dapps/regatta/boat-${regatta.boatSlugs[regatta.chosenBoat]}-${regatta.weatherSlugs[regatta.chosenWeather]}.png" />
         <div class="actions">
           <a onclick=${() => emit('replaceState', '/')}>BACK</a>
         </div>
