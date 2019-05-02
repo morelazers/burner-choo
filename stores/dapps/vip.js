@@ -13,7 +13,7 @@ const abi = require('../../contracts/VIP_PASS.abi')
 const DEFAULT_BOTTOM_TEXT = html`
   <div class="tc">
     <p>Select one of these nerds to replace them as a VIP.</p>
-    <p>You'll receive a grace period of at least 15 minutes in the VIP_ZONE.</p>
+    <p>You'll receive a grace period of 15 minutes in the VIP_ZONE.</p>
   </div>`
 
 function store (state, emitter) {

@@ -21,33 +21,17 @@ const DEFAULT_STATE = {
   repellentPricePercent: 10,
   boatSlugs: ['small', 'med', 'big'],
   weatherSlugs: ['rain', 'wind', 'sun'],
-  entryPrice: -1
+  entryPrice: -1,
+  contract: null
 }
 
 function store (state, emitter) {
 
   // set up the initial state of our dapp
-  state.dapps.regatta = DEFAULT_STATE
+  state.dapps.regatta = Object.assign({}, DEFAULT_STATE)
 
   let regatta = state.dapps.regatta
-  regatta.contract = new ethers.Contract(regatta.CONTRACT_ADDRESS, abi, state.provider)
-  regatta.contract.on(regatta.contract.filters.CashOut(), (addr) => {
-    console.log('CASHOUT')
-    console.log({addr})
-    if (addr.toLowerCase() === state.wallet.address.toLowerCase()) {
-      state.assist.notify('success', `Regatta winnings claimed`)
-    }
-  })
-  regatta.contract.on(regatta.contract.filters.Enter(), (_, addr) => {
-    console.log('ENTRY')
-    console.log({addr})
-    if (addr.toLowerCase() !== state.wallet.address.toLowerCase()) {
-      state.assist.notify('success', `Someone entered the regatta`)
-    }
-  })
-
-  setInterval(() => getProgress(), 1000)
-
+  bindListeners()
   getBalance()
 
   //race states:
@@ -75,8 +59,17 @@ function store (state, emitter) {
    *
    */
 
+  emitter.on('regatta.cancel', () => {
+    emitter.emit('regatta.clear')
+    emitter.emit('replaceState', '/')
+    emitter.emit('render')
+  })
+
   emitter.on('regatta.clear', () => {
-    regatta = DEFAULT_STATE
+    clearInterval(regatta.refreshInterval)
+    state.dapps.regatta = Object.assign({}, DEFAULT_STATE)
+    regatta = state.dapps.regatta // reassign
+    bindListeners()
   })
 
   emitter.on('regatta.enter', () => {
@@ -131,30 +124,34 @@ function store (state, emitter) {
       ['uint256', 'uint8', 'uint8', 'bool'],
       [progress.block_finish, regatta.chosenBoat, regatta.chosenWeather, regatta.squidRepellent]
     )
-    emitter.emit(
-      'wallet.sendTokens',
-      regatta.CONTRACT_ADDRESS,
-      regatta.entryPrice,
-      bytes,
-      {
-        txSent: () => `Entering for ${state.CURRENCY_SYMBOL}${regatta.entryPrice}`,
-        txConfirmedClient: () => `Let's go!`,
-        txError: () => `Hm, wait for the next race`
-      }
-    )
+    console.log(regatta.status)
+    if (regatta.status === 'waiting' || regatta.status === 'starting' || regatta.status === 'finished') {
+      emitter.emit(
+        'wallet.sendTokens',
+        regatta.CONTRACT_ADDRESS,
+        regatta.entryPrice,
+        bytes,
+        {
+          txSent: () => `Entering for ${state.CURRENCY_SYMBOL}${regatta.entryPrice}`,
+          txConfirmed: () => `Let's go!`,
+          txError: () => `Hm, wait for the next race`
+        }
+      )
+    } else {
+      state.assist.notify('error', 'Too slow, try the next race')
+    }
   }
 
   async function getBalance () {
     const bal = await regatta.contract.get_balance()
     regatta.myBalance = bal.toNumber()
-    console.log(regatta.myBalance)
   }
 
   async function getProgress () {
-    const times = await regatta.contract.get_times();
-    const progress = await regatta.contract.get_progress();
+    const times = await regatta.contract.get_times()
+    const progress = await regatta.contract.get_progress()
 
-    const status = getRaceState(times,progress)
+    const status = getRaceState(times, progress)
     if (status !== regatta.status) {
       regatta.status = status
       emitter.emit('render')
@@ -169,41 +166,57 @@ function store (state, emitter) {
       let winners = parseProgress(progress.progress);
 
       if(times.block_start == 0) {
-          //Waiting
-          return "waiting"
+        regatta.niceStatus = 'Waiting for entrants...'
+        return "waiting"
       } else if (times.block_finish == times.block_start) {
-          //Void
-          return "void"
+        regatta.niceStatus = ''
+        return "void"
       } else if (times.block_start > times.block_current - 1) {
-          //Starting
-          return "starting"
+        regatta.niceStatus = 'Next race starting soon'
+        return "starting"
       } else if (times.block_start == times.block_current) {
-          return "starting_now"
+        regatta.niceStatus = 'Next race starting now!'
+        return "starting_now"
       } else if (times.block_finish  != "0") {
-          //Declared
-          return "declared"
+        regatta.niceStatus = ''
+        return "declared"
       } else if (winners.length === 0) {
-          //Running
-          return "running"
+        regatta.niceStatus = 'There\'s a race happening now!'
+        return "running"
       } else {
-          //Finished
-          return "finished"
+        regatta.niceStatus = 'Waiting for entrants...'
+        return "finished"
       }
   }
 
   function parseProgress (progress) {
-    let winners = [];
-    for(let boat = 0; boat < progress.length; boat++){
-        if(progress[boat] >= regatta.COURSE_LENGTH){
-            winners.push(boat);
-        }
+    let winners = []
+    for (let boat = 0; boat < progress.length; boat++){
+      if (progress[boat] >= regatta.COURSE_LENGTH) {
+        winners.push(boat)
+      }
     }
-    return winners;
+    return winners
   }
 
   async function plunder () {
     const tx = await regatta.contract.grab_gold()
     console.log(tx)
+  }
+
+  function bindListeners () {
+    regatta.contract = new ethers.Contract(regatta.CONTRACT_ADDRESS, abi, state.provider)
+    regatta.contract.on(regatta.contract.filters.CashOut(), (addr) => {
+      if (addr.toLowerCase() === state.wallet.address.toLowerCase()) {
+        state.assist.notify('success', `Regatta winnings claimed`)
+      }
+    })
+    regatta.contract.on(regatta.contract.filters.Enter(), (_, addr) => {
+      if (addr.toLowerCase() !== state.wallet.address.toLowerCase()) {
+        state.assist.notify('success', `Someone entered the regatta`)
+      }
+    })
+    regatta.refreshInterval = setInterval(() => getProgress(), 1000)
   }
 
 }

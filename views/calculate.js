@@ -94,7 +94,7 @@ module.exports = (state, emit) => {
           <span class="w-33"></span>
         </div>
         <div class="flex flex-row">
-          <button class="w-33" onclick=${() => emit('pushState', '/')}>BACK</button>
+          <button class="w-33" onclick=${() => emit('replaceState', '/')}>BACK</button>
           <span class="w-33"></span>
           <button class="w-33 proceed" onclick=${() => {
             emit('nextTx.setPrice', state.calculate.input)

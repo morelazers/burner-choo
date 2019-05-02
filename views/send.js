@@ -40,8 +40,20 @@ module.exports = (state, emit) => {
       width: 75%;
       top: 50%;
       left: 50%;
-      /* bring your own prefixes */
       transform: translate(-50%, -50%);
+    }
+    .action-overlay {
+      position: fixed;
+      bottom: 2rem;
+      left: 50%;
+      transform: translate(-50%, -50%);
+    }
+    .action-overlay a {
+      background: transparent !important;
+    }
+    .action-overlay a::hover,
+    .action-overlay a::active {
+      background: #A7E4AE !important;
     }
   `
 
@@ -50,7 +62,10 @@ module.exports = (state, emit) => {
     <section class="flex">
       <div id="qr-preview">
         <canvas id="canvas" hidden></canvas>
-        <video id="video" class="video h-100 w-100"></video>
+        <video id="video" class="video h-100 w-100 position-absolute"></video>
+        <div class="actions action-overlay">
+          <a class="pa2" onclick=${() => emit('replaceState', '/')}>BACK</a>
+        </div>
         <img class="absolute-center" src="/assets/qr-overlay.png" />
       </div>
     </section>
