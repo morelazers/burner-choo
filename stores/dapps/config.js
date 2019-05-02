@@ -14,7 +14,7 @@ function store (state, emitter) {
       {
         name: 'Regatta',
         link: 'regatta',
-        icon: '/assets/dapps/regatta/icon.png'
+        icon: '/assets/dapps/regatta/regattalogo.gif'
       },
       {
         name: 'Tarot',
