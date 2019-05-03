@@ -52,14 +52,13 @@ module.exports = (state, emit) => {
   }
   `
 
-  console.log(`king view`)
+  console.log(`king view ${state.dapps.king.remainingSeconds}`)
 
   if (state.dapps.king.waiting) {
     console.log(`waiting`)
     return waitingView(state, emit)
   } else {
     if (!state.dapps.king.vacant) {
-      console.log(`remaining ${state.dapps.king.remaining}`)
       if (state.wallet.address.toLowerCase() === state.dapps.king.king.toLowerCase()) {
         console.log(`king`)
         return kingResultsView(state, emit)

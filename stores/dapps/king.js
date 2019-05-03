@@ -10,8 +10,7 @@ const DEFAULT_STATE = {
   waiting: false,
   prize: 0,
   coronation: 0,
-  remainingSeconds: 0,
-  vacant: true
+  remainingSeconds: 0
 }
 
 
@@ -83,7 +82,8 @@ function store (state, emitter) {
       clearInterval(king.interval)
     }
     king.remainingSeconds = remaining;
-    console.log(`secondsUntilPrize ${remaining}`)
+
+    console.log(`secondsUntilPrize ${king.remainingSeconds}`)
     emitter.emit('render')
   }
 
