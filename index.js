@@ -20,13 +20,13 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.use((state, emitter) => {
-  console.log(process.env)
 //needs more whitespace
   // -- XDAI TEST CONTRACTS --
-  // state.JSON_RPC_URL = JSON_RPC_URL || 'https://xdai.flexdapps.com/'
+  state.JSON_RPC_URL = 'https://xdai.flexdapps.com:7361/'
+  // state.JSON_RPC_URL = 'https://dai.poa.network:7361/'
+  state.TOKEN_ADDRESS = '0x5eb7e67ec2ce404ebabafed0a79bab10d030c58a'
+  state.NETWORK_ID = 100
   // state.EVENT_SERVER = 'ws://10.2.47.201:9009/'
-  // state.TOKEN_ADDRESS = TOKEN_ADDRESS || '0xB7A4375BF67BF865CA8e2336C50fc77B393375fd'
-  // state.NETWORK_ID = 100
 
   // -- KOVAN CONTRACTS --
   // state.JSON_RPC_URL = 'https://xdai.flexdapps.com/'
@@ -36,18 +36,18 @@ app.use((state, emitter) => {
 
 
   // -- GOERLI CONTRACTS --
-  state.JSON_RPC_URL = 'https://xdai.flexdapps.com:7361/'
+  // state.JSON_RPC_URL = 'https://xdai.flexdapps.com:7361/'
   // state.EVENT_SERVER = 'wss://10.2.47.201:9009/'
-  state.EVENT_SERVER = 'wss://events.flexdapps.com:9009/'
-  state.TOKEN_ADDRESS = '0x5eb7e67ec2ce404ebabafed0a79bab10d030c58a'
-  state.NETWORK_ID = 10
+  // state.EVENT_SERVER = 'wss://events.flexdapps.com:9009/'
+  // state.TOKEN_ADDRESS = '0xe0728a9d55ebd03bfcc6e9faa59e6dfe96741636'
+  // state.NETWORK_ID = 10
 
   // -- LOCAL TEST CONTRACTS
   // state.JSON_RPC_URL = 'https://localhost:9009'
   // state.TOKEN_ADDRESS = '0xDBA081ff3cc5921a784A788Cf5a49Dd7A8F9B83F'
   // state.NETWORK_ID = 5777
 
-  state.CURRENCY_SYMBOL = CURRENCY_SYMBOL || '៛'
+  state.CURRENCY_SYMBOL = '៛'
 
   state.web3 = new Web3(state.JSON_RPC_URL)
   state.web3.eth.extend({

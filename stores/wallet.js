@@ -35,7 +35,7 @@ async function store (state, emitter) {
   requestEth() // @todo this is hardcoded, remove later
 
   // -- PARITY-based nodes
-  state.web3.eth.personal.newParityAccount(state.wallet.burner.signingKey.privateKey, 'have_fun_kids_______8')
+  state.web3.eth.personal.newParityAccount(state.wallet.burner.signingKey.privateKey, 'n0t_a_n3w_p4ssw0rd_at_4ll')
 
   // -- GETH-based nodes (how annoying is this)
   // some other web3 call goes here
@@ -55,9 +55,9 @@ async function store (state, emitter) {
   state.wallet.tokenContractEthers.on(state.wallet.tokenContractEthers.filters.Transfer(null, null), (f, t, v) => {
     if (t.toLowerCase() === state.wallet.address.toLowerCase()) {
       state.assist.notify('success', `Received ${state.CURRENCY_SYMBOL}${v.toNumber().toLocaleString()}!`)
-    } else if (f.toLowerCase === state.wallet.address.toLowerCase()) {
-      // we were the person who sent the money
-      state.assist.notify('success', `Sent ${state.CURRENCY_SYMBOL}${v.toNumber().toLocaleString()}!`)
+    } else if (f.toLowerCase() === state.wallet.address.toLowerCase()) {
+      // we were the person who sent the money but we get this notification already from send function
+      // state.assist.notify('success', `Sent ${state.CURRENCY_SYMBOL}${v.toNumber().toLocaleString()}!`)
     }
     state.wallet.refresh()
   })
@@ -116,26 +116,48 @@ async function store (state, emitter) {
   // uses the standard token tx messages unless you pass in something as messages
   async function sendTokenTransaction (to, value, bytes = '0x', messages = {}) {
     const txMessages = Object.assign(getDefaultTokenMessages(value), messages)
-    const c = state.assist.Contract(state.wallet.tokenContract)
+    // const c = state.assist.Contract(state.wallet.tokenContract)
+    const c = state.wallet.tokenContractEthers.connect(state.wallet.burner)
     console.log(`Sending ${value} tokens to ${to}`)
     const nonce = await state.provider.getTransactionCount(state.wallet.address)
     console.log(`Account nonce: ${nonce}`)
-    console.log('Unlocking account')
-    await unlockAccount()
-    console.log('Account unlocked, wrapping contract')
-    return c.methods['transfer(address,uint256,bytes)'](to, value, bytes).send({
-      from: state.wallet.address,
+    // console.log('Unlocking account')
+    // await unlockAccount()
+    // console.log('Account unlocked, wrapping contract')
+    console.log(c)
+    console.log(txMessages)
+    const tx = c['transfer(address,uint256,bytes)'](to, value, bytes, {
+    //   // from: state.wallet.address,
       gasPrice: ethers.utils.parseUnits('1', 'gwei'),
-      gas: '500000',
+      gasLimit: ethers.utils.bigNumberify(500000).toHexString(),
       nonce: nonce
-    }, {
-      messages: txMessages
     })
+    console.log(`Sent transaction with hash: ${tx.hash}`)
+    let dismiss = state.assist.notify('pending', txMessages.txSent(), -1)
+    console.log(`Assist pending notification: ${txMessages.txSent()}`)
+    console.log(tx)
+    tx.then(async (r) => {
+      console.log({r})
+      let waitFunc = r.wait()
+      console.log({waitFunc})
+      await waitFunc
+      console.log(`Tx complete! Dismissing Assist notification`)
+      dismiss()
+      console.log(`Creating Assist success notification: ${txMessages.txConfirmed()}`)
+      state.assist.notify('success', txMessages.txConfirmed())
+    })
+
+    /**
+     * , {
+      messages: txMessages
+    }
+     */
+
   }
 
   // unlocks the account for a single transaction
   async function unlockAccount() {
-    return state.web3.eth.personal.unlockAccount(state.wallet.address, 'have_fun_kids_______8', '0x1')
+    return state.web3.eth.personal.unlockAccount(state.wallet.address, 'have_fun_kids_______8', null)
   }
 
   // gets the default token sending messages (should allow tokens to set a
@@ -157,12 +179,13 @@ async function store (state, emitter) {
       }).then((e, res) => {
         const killPending = state.assist.notify('pending', `Setting you up`, -1)
         state.provider.on(state.wallet.address, (b) => {
-          if (b.toNumber() !== 0) {
+          console.log(b)
+          // if (b.toNumber() !== 0) {
             killPending()
             state.assist.notify('success', `Good to go`)
             state.wallet.refresh()
             state.provider.removeListener(state.wallet.address)
-          }
+          // }
         })
         console.log(e, res)
         return res
@@ -208,6 +231,7 @@ async function getTokenBalance (contract, address) {
     console.log(`-- BALANCE: ${b} --`)
     return b.toNumber()
   } catch (e) {
+    console.log('-- ERROR --')
     console.log(e)
     return -1
   }

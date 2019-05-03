@@ -7,7 +7,7 @@ module.exports = function (state, emitter) {
     read: false,
     reading: false,
     activeCard: -1,
-    CONTRACT_ADDRESS: '0xf1515292a439ce23fc177e966db109d6b008cef5',
+    CONTRACT_ADDRESS: '0x42957aefce4d04636427513239eac22ce0ecb371',
     price: 1000,
     cards: [
       'The Fool',

@@ -14,7 +14,9 @@ function store (state, emitter) {
 
   let pictureWall = state.dapps.pictureWall
 
-  pictureWall.interval = setInterval(getImages, 1000)
+  emitter.on('pictureWall.navigate', () => {
+    pictureWall.interval = setInterval(getImages, 1000)
+  })
 
   emitter.on('pictureWall.posting', y => {
     if (y) {

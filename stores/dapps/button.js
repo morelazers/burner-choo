@@ -46,11 +46,11 @@ function store (state, emitter) {
       "0x0",
       {
         txSent: () => `Pushing the button`,
-        txConfirmedClient: () => {
+        txConfirmed: () => {
           return `Button was pushed`
         }
       }
-      ) 
+      )
     })
 
   async function getInfo () {

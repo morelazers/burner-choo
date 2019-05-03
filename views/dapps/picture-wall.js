@@ -7,7 +7,11 @@ const QRCode = require('qrcode')
 const TITLE = 'PEASANT'
 
 module.exports = (state, emit) => {
-  if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
+  if (state.title !== TITLE) {
+    emit(state.events.DOMTITLECHANGE, TITLE)
+    emit('pictureWall.navigate')
+    console.log(TITLE)
+  }
 
   let pictureWall = state.dapps.pictureWall
 

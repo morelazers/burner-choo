@@ -20,9 +20,9 @@ function store (state, emitter) {
 
   // the initial config for your dapp
   state.vip = {
-    // CONTRACT_ADDRESS: '0x401F73858c0D1dEfFeB94328952Ec412AC37ED64', // XDAI
+    CONTRACT_ADDRESS: '0xea8896caf3eb20c37eea22c8c6218c7c4ee6496a', // XDAI
     // CONTRACT_ADDRESS: '0x842E889a5c4F9B018157f857bA0c3953Cf3f00BF', // LOCAL
-    CONTRACT_ADDRESS: '0xec2e3eaee6f179eb66834f76b05f94dde4bb38db', // GOERLI
+    // CONTRACT_ADDRESS: '0xec2e3eaee6f179eb66834f76b05f94dde4bb38db', // GOERLI
     list: [],
     selected: null,
     bottomText: DEFAULT_BOTTOM_TEXT,
