@@ -4,8 +4,9 @@ const css = require('sheetify')
 const TITLE = 'KING'
 
 module.exports = (state, emit) => {
-  if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
-
+  if (state.title !== TITLE) {
+    emit(state.events.DOMTITLECHANGE, TITLE)
+  }
   const container = css`
   .push-button {
     width: 50%;
@@ -51,18 +52,26 @@ module.exports = (state, emit) => {
   }
   `
 
-  if (state.dapps.king.requested) {
-    if (state.dapps.king.waiting) {
-      return waitingView(state, emit)
-    } else {
+  console.log(`king view`)
+
+  if (state.dapps.king.waiting) {
+    console.log(`waiting`)
+    return waitingView(state, emit)
+  } else {
+    if (!state.dapps.king.vacant) {
+      console.log(`remaining ${state.dapps.king.remaining}`)
       if (state.wallet.address.toLowerCase() === state.dapps.king.king.toLowerCase()) {
+        console.log(`king`)
         return kingResultsView(state, emit)
       } else {
+        console.log(`nonking`)
         return nonKingResultsView(state, emit)
       }      
+    } else {
+      console.log(`initial view`)
+      return initialView(state, emit)
+  
     }
-  } else {
-    return initialView(state, emit)
   }
 }
 
@@ -74,13 +83,9 @@ function initialView (state, emit) {
   <section class="flex flex-column justify-around items-center pa5">
   <div class="f1">Chain of Thrones</div>
   <div class="f3">
-  Claim the throne and hold it for 30 minutes.
-  If no one else claims the throne then the prize will be yours.
+  The throne is empty, hold it for 300 seconds to claim the prize.
   </div>
-  
-  <div class ="f2">
-    Prize: ${state.CURRENCY_SYMBOL}${state.dapps.king.prize.toLocaleString()}
-  </div>
+    
   <img class="push-button" src="/assets/dapps/king/throne.png" onclick=${handleButtonPush} />
   <div class="actions">
     <button
@@ -103,7 +108,7 @@ function waitingView (state, emit) {
   return html`
   <section class="flex flex-column justify-around items-center pa5">
   <div class="f1">Chain of Thrones</div>
-  <div class="f2">Waiting to claim the throne</div>
+  <div class="f2">Claiming the throne</div>
   <img class="push-button" src="/assets/dapps/king/throne.png" />
   
 </section>
@@ -116,7 +121,9 @@ function kingResultsView (state, emit) {
   return html`
   <section class="flex flex-column justify-around items-center pa5">
   <div class="f1">Chain of Thrones</div>
-  <div class="f2">You sit in the Chain of Thrones</div>
+  <div class="f3">You sit in the Chain of Thrones</div>
+  <div class="f3">Hold for ${state.dapps.king.remainingSeconds} seconds to win</div>
+  <div class="f3">Prize: ${state.CURRENCY_SYMBOL}${state.dapps.king.prize.toLocaleString()}</div>
   <img class="push-button" src="/assets/dapps/king/throne.png" />
   <div class="actions">
     <a href="/dapps">BACK</a>
@@ -131,6 +138,8 @@ function nonKingResultsView (state, emit) {
   <section class="flex flex-column justify-around items-center pa5">
   <div class="f1">Chain of Thrones</div>
   <div class="f2">Someone else sits in the Chain of Thrones</div>
+  <div class="f2">They win in ${state.dapps.king.remainingSeconds}</div>
+  <div class="f2">Prize: ${state.CURRENCY_SYMBOL}${state.dapps.king.prize.toLocaleString()}</div>
   <img class="push-button" src="/assets/dapps/king/throne.png" />
   <div class="actions">
     <button
@@ -147,3 +156,5 @@ function nonKingResultsView (state, emit) {
     emit('king.pay')
   }
 }
+
+

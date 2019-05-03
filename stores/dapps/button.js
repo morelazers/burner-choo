@@ -56,7 +56,7 @@ function store (state, emitter) {
   async function getInfo () {
       const pushes = await button.contract.pushes();
       button.pushes = pushes.toNumber();    
-      console.log(`pushes ${button.pushes}`)
+      console.log(`Pushed ${button.pushes}`)
   }
 
 }
