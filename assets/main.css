@@ -37,7 +37,8 @@ a:hover,
 a:active,
 button:hover,
 button:active,
-button:focus {
+button:focus,
+button.active {
   background: #A7E4AE;
   color: #2A333E !important;
   border-style: hidden;

@@ -6,7 +6,7 @@ const fart = require('fart')
 const abi = require('../../contracts/poop.abi')
 
 const DEFAULT_STATE = {
-  CONTRACT_ADDRESS: '0x867c18b017d31354c4716748a90c628a9813ccb0',
+  CONTRACT_ADDRESS: '0x2f5b407ad9c079bc61e49a06d8af1dcb1e53dd96',
   price: 10,
   farting: false
 }

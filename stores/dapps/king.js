@@ -22,7 +22,7 @@ function store (state, emitter) {
 
   // create your contract instance
   king.contract = new ethers.Contract(king.CONTRACT_ADDRESS, abi, state.provider)
-  
+
   // bind event listenerd
   king.contract.on(king.contract.filters.NewKing(), (newKing) => {
     king.king = newKing;
@@ -47,7 +47,7 @@ function store (state, emitter) {
       "0x0",
       {
         txSent: () => `Claiming the throne`,
-        txConfirmedClient: () => {
+        txConfirmed: () => {
           emit('king.crowned')
           return `Crowned`
         }
@@ -57,7 +57,7 @@ function store (state, emitter) {
 
   async function getInfo () {
     const prize = await king.contract.prize();
-    king.prize = prize.toNumber();    
+    king.prize = prize.toNumber();
     console.log(`prize ${king.prize}`)
   }
 

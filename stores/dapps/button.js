@@ -46,16 +46,16 @@ function store (state, emitter) {
       "0x0",
       {
         txSent: () => `Pushing the button`,
-        txConfirmedClient: () => {
+        txConfirmed: () => {
           return `Button was pushed`
         }
       }
-      ) 
+      )
     })
 
   async function getInfo () {
       const pushes = await button.contract.pushes();
-      button.pushes = pushes.toNumber();    
+      button.pushes = pushes.toNumber();
       console.log(`pushes ${button.pushes}`)
   }
 

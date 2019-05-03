@@ -137,7 +137,7 @@ const nomenclature = {
 nomenclature.init()
 
 const DEFAULT_STATE = {
-  CONTRACT_ADDRESS: '0x3bf065495b8dab9914a970831bca88741027bdff',
+  CONTRACT_ADDRESS: '0xa89be71c7830a1a5e4e8256b3d258a393e871ccd',
   COURSE_LENGTH: 50,
   balance: 0,
   enterRace: -1,
@@ -155,7 +155,8 @@ const DEFAULT_STATE = {
   boatSlugs: ['small', 'med', 'big'],
   weatherSlugs: ['rain', 'wind', 'sun'],
   entryPrice: -1,
-  contract: null
+  contract: null,
+  tx: false
 }
 
 function store (state, emitter) {
@@ -164,7 +165,8 @@ function store (state, emitter) {
   state.dapps.regatta = Object.assign({}, DEFAULT_STATE)
 
   let regatta = state.dapps.regatta
-  bindListeners()
+  // bindListeners()
+  refreshContracts()
   getBalance()
 
   //race states:
@@ -194,6 +196,7 @@ function store (state, emitter) {
 
   emitter.on('regatta.navigate', () => {
     emitter.emit('regatta.clear')
+    startRefresh()
   })
 
   emitter.on('regatta.cancel', () => {
@@ -255,13 +258,17 @@ function store (state, emitter) {
     emitter.emit('render')
   })
 
+  emitter.on('regatta.plunder', () => {
+    plunder()
+  })
+
   async function enterRace () {
     const progress = await regatta.contract.get_progress()
     const bytes = ethers.utils.defaultAbiCoder.encode(
       ['uint256', 'uint8', 'uint8', 'bool'],
       [progress.block_finish, regatta.chosenBoat, regatta.chosenWeather, regatta.squidRepellent]
     )
-    // console.log(regatta.status)
+    // console.log(regatta.status)e
     if (regatta.status === 'waiting' || regatta.status === 'starting' || regatta.status === 'finished') {
       emitter.emit(
         'wallet.sendTokens',
@@ -270,7 +277,7 @@ function store (state, emitter) {
         bytes,
         {
           txSent: () => `Entering for ${state.CURRENCY_SYMBOL}${regatta.entryPrice}`,
-          txConfirmed: () => `Let's go!`,
+          txConfirmed: () => `Let's go, ${regatta.myName}`,
           txError: () => `Hm, wait for the next race`
         }
       )
@@ -280,10 +287,18 @@ function store (state, emitter) {
   }
 
   async function getBalance () {
-    const bal = await regatta.contract.get_balance()
+    const bal = await regatta.contract.get_balance(state.wallet.address)
     // console.log(bal)
     regatta.myBalance = bal.toNumber()
-    // console.log(regatta.myBalance)
+    console.log(`My regatta balance is: ${regatta.myBalance}`)
+    // if (regatta.tx === false) {
+      // const tx = regatta.contract.grab_gold()
+      // regatta.tx = true
+      // console.log(tx)
+    // }
+    // const tx = regatta.contract.grab_gold()
+    // console.log(tx)
+    // console.log(await tx)
   }
 
   async function getProgress () {
@@ -339,17 +354,28 @@ function store (state, emitter) {
   }
 
   async function plunder () {
-    const tx = await regatta.contract.grab_gold()
-    console.log(tx)
+    const tx = regatta.contract.grab_gold()
+    let dismiss = state.assist.notify('pending', `Grabbin yer booty...`, -1)
+    tx.then(async (r) => {
+      let waitFunc = r.wait()
+      await r.wait()
+      console.log(`Tx complete! Dismissing Assist notification`)
+      dismiss()
+      // state.assist.notify('success', txMessages.txConfirmed())
+    })
+    // console.log(tx)
+  }
+
+  function refreshContracts () {
+    regatta.contract = new ethers.Contract(regatta.CONTRACT_ADDRESS, abi, state.provider)
+    regatta.contract = regatta.contract.connect(state.wallet.burner)
   }
 
   function bindListeners () {
-    regatta.contract = new ethers.Contract(regatta.CONTRACT_ADDRESS, abi, state.provider)
+    refreshContracts()
     regatta.contract.on(regatta.contract.filters.CashOut(), (addr) => {
-      console.log('-- CASH OUT --')
-      console.log({addr})
-      if (addr.toLowerCase() === state.wallet.address.toLowerCase()) {
-        state.assist.notify('success', `Regatta winnings claimed`)
+      if (addr.toLowerCase() !== state.wallet.address.toLowerCase()) {
+        state.assist.notify('success', `Someone won the Regatta`)
       }
     })
     regatta.contract.on(regatta.contract.filters.Enter(), (_, addr) => {
@@ -362,20 +388,35 @@ function store (state, emitter) {
       console.log('-- DECLARE --')
     })
 
-    regatta.contract.on(regatta.contract.filters.Finish(), (race, block, judge, paid, finish, winners) => {
+    regatta.contract.on(regatta.contract.filters.Finish(), async (race, block, judge) => {
       console.log('-- FINISH --')
-      console.log({race})
-      console.log({block})
-      console.log({judge})
-      console.log({paid})
-      console.log({finish})
-      console.log({winners})
+
+      console.log(`Paid ${paid.toNumber()} to ${judge}`)
+
+      console.log(`We are ${state.wallet.address}`)
+      console.log(`Are we the judge? ${state.wallet.address.toLowerCase() === judge.toLowerCase()}`)
+      console.log(regatta.contract)
+      const balance = await regatta.contract.get_balance.call()
+      console.log(`Our balance is: ${balance.toNumber()}`)
+      regatta.myBalance = balance.toNumber()
+
+      // alert('-- FINISH --')
+      // alert(`Paid ${paid.toNumber()} to ${judge}`)
+      // alert(`We are ${state.wallet.address}`)
+      // alert(`Are we the judge? ${state.wallet.address.toLowerCase() === judge.toLowerCase()}`)
+      // alert(JSON.stringify(regatta.contract))
+      // alert(JSON.stringify(balance))
+      // alert(`Our balance is: ${balance.toNumber()}`)
+
     })
+    regatta.myName = nomenclature.generate(state.wallet.address)
+  }
+
+  function startRefresh () {
     regatta.refreshInterval = setInterval(() => {
       getProgress()
       getBalance()
     }, 1000)
-    regatta.myName = nomenclature.generate(state.wallet.address)
   }
 
 }

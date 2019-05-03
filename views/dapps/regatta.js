@@ -13,7 +13,7 @@ module.exports = (state, emit) => {
 
   const container = css`
     .hidden {
-      display: none;
+      display: none !important;
     }
     .pixelate {
       image-rendering: pixelated;
@@ -40,6 +40,7 @@ module.exports = (state, emit) => {
   }
 
   function enterRace () {
+    const plunderButton = html`<div class="actions flex flex-column items-center f2"><button class="active" onclick=${() => emit('regatta.plunder')}>PLUNDER ${state.CURRENCY_SYMBOL}${regatta.myBalance}</button></div>`
     return html`
       <section class="flex flex-column justify-around items-center pa4 pt5">
       <div class='flex items-center flex-column'>
@@ -50,9 +51,13 @@ module.exports = (state, emit) => {
         <div class="actions flex flex-column tc w-100">
           <a onclick=${() => {
             if (canEnter) emit('regatta.enter')
-          }}>${canEnter ? 'ENTER' : 'LOADING'}</a>
-          <a onclick=${() => emit('replaceState', '/dapps')}>BACK</a>
+          }}>${canEnter ? 'ENTER' : 'HOLD ON'}</a>
+          <a onclick=${() => {
+            emit('regatta.clear')
+            emit('replaceState', '/dapps')
+          }}>BACK</a>
         </div>
+        ${regatta.myBalance ? plunderButton : ''}
       </section>
     `
   }
@@ -133,7 +138,7 @@ module.exports = (state, emit) => {
   function race () {
 
     const cheerOn = raw(`<div class="f2">Nice work, time to cheer on your <span class="underline">${regatta.boatNames[regatta.chosenBoat]}</span> with <span class="underline">${regatta.weatherNames[regatta.chosenWeather]}</span>, ${regatta.myName}</div>`)
-    const raceOver = raw(`<div class="f2">Wow, that was a close one!</div>`)
+    const plunderButton = html`<div class="actions flex flex-column items-center f2"><button class="active" onclick=${() => emit('regatta.plunder')}>PLUNDER ${state.CURRENCY_SYMBOL}${regatta.myBalance}</button></div>`
 
     return html`
       <section class="flex flex-column justify-around items-center pa4 pt5">
@@ -143,6 +148,7 @@ module.exports = (state, emit) => {
         <div class="actions">
           <a onclick=${() => emit('regatta.cancel')}>BACK</a>
         </div>
+        ${regatta.myBalance ? plunderButton : ''}
       </section>
     `
   }

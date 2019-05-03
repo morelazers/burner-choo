@@ -1,5 +1,38 @@
 module.exports = [
 	{
+		"constant": true,
+		"inputs": [],
+		"name": "get_weather",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "punter",
+				"type": "address"
+			}
+		],
+		"name": "get_balance",
+		"outputs": [
+			{
+				"name": "balance",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
 		"constant": false,
 		"inputs": [
 			{
@@ -23,17 +56,25 @@ module.exports = [
 		"type": "function"
 	},
 	{
-		"constant": false,
-		"inputs": [
+		"constant": true,
+		"inputs": [],
+		"name": "get_times",
+		"outputs": [
 			{
-				"name": "new_beard",
-				"type": "address"
+				"name": "block_start",
+				"type": "uint256"
+			},
+			{
+				"name": "block_finish",
+				"type": "uint256"
+			},
+			{
+				"name": "block_current",
+				"type": "uint256"
 			}
 		],
-		"name": "mutiny",
-		"outputs": [],
 		"payable": false,
-		"stateMutability": "nonpayable",
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -48,6 +89,48 @@ module.exports = [
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "get_race_number",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "get_boat_count",
+		"outputs": [
+			{
+				"name": "boat_count",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "MODULO_SQUID",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
 		"type": "function"
 	},
 	{
@@ -67,6 +150,105 @@ module.exports = [
 			}
 		],
 		"name": "tokenFallback",
+		"outputs": [],
+		"payable": false,
+		"stateMutability": "nonpayable",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "get_pool",
+		"outputs": [
+			{
+				"name": "",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "get_progress",
+		"outputs": [
+			{
+				"name": "progress",
+				"type": "uint256[10]"
+			},
+			{
+				"name": "block_finish",
+				"type": "uint256"
+			},
+			{
+				"name": "weather",
+				"type": "uint256"
+			},
+			{
+				"name": "squid",
+				"type": "uint256"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [],
+		"name": "get_boats",
+		"outputs": [
+			{
+				"name": "owner",
+				"type": "address[10]"
+			},
+			{
+				"name": "class",
+				"type": "uint8[10]"
+			},
+			{
+				"name": "variant",
+				"type": "uint8[10]"
+			},
+			{
+				"name": "repellent",
+				"type": "bool[10]"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": true,
+		"inputs": [
+			{
+				"name": "boat",
+				"type": "address"
+			}
+		],
+		"name": "get_name",
+		"outputs": [
+			{
+				"name": "name",
+				"type": "bytes32"
+			}
+		],
+		"payable": false,
+		"stateMutability": "view",
+		"type": "function"
+	},
+	{
+		"constant": false,
+		"inputs": [
+			{
+				"name": "new_beard",
+				"type": "address"
+			}
+		],
+		"name": "mutiny",
 		"outputs": [],
 		"payable": false,
 		"stateMutability": "nonpayable",
@@ -161,21 +343,6 @@ module.exports = [
 				"indexed": false,
 				"name": "judge",
 				"type": "address"
-			},
-			{
-				"indexed": false,
-				"name": "paid",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "finish",
-				"type": "uint256"
-			},
-			{
-				"indexed": false,
-				"name": "winners",
-				"type": "uint256"
 			}
 		],
 		"name": "Finish",
@@ -209,182 +376,5 @@ module.exports = [
 		],
 		"name": "CashOut",
 		"type": "event"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "get_balance",
-		"outputs": [
-			{
-				"name": "balance",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "get_boat_count",
-		"outputs": [
-			{
-				"name": "boat_count",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "get_boats",
-		"outputs": [
-			{
-				"name": "owner",
-				"type": "address[10]"
-			},
-			{
-				"name": "class",
-				"type": "uint8[10]"
-			},
-			{
-				"name": "variant",
-				"type": "uint8[10]"
-			},
-			{
-				"name": "repellent",
-				"type": "bool[10]"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [
-			{
-				"name": "boat",
-				"type": "address"
-			}
-		],
-		"name": "get_name",
-		"outputs": [
-			{
-				"name": "name",
-				"type": "bytes32"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "get_pool",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "get_progress",
-		"outputs": [
-			{
-				"name": "progress",
-				"type": "uint256[10]"
-			},
-			{
-				"name": "block_finish",
-				"type": "uint256"
-			},
-			{
-				"name": "weather",
-				"type": "uint256"
-			},
-			{
-				"name": "squid",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "get_race_number",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "get_times",
-		"outputs": [
-			{
-				"name": "block_start",
-				"type": "uint256"
-			},
-			{
-				"name": "block_finish",
-				"type": "uint256"
-			},
-			{
-				"name": "block_current",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "get_weather",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
-	},
-	{
-		"constant": true,
-		"inputs": [],
-		"name": "MODULO_SQUID",
-		"outputs": [
-			{
-				"name": "",
-				"type": "uint256"
-			}
-		],
-		"payable": false,
-		"stateMutability": "view",
-		"type": "function"
 	}
 ]
