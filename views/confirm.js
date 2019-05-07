@@ -1,12 +1,9 @@
 const html = require('choo/html')
-const css = require('sheetify')
 
 const TITLE = 'CONFIRM'
 
 module.exports = (state, emit) => {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
-
-  console.log(state.wallet)
 
   if (state.wallet.nextTx.price === -1) {
     emit('replaceState', '/')

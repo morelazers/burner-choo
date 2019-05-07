@@ -32,6 +32,7 @@ module.exports = (state, emit) => {
   const synth = new Tone.Synth().toMaster()
   synth.volume.value = 0
 
+  // looking back at this code gives me chills, sorry
   return html`
     <section class="flex flex-column pa0 items-center tc justify-between">
       <div class="flex tc f-subheadline pa5 items-center">

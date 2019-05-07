@@ -63,7 +63,6 @@ function store (state, emitter) {
     }
     if (state.wallet.tokenBalance >= pictureWall.IMAGE_PRICE) {
       // cool we can purchase the image
-      console.log(`Purchasing ${hash}`)
       const seller = pictureWall.images[hash].seller
       emitter.emit(
         'wallet.sendTokens',
@@ -75,7 +74,7 @@ function store (state, emitter) {
           txConfirmed: () => {
             // the most insecure buying process ever
             fetch(`https://xdai-ipfs.flexdapps.com/${hash}/buy/${state.wallet.address.toLowerCase()}`).then(res => {
-              console.log(res)
+              // console.log(res)
             })
             return `Unlocked!`
           }

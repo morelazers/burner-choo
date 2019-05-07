@@ -7,8 +7,8 @@ module.exports = function (state, emitter) {
     read: false,
     reading: false,
     activeCard: -1,
-    CONTRACT_ADDRESS: '0x42957aefce4d04636427513239eac22ce0ecb371',
-    price: 1000,
+    CONTRACT_ADDRESS: '0x30a0cbdaafa186fe94db1cdfa1faa28a43f507a3',
+    price: 2000,
     cards: [
       'The Fool',
       'The Magician',
@@ -69,33 +69,29 @@ module.exports = function (state, emitter) {
       `Justice grips gilded scales representing mercy and punishment. While the judicial system can be fooled, divine justice can never be escaped. Harmonious interactions with the legal system may be bestowed upon you. Alternatively, the opposite.`,
       `The Sage of solitude. His lantern navigates his narrow, dark path through the Unknown. He seeks enlightenment as he does not know his way yet. Be patient. Listen to your elders. Reevaluate your ignorance and utilise your past experiences.`,
       `Cyclic inevitability of destiny and chance. Prepare for a change in your circumstances. Know the wheel will keep turning, despite anything you do.`,
-      `	Strength as a signifier of mastery. In principle, your force and energy reserves can counter any attack, pain or danger. Determination, skill and reliability is required.`,
+      `Strength as a signifier of mastery. In principle, your force and energy reserves can counter any attack, pain or danger. Determination, skill and reliability is required.`,
       `Surrender to your newfound, perhaps subversive perspective or change in circumstances. Contemplate your sacrifice. Care for your body. `,
-      `	Transformation is inevitable. A harsh outcome may await you. No one is immune. What is durable will last longest, what is lost is cleared for new beginnings.`,
+      `Transformation is inevitable. A harsh outcome may await you. No one is immune. What is durable will last longest, what is lost is cleared for new beginnings.`,
       `Alchemical control of volatile factors results in a successful conclusion. Restore your self-control and adaptability. Alternatively, corruption and undesirable combinations of events.`,
-      `	Seduced by the Devil’s hands, you grip for physical and material pleasures. Consistent hedonism may result in destruction. Alternatively, release from fear, restraint and temptation.`,
-      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
-      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
-      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
-      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
-      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
-      `Creation of Life. You are being offered a foundation of abundance, security and protection. A business, idea, love or activity has germinated.  This is your foundation to future progress, positive change and productivity.`,
+      `Seduced by the Devil’s hands, you grip for physical and material pleasures. Consistent hedonism may result in destruction. Alternatively, release from fear, restraint and temptation.`,
+      `Unstoppable destruction and chaos emerge unexpectedly. Rebuild and refocus.`,
+      `In your own reverie, you look up towards a sparkling outcome. Hope fulfils you, and you keep dreaming. Consciousness and unconsciousness are poured into this dream.`,
+      `Illusion absorbs you, and you cannot help but believe what you see. Do not be deceived, you are warned.`,
+      `Friendship, happiness and salient rays. Positive outcomes to your struggles are promised. Your conscious mind and golden light heals the situation.`,
+      `Evolution, the last judgment. Renewal is signified. An absolute end can only invoke a tremendous beginning. If in doubt, look at your history for clarity.`,
+      `Joy attained in the body, of the soul's intoxication in the Earthly paradise. The World represents what is truly desired. An end to a cycle has occurred. Fulfilment and success of relations, projects. Alternatively, delayed plans and stagnation. `,
     ],
     myReading: [],
     eras: ['Past', 'Present', 'Future']
   }
 
-  // an address i know has a reading
-  // 0x9f3ae1d603320980Bd7FD79EB6dF981d8A2A0e24
-
   const address = state.wallet.address
-  // const address = '0x9f3ae1d603320980Bd7FD79EB6dF981d8A2A0e24'
 
   // create your contract instance
   state.dapps.tarot.contract = new ethers.Contract(state.dapps.tarot.CONTRACT_ADDRESS, abi, state.provider)
   state.dapps.tarot.contract = state.dapps.tarot.contract.connect(state.wallet.burner)
 
-  // bind event listenerd
+  // bind event listeners
   state.dapps.tarot.contract.on(state.dapps.tarot.contract.filters.Reading(null, null), (soul, card1, card2, card3) => {
     if (address.toLowerCase() === soul.toLowerCase()) {
       state.dapps.tarot.read = true
@@ -124,7 +120,7 @@ module.exports = function (state, emitter) {
     if (state.wallet.tokenBalance >= state.dapps.tarot.price) {
       state.dapps.tarot.reading = true
       emitter.emit('render') // re-render so we can show the loading animation
-      emit(
+      emitter.emit(
         'wallet.sendTokens',
         state.dapps.tarot.CONTRACT_ADDRESS,
         state.dapps.tarot.price,

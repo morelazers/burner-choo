@@ -34,22 +34,14 @@ async function store (state, emitter) {
   state.wallet.address = state.wallet.burner.signingKey.address // for convenience
   requestEth() // @todo this is hardcoded, remove later
 
-  // -- PARITY-based nodes
-  state.web3.eth.personal.newParityAccount(state.wallet.burner.signingKey.privateKey, 'n0t_a_n3w_p4ssw0rd_at_4ll')
-
-  // -- GETH-based nodes (how annoying is this)
-  // some other web3 call goes here
-
+  // set this such that other parts of our application can refresh the wallet UI
   state.wallet.refresh = () => {
     for (let refreshFunc of state.wallet.refreshFuncs) {
       refreshFunc()
     }
   }
 
-
-
   // @todo - rewrite this to use web3 and get rid of the ethers.js stuff
-  state.wallet.tokenContract = new state.web3.eth.Contract(abi, state.TOKEN_ADDRESS)
   state.wallet.tokenContractEthers = new ethers.Contract(state.TOKEN_ADDRESS, abi, state.provider)
   state.wallet.tokenContractEthers = state.wallet.tokenContractEthers.connect(state.wallet.burner)
   state.wallet.tokenContractEthers.on(state.wallet.tokenContractEthers.filters.Transfer(null, null), (f, t, v) => {
@@ -66,8 +58,8 @@ async function store (state, emitter) {
 
 
   // a whole bunch of events for you to configure the 'confirm' screen in the
-  // wallet. YOU DON'T HAVE TO USE THE CONFIRM SCREEN, this is just a handy little
-  // set of helpers if you do
+  // wallet. YOU DON'T HAVE TO USE THE CONFIRM SCREEN, this is just a handy
+  // little set of helpers if you do
   // @todo show how it looks when you set all these things
   emitter.on('nextTx.setBeforeParams', (s) => state.wallet.nextTx.beforeParams = s)
   emitter.on('nextTx.setPrice', (s) => state.wallet.nextTx.price = s)
@@ -89,20 +81,13 @@ async function store (state, emitter) {
     if (v > state.wallet.tokenBalance) {
       return state.assist.notify('error', `Balance too low`)
     }
-    const hash = sendTokenTransaction(t, v, b, m)
-    console.log({hash})
+    sendTokenTransaction(t, v, b, m)
     emitter.emit('nextTx.sent')
   })
 
   state.wallet.refreshFuncs.push(setTokenBalance, getEthbalance)
 
-  emitter.on('DOMContentLoaded', function() {
-    console.log('--DOM LOADED--')
-    // connectToSocket()
-  })
-
-  // function which gets the balance of the user in a token (currently hardcoded)
-  // then renders an update
+  // function which gets the balance of the user in a token then renders an update
   async function setTokenBalance () {
     try {
       state.wallet.tokenBalance = await getTokenBalance(state.wallet.tokenContractEthers, state.wallet.address)
@@ -116,48 +101,19 @@ async function store (state, emitter) {
   // uses the standard token tx messages unless you pass in something as messages
   async function sendTokenTransaction (to, value, bytes = '0x', messages = {}) {
     const txMessages = Object.assign(getDefaultTokenMessages(value), messages)
-    // const c = state.assist.Contract(state.wallet.tokenContract)
     const c = state.wallet.tokenContractEthers.connect(state.wallet.burner)
-    console.log(`Sending ${value} tokens to ${to}`)
     const nonce = await state.provider.getTransactionCount(state.wallet.address)
-    console.log(`Account nonce: ${nonce}`)
-    // console.log('Unlocking account')
-    // await unlockAccount()
-    // console.log('Account unlocked, wrapping contract')
-    console.log(c)
-    console.log(txMessages)
     const tx = c['transfer(address,uint256,bytes)'](to, value, bytes, {
-    //   // from: state.wallet.address,
       gasPrice: ethers.utils.parseUnits('1', 'gwei'),
       gasLimit: ethers.utils.bigNumberify(500000).toHexString(),
       nonce: nonce
     })
-    console.log(`Sent transaction with hash: ${tx.hash}`)
     let dismiss = state.assist.notify('pending', txMessages.txSent(), -1)
-    console.log(`Assist pending notification: ${txMessages.txSent()}`)
-    console.log(tx)
     tx.then(async (r) => {
-      console.log({r})
-      let waitFunc = r.wait()
-      console.log({waitFunc})
-      await waitFunc
-      console.log(`Tx complete! Dismissing Assist notification`)
+      await r.wait()
       dismiss()
-      console.log(`Creating Assist success notification: ${txMessages.txConfirmed()}`)
       state.assist.notify('success', txMessages.txConfirmed())
     })
-
-    /**
-     * , {
-      messages: txMessages
-    }
-     */
-
-  }
-
-  // unlocks the account for a single transaction
-  async function unlockAccount() {
-    return state.web3.eth.personal.unlockAccount(state.wallet.address, 'have_fun_kids_______8', null)
   }
 
   // gets the default token sending messages (should allow tokens to set a
@@ -179,15 +135,11 @@ async function store (state, emitter) {
       }).then((e, res) => {
         const killPending = state.assist.notify('pending', `Setting you up`, -1)
         state.provider.on(state.wallet.address, (b) => {
-          console.log(b)
-          // if (b.toNumber() !== 0) {
-            killPending()
-            state.assist.notify('success', `Good to go`)
-            state.wallet.refresh()
-            state.provider.removeListener(state.wallet.address)
-          // }
+          killPending()
+          state.assist.notify('success', `Good to go`)
+          state.wallet.refresh()
+          state.provider.removeListener(state.wallet.address)
         })
-        console.log(e, res)
         return res
       })
     } else {
@@ -199,40 +151,14 @@ async function store (state, emitter) {
     state.wallet.ethBalance = ethers.utils.formatEther(await state.provider.getBalance(state.wallet.address))
   }
 
-  // function connectToSocket () {
-  //   // LET'S TRY SOME FUNKY SHIT
-  //   const connection = new WebSocket(state.EVENT_SERVER)
-  //   connection.onopen = () => {
-  //     connection.send(state.wallet.address)
-  //   }
-  //   connection.onmessage = m => {
-  //     const msg = JSON.parse(m.data)
-  //     console.log('-- NEW EVENT SERVER MESSAGE --')
-  //     console.log(msg)
-  //     if (msg.type === 'BALANCE_UPDATE') {
-  //       if (msg.value > state.wallet.tokenBalance) {
-  //         // balance is greater now than before
-  //         const sent = msg.value - state.wallet.tokenBalance
-  //         state.assist.notify('txConfirmedClient', () => `Received ${state.CURRENCY_SYMBOL}${sent.toLocaleString()}`)
-  //       }
-  //       // we already have a 'sent' notification, so there's no need to add one here
-  //       state.wallet.refresh()
-  //     }
-  //   }
-  // }
-
 }
 
 // gets the balance of a given user on a given token contract
 async function getTokenBalance (contract, address) {
   try {
-    console.log('-- GETTING BALANCE --')
     const b = await contract.balanceOf(address)
-    console.log(`-- BALANCE: ${b} --`)
     return b.toNumber()
   } catch (e) {
-    console.log('-- ERROR --')
-    console.log(e)
     return -1
   }
 }
@@ -247,6 +173,5 @@ function getWallet (provider) {
     localStorage.setItem('wallet', JSON.stringify(w))
     w = w.connect(provider)
   }
-  console.log({w})
   return w
 }

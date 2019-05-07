@@ -1,13 +1,9 @@
 const html = require('choo/html')
-const css = require('sheetify')
 
 const TITLE = 'POOP'
 
 module.exports = (state, emit) => {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
-
-  const container = css`
-  `
 
   let poop = state.dapps.poop
 

@@ -5,117 +5,154 @@ const abi = require('../../contracts/REGATTA.abi')
 
 const nomenclature = {
   titles: [
-      "HMS",
-      "RMS",
-      "SS",
-      "Good Ship",
-      "Mighty",
-      "HMAS",
-      "MS",
-      "Old",
-      "New",
-      "Cursed",
-      "Leaky",
-      "Steamboat",
-      "Princess",
-      "Spirit of",
+    "HMS",
+    "RMS",
+    "SS",
+    "Good Ship",
+    "Mighty",
+    "HMAS",
+    "MS",
+    "Old",
+    "New",
+    "Cursed",
+    "Leaky",
+    "Steamboat",
+    "Princess",
+    "Spirit of",
   ],
   names: [
-      "Shippington",
-      "Boater",
-      "Sinky",
-      "Floater",
-      "Shiply",
-      "Zoomyzoom",
-      "Gofastplease",
-      "Hope",
-      "Shame",
-      "Watermelon",
-      "Fireman",
-      "Sea-you-later",
-      "Pirate",
-      "Ahoy",
-      "Cheeseburger",
-      "Bananas",
-      "Spoonboy",
-      "Internet",
-      "Ethereum",
-      "Pun-name",
-      "Time Traveller",
-      "Bean Factory",
-      "I am sad",
-      "Hoot-hoot",
-      "Jon Snow",
-      "Bounty",
-      "Endeavour",
-      "Tony Abbott",
-      "Spiderman",
-      "Scissorhands",
-      "Lizardfinger",
-      "Iron Fish",
-      "Sail Gently Into That Good Night",
-      "Hank Scorpio",
-      "Titanic",
-      "Gary Dent",
-      "Safety",
-      "Avengers",
-      "Sandbar",
-      "Chocolate",
-      "Orangey",
-      "Disappointment",
-      "Untitled",
-      "Fingerbun",
-      "Dingo",
-      "Kangaroo",
-      "Wallaby",
-      "Wombat",
-      "Rosella",
-      "Tim-Tam",
-      "Lamington",
-      "Vegemite",
-      "Pavlova",
-      "Crikey!",
-      "Saddlebags",
-      "Emu",
-      "Spoonfed",
-      "Salsa",
-      "Not-a-knife",
-      "Speedy",
-      "Scurvy",
-      "Nemo",
-      "Unsinkable",
-      "Lizardbreath",
-      "Buttercup",
-      "Pinafore",
-      "Foghorn",
-      "Pontypool",
-      "Anne",
-      "MissingNo.",
-      "Beagle",
-      "Smeagol",
-      "Adventure",
-      "Problematic",
-      "Arr Matey",
-      "Queen Anne's Revenge",
-      "Jazz Hands",
-      "Misery",
-      "Spirit",
-      "Hope",
-      "Hopeless",
-      "Lightning",
-      "Thunder",
-      "Bouyancy",
-      "Cymru",
-      "Black Pearl",
-      "Airbender",
-      "Lifeboat",
-      "Seafoam",
-      "Waverunner",
-      "Chastity",
-      "Reason",
-      "Charity",
-      "Longing",
-      "Mystery",
+    "Shippington",
+    "Boater",
+    "Sinky",
+    "Floater",
+    "Shiply",
+    "Zoomyzoom",
+    "Gofastplease",
+    "Hope",
+    "Shame",
+    "Watermelon",
+    "Fireman",
+    "Sea-you-later",
+    "Pirate",
+    "Ahoy",
+    "Cheeseburger",
+    "Bananas",
+    "Spoonboy",
+    "Internet",
+    "Ethereum",
+    "Pun-name",
+    "Time Traveller",
+    "Bean Factory",
+    "I am sad",
+    "Hoot-hoot",
+    "Jon Snow",
+    "Bounty",
+    "Endeavour",
+    "Tony Abbott",
+    "Spiderman",
+    "Scissorhands",
+    "Lizardfinger",
+    "Iron Fish",
+    "Sail Gently Into That Good Night",
+    "Hank Scorpio",
+    "Titanic",
+    "Gary Dent",
+    "Safety",
+    "Avengers",
+    "Sandbar",
+    "Chocolate",
+    "Orangey",
+    "Disappointment",
+    "Untitled",
+    "Fingerbun",
+    "Dingo",
+    "Kangaroo",
+    "Wallaby",
+    "Wombat",
+    "Rosella",
+    "Tim-Tam",
+    "Lamington",
+    "Vegemite",
+    "Pavlova",
+    "Crikey!",
+    "Saddlebags",
+    "Emu",
+    "Spoonfed",
+    "Salsa",
+    "Not-a-knife",
+    "Speedy",
+    "Scurvy",
+    "Nemo",
+    "Unsinkable",
+    "Lizardbreath",
+    "Buttercup",
+    "Pinafore",
+    "Foghorn",
+    "Pontypool",
+    "Anne",
+    "MissingNo.",
+    "Beagle",
+    "Smeagol",
+    "Adventure",
+    "Problematic",
+    "Arr Matey",
+    "Queen Anne's Revenge",
+    "Jazz Hands",
+    "Misery",
+    "Spirit",
+    "Hope",
+    "Hopeless",
+    "Lightning",
+    "Thunder",
+    "Bouyancy",
+    "Cymru",
+    "Black Pearl",
+    "Airbender",
+    "Lifeboat",
+    "Seafoam",
+    "Waverunner",
+    "Chastity",
+    "Reason",
+    "Charity",
+    "Longing",
+    "Mystery",
+    "Vengeance",
+    "Friendly",
+    "Bastard",
+    "Regret",
+    "Remorse",
+    "DeLorean",
+    "McFly",
+    "Short-Round",
+    "Veridian",
+    "Dennis Waterman",
+    "Jupiter Whistles",
+    "Serenity",
+    "Dawn",
+    "Autumn",
+    "Snowflake",
+    "Teardrop",
+    "Glory",
+    "Blunderbus",
+    "Macaw",
+    "Seaweed",
+    "Sneaky",
+    "Serpent",
+    "Boulderdash",
+    "Humbug",
+    "Rascal",
+    "Larakin",
+    "Believer",
+    "Spite",
+    "Favour",
+    "Fortune",
+    "Shanty",
+    "Majesty",
+    "Madness",
+    "Kindness",
+    "Salvation",
+    "Despair",
+    "Curiosity"
   ],
   list: [],
   generate(address){
@@ -137,7 +174,7 @@ const nomenclature = {
 nomenclature.init()
 
 const DEFAULT_STATE = {
-  CONTRACT_ADDRESS: '0xa89be71c7830a1a5e4e8256b3d258a393e871ccd',
+  CONTRACT_ADDRESS: '0x812adb4b14021dd9affabc72da9d38a13bdc92f8',
   COURSE_LENGTH: 50,
   balance: 0,
   enterRace: -1,
@@ -161,38 +198,21 @@ const DEFAULT_STATE = {
 
 function store (state, emitter) {
 
-  // set up the initial state of our dapp
   state.dapps.regatta = Object.assign({}, DEFAULT_STATE)
 
   let regatta = state.dapps.regatta
-  // bindListeners()
   refreshContracts()
   getBalance()
 
-  //race states:
-  //     in frontend/js/Game.js, there is a function that parses times & progress to get these states, you might find it useful
-  //    (from read_race_state(times,progress) )
+  // race states:
   //
-  //  waiting -> only one entrant atm, can enter
-  //  starting -> can still enter,
-  //  starting_now -> too late to enter
-  //  running -> race in progress
-  //  finished -> boat passed finish line, but no tx declaring finished
-  //   declared, -> race finish has been declared, someone can declare new race
+  // waiting -> only one entrant atm, can enter
+  // starting -> can still enter,
+  // starting_now -> too late to enter
+  // running -> race in progress
+  // finished -> boat passed finish line, but no tx declaring finished
+  // declared, -> race finish has been declared, someone can declare new race
   //
-
-
-  /**
-   * just_enter_race requires block_finish from get_progress
-   *
-   * get_times, if (block_start > current block number), can enter
-   *
-   * // get_progress().block_finish != 0 ||
-   * // get_times().block_start > get_times().block_current - 1
-   *
-   *
-   *
-   */
 
   emitter.on('regatta.navigate', () => {
     emitter.emit('regatta.clear')
@@ -268,7 +288,6 @@ function store (state, emitter) {
       ['uint256', 'uint8', 'uint8', 'bool'],
       [progress.block_finish, regatta.chosenBoat, regatta.chosenWeather, regatta.squidRepellent]
     )
-    // console.log(regatta.status)e
     if (regatta.status === 'waiting' || regatta.status === 'starting' || regatta.status === 'finished') {
       emitter.emit(
         'wallet.sendTokens',
@@ -288,17 +307,7 @@ function store (state, emitter) {
 
   async function getBalance () {
     const bal = await regatta.contract.get_balance(state.wallet.address)
-    // console.log(bal)
     regatta.myBalance = bal.toNumber()
-    console.log(`My regatta balance is: ${regatta.myBalance}`)
-    // if (regatta.tx === false) {
-      // const tx = regatta.contract.grab_gold()
-      // regatta.tx = true
-      // console.log(tx)
-    // }
-    // const tx = regatta.contract.grab_gold()
-    // console.log(tx)
-    // console.log(await tx)
   }
 
   async function getProgress () {
@@ -313,11 +322,11 @@ function store (state, emitter) {
   }
 
   function getRaceState (times, progress) {
-      times.block_start = Number(times.block_start);
-      times.block_finish = Number(times.block_finish);
-      times.block_current = Number(times.block_current);
+      times.block_start = Number(times.block_start)
+      times.block_finish = Number(times.block_finish)
+      times.block_current = Number(times.block_current)
 
-      let winners = parseProgress(progress.progress);
+      let winners = parseProgress(progress.progress)
 
       if(times.block_start == 0) {
         regatta.niceStatus = 'Waiting for entrants...'
@@ -357,13 +366,10 @@ function store (state, emitter) {
     const tx = regatta.contract.grab_gold()
     let dismiss = state.assist.notify('pending', `Grabbin yer booty...`, -1)
     tx.then(async (r) => {
-      let waitFunc = r.wait()
       await r.wait()
       console.log(`Tx complete! Dismissing Assist notification`)
       dismiss()
-      // state.assist.notify('success', txMessages.txConfirmed())
     })
-    // console.log(tx)
   }
 
   function refreshContracts () {
@@ -384,30 +390,9 @@ function store (state, emitter) {
       }
     })
 
-    regatta.contract.on(regatta.contract.filters.Declare(), (race) => {
-      console.log('-- DECLARE --')
-    })
-
     regatta.contract.on(regatta.contract.filters.Finish(), async (race, block, judge) => {
-      console.log('-- FINISH --')
-
-      console.log(`Paid ${paid.toNumber()} to ${judge}`)
-
-      console.log(`We are ${state.wallet.address}`)
-      console.log(`Are we the judge? ${state.wallet.address.toLowerCase() === judge.toLowerCase()}`)
-      console.log(regatta.contract)
       const balance = await regatta.contract.get_balance.call()
-      console.log(`Our balance is: ${balance.toNumber()}`)
       regatta.myBalance = balance.toNumber()
-
-      // alert('-- FINISH --')
-      // alert(`Paid ${paid.toNumber()} to ${judge}`)
-      // alert(`We are ${state.wallet.address}`)
-      // alert(`Are we the judge? ${state.wallet.address.toLowerCase() === judge.toLowerCase()}`)
-      // alert(JSON.stringify(regatta.contract))
-      // alert(JSON.stringify(balance))
-      // alert(`Our balance is: ${balance.toNumber()}`)
-
     })
     regatta.myName = nomenclature.generate(state.wallet.address)
   }

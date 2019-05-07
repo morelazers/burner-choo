@@ -1,13 +1,7 @@
 const css = require('sheetify')
 const choo = require('choo')
 const bnc = require('bnc-assist')
-const Web3 = require('web3')
 require('babel-polyfill')
-require('dotenv').config()
-
-const { JSON_RPC_URL, CURRENCY_SYMBOL, TOKEN_ADDRESS } = process.env
-
-const dapps = require('./config')
 
 css('tachyons')
 css('./assets/main.css')
@@ -20,25 +14,14 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.use((state, emitter) => {
-//needs more whitespace
+
   // -- XDAI TEST CONTRACTS --
-  state.JSON_RPC_URL = 'https://xdai.flexdapps.com:7361/'
-  // state.JSON_RPC_URL = 'https://dai.poa.network:7361/'
+  state.JSON_RPC_URL = 'https://dai.poa.network/'
   state.TOKEN_ADDRESS = '0x5eb7e67ec2ce404ebabafed0a79bab10d030c58a'
   state.NETWORK_ID = 100
-  // state.EVENT_SERVER = 'ws://10.2.47.201:9009/'
-
-  // -- KOVAN CONTRACTS --
-  // state.JSON_RPC_URL = 'https://xdai.flexdapps.com/'
-  // state.EVENT_SERVER = 'ws://10.2.47.201:9009/'
-  // state.TOKEN_ADDRESS = '0x6692df992562c701e7eb51255084715cce7bfe59'
-  // state.NETWORK_ID = 42
-
 
   // -- GOERLI CONTRACTS --
   // state.JSON_RPC_URL = 'https://xdai.flexdapps.com:7361/'
-  // state.EVENT_SERVER = 'wss://10.2.47.201:9009/'
-  // state.EVENT_SERVER = 'wss://events.flexdapps.com:9009/'
   // state.TOKEN_ADDRESS = '0xe0728a9d55ebd03bfcc6e9faa59e6dfe96741636'
   // state.NETWORK_ID = 10
 
@@ -48,21 +31,11 @@ app.use((state, emitter) => {
   // state.NETWORK_ID = 5777
 
   state.CURRENCY_SYMBOL = '៛'
-
-  state.web3 = new Web3(state.JSON_RPC_URL)
-  state.web3.eth.extend({
-    property: 'personal',
-    methods: [{
-      name: 'newParityAccount',
-      call: 'parity_newAccountFromSecret',
-      params: 2
-    }]
-  })
   emitter.on('DOMContentLoaded', () => {
     state.assist = bnc.init({
       dappId: '6981d7c2-9e6f-420f-9772-228a8c0d4534',
       networkId: state.NETWORK_ID,
-      web3: state.web3,
+      // web3: state.web3,
       mobileBlocked: false,
       style: {
         darkMode: true,
@@ -112,14 +85,12 @@ app.use((state, emitter) => {
           a#bn-transaction-branding {
             align-self: unset !important;
           }
-
           .bn-status-icon {
             text-align: center;
             width: 20px;
             height: auto;
             background-image: none !important;
           }
-
           .bn-progress .bn-status-icon::after {
             color: #A7E4AE;
             content: "⋮";
@@ -127,21 +98,18 @@ app.use((state, emitter) => {
             position: relative;
             display: inherit;
           }
-
           .bn-complete .bn-status-icon::after {
             color: #A7E4AE;
             content: "✓";
             position: relative;
             display: inherit;
           }
-
           .bn-failed .bn-status-icon::after {
             color: red;
             content: "✕";
             position: relative;
             display: inherit;
           }
-
           @keyframes loading {
             0% {
               content: "⋮";
@@ -174,15 +142,15 @@ app.use(require('./stores/dapps/config'))
 
 // @todo fix
 // for (let dapp of dapps) {
-  //   const path = './stores/dapps/' + dapp
-  //   app.use(require(path))
-  // }
+//   const path = './stores/dapps/' + dapp
+//   app.use(require(path))
+// }
+
 app.use(require('./stores/dapps/vip'))
 app.use(require('./stores/dapps/regatta'))
 app.use(require('./stores/dapps/picture-wall'))
 app.use(require('./stores/dapps/tarot'))
 app.use(require('./stores/dapps/poop'))
-app.use(require('./stores/dapps/button'))
 app.use(require('./stores/dapps/king'))
 
 app.route('/', require('./views/main'))
@@ -197,24 +165,12 @@ app.route('/calculate', require('./views/calculate'))
 // all the extra files - it should probably have a subroute too like /dapps/my-dapp
 // remove these lines if you don't want to have any custom dapps
 app.route('/dapps', require('./views/dapps/index'))
-
-// for some reason this does not work
-// for (let dapp of dapps) {
-  // const path = './views/dapps/' + dapp
-  // app.route(`/${dapp}`, require(path))
-// }
-
 app.route('/dapps/vip', require('./views/dapps/vip'))
 app.route('/dapps/regatta', require('./views/dapps/regatta'))
 app.route('/dapps/picture-wall', require('./views/dapps/picture-wall'))
 app.route('/dapps/tarot', require('./views/dapps/tarot'))
 app.route('/dapps/poop', require('./views/dapps/poop'))
 app.route('/dapps/king', require('./views/dapps/king'))
-app.route('/dapps/button', require('./views/dapps/button'))
 
 const element = app.start()
 document.body.appendChild(element)
-
-// console.log(element)
-
-// module.exports = app.mount('section')

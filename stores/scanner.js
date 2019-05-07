@@ -23,7 +23,6 @@ function store (state, emitter) {
 
 // starts the webcam stream to scan a thing
 function beginScan (cb) {
-  console.log('BEGINNING TO SCAN')
   const video = document.getElementById("video")
   const canvasElement = document.getElementById("canvas")
   const canvas = canvasElement.getContext("2d")
@@ -32,7 +31,6 @@ function beginScan (cb) {
 
   // Use facingMode: environment to attemt to get the front camera on phones
   navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
-    console.log('-- GOT USER MEDIA --')
     streamObj = stream
     video.srcObject = stream
     video.setAttribute("playsinline", true) // required to tell iOS safari we don't want fullscreen
@@ -41,10 +39,7 @@ function beginScan (cb) {
   })
 
   function tick() {
-    console.log('-- TICKING --')
-    console.log({done})
     if (done) {
-      console.log('-- CANCELLING ANIMATION --')
       cancelAnimationFrame(animation)
       return
     }
@@ -70,7 +65,6 @@ function beginScan (cb) {
 }
 
 function endScan () {
-  console.log('-- ENDING SCAN --')
   try {
     cancelAnimationFrame(animation)
     done = true
@@ -79,7 +73,6 @@ function endScan () {
     }
   } catch (e) {
     // stream prob already stopped
-    console.log('!! COULD NOT STOP STREAM !!')
   }
 }
 

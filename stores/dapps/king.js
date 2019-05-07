@@ -5,41 +5,44 @@ const ethers = require('ethers')
 const abi = require('../../contracts/KING.abi')
 
 const DEFAULT_STATE = {
-  CONTRACT_ADDRESS: '0xA1c6F1c705C48847804436c7790bffbEe62E1733',
+  CONTRACT_ADDRESS: '0xC3dE6a71F473aF8F850A465b7E7dAFC6aB6fB24a',
   price: 758,
-  requested: false,
   waiting: false,
-  prize: 0
+  prize: 0,
+  coronation: 0
 }
 
 
 function store (state, emitter) {
 
   // set up the initial state of our dapp
-  state.dapps.king = DEFAULT_STATE
+  state.dapps.king = Object.assign({}, DEFAULT_STATE)
+  let king = state.dapps.king
 
-  let king = state.dapps.king;
-
-  // create your contract instance
-  king.contract = new ethers.Contract(king.CONTRACT_ADDRESS, abi, state.provider)
+  refreshContracts()
+  getInfo()
 
   // bind event listenerd
   king.contract.on(king.contract.filters.NewKing(), (newKing) => {
-    king.king = newKing;
+    king.king = newKing
+    king.vacant = false
 
     if (state.wallet.address.toLowerCase() === newKing.toLowerCase()) {
       king.waiting = false;
-      emitter.emit('render')
     }
+
+    state.assist.notify('success', `New Chain of Thrones King`)
+    getInfo()
+    emitter.emit('king.navigate')
   })
 
-  getInfo()
+  secondsUntilPrize()
+
+  king.interval = setInterval(secondsUntilPrize, 1000)
 
   emitter.on('king.pay', () => {
-    king.requested = true
     king.waiting = true
     emitter.emit('render')
-
     emitter.emit(
       'wallet.sendTokens',
       king.CONTRACT_ADDRESS,
@@ -47,18 +50,44 @@ function store (state, emitter) {
       "0x0",
       {
         txSent: () => `Claiming the throne`,
-        txConfirmed: () => {
-          emit('king.crowned')
-          return `Crowned`
-        }
+        txConfirmed: () => `Claimed`
       }
-      )
+    )
+  })
+
+  emitter.emit('king.navigate', () => {
+    clearInterval(king.interval)
+    getInfo()
+    king.interval = setInterval(secondsUntilPrize, 1000)
+  })
+
+  emitter.on('king.clear', () => {
+    clearInterval(king.interval)
   })
 
   async function getInfo () {
-    const prize = await king.contract.prize();
-    king.prize = prize.toNumber();
-    console.log(`prize ${king.prize}`)
+    const prize = await king.contract.prize()
+    king.prize = prize.toNumber()
+    const coronation = await king.contract.coronation()
+    king.king = await king.contract.king()
+    king.coronation = coronation.toNumber()
+    emitter.emit('render')
+  }
+
+  function secondsUntilPrize() {
+    var remaining = ((Math.floor(Date.now() / 1000)) - (king.coronation + (5 * 60)))
+    if (remaining > 0) {
+      remaining = 0
+      king.vacant = true
+    } else {
+      king.vacant = false
+    }
+    king.remainingSeconds = remaining
+    emitter.emit('render')
+  }
+
+  function refreshContracts() {
+    king.contract = new ethers.Contract(king.CONTRACT_ADDRESS, abi, state.provider)
   }
 
 }

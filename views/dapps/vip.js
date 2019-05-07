@@ -5,8 +5,6 @@ const TITLE = 'VIP'
 
 module.exports = view
 
-// #E03326
-
 function view (state, emit) {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 

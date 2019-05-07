@@ -1,6 +1,5 @@
 const html = require('choo/html')
 const raw = require('choo/html/raw')
-const css = require('sheetify')
 
 const TITLE = 'DAPPS'
 
@@ -8,9 +7,6 @@ module.exports = view
 
 function view (state, emit) {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
-
-  const styles = css`
-  `
 
   return html`
     <section class="flex flex-column items-center pa3 pt5">
@@ -32,7 +28,3 @@ function view (state, emit) {
     </section>
   `
 }
-
-/**
- *
- */

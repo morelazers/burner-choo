@@ -2,15 +2,12 @@ const html = require('choo/html')
 const raw = require('choo/html/raw')
 const css = require('sheetify')
 
-const QRCode = require('qrcode')
-
-const TITLE = 'PEASANT'
+const TITLE = 'PICTURE-WALL'
 
 module.exports = (state, emit) => {
   if (state.title !== TITLE) {
     emit(state.events.DOMTITLECHANGE, TITLE)
     emit('pictureWall.navigate')
-    console.log(TITLE)
   }
 
   let pictureWall = state.dapps.pictureWall
@@ -49,8 +46,6 @@ module.exports = (state, emit) => {
     }
   `
 
-  console.log({pictureWall})
-
   if (pictureWall.posting) {
     return addImage()
   } else {
@@ -81,7 +76,6 @@ module.exports = (state, emit) => {
       const sales = img.buyers.length
 
       const mePurchased = (img.buyers.indexOf(state.wallet.address.toLowerCase()) !== -1 || img.seller.toLowerCase() === state.wallet.address.toLowerCase())
-      // const purchaseButton = html`<div class="" onclick=${() => emit('pictureWall.purchase', el) }>PURCHASE FOR ${state.CURRENCY_SYMBOL}${pictureWall.IMAGE_PRICE}</div>`
 
       const purchase = () => {
         if (mePurchased) {

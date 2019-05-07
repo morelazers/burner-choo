@@ -21,7 +21,6 @@ module.exports = (state, emit) => {
       state.calculate.input = ''
       state.calculate.formattedInput = ''
       state.wallet.afterConfirm = () => {
-        console.log('After confirm')
         emit('wallet.sendTokens', addr, amount)
         emit('pushState', '/')
       }
@@ -62,7 +61,7 @@ module.exports = (state, emit) => {
     <section class="flex">
       <div id="qr-preview">
         <canvas id="canvas" hidden></canvas>
-        <video id="video" class="video h-100 w-100 position-absolute"></video>
+        <video id="video" class="video h-100 w-100 position-absolute" playsinline></video>
         <div class="actions action-overlay">
           <a class="pa2" onclick=${() => emit('replaceState', '/')}>BACK</a>
         </div>

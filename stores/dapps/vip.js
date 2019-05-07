@@ -2,9 +2,7 @@ module.exports = store
 
 const html = require('choo/html')
 
-/**
- * Load some dapp-specific information in this file like the ABI, address
- */
+// Load some dapp-specific information in this file like the ABI, address
 const ethers = require('ethers')
 
 // @todo - we should create an alias so this doesn't have to be nested ../../
@@ -21,7 +19,6 @@ function store (state, emitter) {
   // the initial config for your dapp
   state.vip = {
     CONTRACT_ADDRESS: '0xea8896caf3eb20c37eea22c8c6218c7c4ee6496a', // XDAI
-    // CONTRACT_ADDRESS: '0x842E889a5c4F9B018157f857bA0c3953Cf3f00BF', // LOCAL
     // CONTRACT_ADDRESS: '0xec2e3eaee6f179eb66834f76b05f94dde4bb38db', // GOERLI
     list: [],
     selected: null,
@@ -98,7 +95,6 @@ function store (state, emitter) {
   function resetTextLater () {
     clearTimeout(state.timeout)
     state.timeout = setTimeout(() => {
-      console.log('-- RESETTING TEXT --')
       state.vip.bottomText = DEFAULT_BOTTOM_TEXT
       emitter.emit('render')
     }, 3000)
