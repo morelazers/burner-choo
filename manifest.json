@@ -1,0 +1,14 @@
+{
+  "name": "FLEX AGM WALLET",
+  "short_name": "FBUX",
+  "description": "AGM Wallet",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#2A333E",
+  "theme_color": "#A7E4AE",
+  "icons": [{
+    "src": "/assets/icon.png",
+    "type": "image/png",
+    "sizes": "512x512"
+  }]
+}

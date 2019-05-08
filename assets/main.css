@@ -1,0 +1,53 @@
+@font-face {
+  font-family: 'VT323';
+  src: url('/assets/VT323-Regular.ttf') format('truetype');
+}
+
+html {
+  font-size: 17px;
+}
+@media (max-width: 900px) {
+  html { font-size: 15px; }
+}
+@media (max-width: 400px) {
+  html { font-size: 13px; }
+}
+
+body {
+  width: 100vw;
+  background: #2A333E;
+  height: 100vh;
+  color: #A7E4AE;
+  font-family: 'VT323';
+}
+
+section {
+  height: 100%;
+}
+
+a, button {
+  color: #A7E4AE;
+  text-decoration: none;
+  outline: none;
+  border-style: hidden;
+  background: #2A333E;
+}
+
+a:hover,
+a:active,
+button:hover,
+button:active,
+button:focus,
+button.active {
+  background: #A7E4AE;
+  color: #2A333E !important;
+  border-style: hidden;
+  outline: none;
+}
+
+/*
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: space-between;
+*/

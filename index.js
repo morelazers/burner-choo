@@ -1,101 +1,176 @@
-const html = require('choo/html')
-const devtools = require('choo-devtools')
+const css = require('sheetify')
 const choo = require('choo')
-const ethers = require('ethers')
-const QRCode = require('qrcode')
+const bnc = require('bnc-assist')
+require('babel-polyfill')
 
-const preview = require('./qr-preview')
-
-require('dotenv').config()
-
-const { JSON_RPC_URL } = process.env
+css('tachyons')
+css('./assets/main.css')
 
 const app = choo()
-app.use(devtools())
-app.use(providerStore)
-app.use(walletStore)
-app.use(balanceStore)
-app.use(txStore)
-app.route('/', mainView)
-app.mount('body')
+if (process.env.NODE_ENV !== 'production') {
+  app.use(require('choo-devtools')())
+} else {
+  app.use(require('choo-service-worker')())
+}
 
-function mainView (state, emit) {
-  return html`
-    <body>
-      <h1>Money: ${state.wallet.balance}</h1>
-      <p>Private key: ${state.wallet.signingKey.privateKey}</p>
-      <p>Address: ${state.wallet.signingKey.address}</p>
-      <img src=${state.wallet.qr} />
-      <button onclick=${sendEth}>Return 0.01 ETH</button>
-      <button onclick=${scan}>Scan QR</button>
-      ${preview.render()}
-    </body>
-  `
-  function sendEth () {
-    emit('sendEth', '0.01')
-  }
+app.use((state, emitter) => {
 
-  function scan () {
-    console.log('scaning')
-    preview.beginScan(res => {
-      console.log(res)
-      if (res.indexOf('ethereum:') !== -1) {
-        preview.endScan()
+  // -- XDAI TEST CONTRACTS --
+  state.JSON_RPC_URL = 'https://dai.poa.network/'
+  state.TOKEN_ADDRESS = '0x5eb7e67ec2ce404ebabafed0a79bab10d030c58a'
+  state.NETWORK_ID = 100
+
+  // -- GOERLI CONTRACTS --
+  // state.JSON_RPC_URL = 'https://xdai.flexdapps.com:7361/'
+  // state.TOKEN_ADDRESS = '0xe0728a9d55ebd03bfcc6e9faa59e6dfe96741636'
+  // state.NETWORK_ID = 10
+
+  // -- LOCAL TEST CONTRACTS
+  // state.JSON_RPC_URL = 'https://localhost:9009'
+  // state.TOKEN_ADDRESS = '0xDBA081ff3cc5921a784A788Cf5a49Dd7A8F9B83F'
+  // state.NETWORK_ID = 5777
+
+  state.CURRENCY_SYMBOL = '៛'
+  emitter.on('DOMContentLoaded', () => {
+    state.assist = bnc.init({
+      dappId: '6981d7c2-9e6f-420f-9772-228a8c0d4534',
+      networkId: state.NETWORK_ID,
+      // web3: state.web3,
+      mobileBlocked: false,
+      style: {
+        darkMode: true,
+        notificationsPosition: 'top',
+        css: `
+          @font-face {
+            font-family: 'VT323';
+            src: url('/assets/VT323-Regular.ttf') format('truetype');
+          }
+          p {
+            font-family: 'VT323';
+            color: #A7E4AE;
+            letter-spacing: 0.1rem;
+            font-size: 1.5rem;
+          }
+          #blocknative-notifications {
+            padding: 0;
+          }
+          .bn-notifications {
+            height: 3.5rem;
+            justify-content: flex-end;
+          }
+          .bn-notification {
+            background: #2A333E;
+            padding: 5px;
+            margin: 0;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            height: 3.5rem;
+          }
+          .bn-notification span,
+          .bn-notification div,
+          .bn-notification a {
+            margin: 0 5px !important;
+          }
+          .bn-notification-meta {
+            display: none;
+          }
+          #bn-transaction-branding {
+            position: relative !important;
+            background-size: 66px 22px !important;
+            bottom: unset !important;
+            right: unset !important;
+            align-self: unset !important;
+          }
+          a#bn-transaction-branding {
+            align-self: unset !important;
+          }
+          .bn-status-icon {
+            text-align: center;
+            width: 20px;
+            height: auto;
+            background-image: none !important;
+          }
+          .bn-progress .bn-status-icon::after {
+            color: #A7E4AE;
+            content: "⋮";
+            animation: loading 0.5s infinite;
+            position: relative;
+            display: inherit;
+          }
+          .bn-complete .bn-status-icon::after {
+            color: #A7E4AE;
+            content: "✓";
+            position: relative;
+            display: inherit;
+          }
+          .bn-failed .bn-status-icon::after {
+            color: red;
+            content: "✕";
+            position: relative;
+            display: inherit;
+          }
+          @keyframes loading {
+            0% {
+              content: "⋮";
+            }
+            25% {
+              content: "⋰";
+            }
+            50% {
+              content: "⋯";
+            }
+            75% {
+              content: "⋱";
+            }
+          }
+        `
       }
     })
-    // const qrScanner = new QrScanner(document.getElementById('preview'), result => console.log('decoded qr code:', result));
-  }
-}
-
-function providerStore (state, emitter) {
-  state.provider = new ethers.providers.JsonRpcProvider(JSON_RPC_URL);
-}
-
-function walletStore (state, emitter) {
-  state.wallet = getWallet(state.provider)
-  QRCode.toDataURL(state.wallet.signingKey.address, (err, url) => {
-    state.wallet.qr = url
   })
-}
+})
+//animation: loading 5s infinite;
+app.use(require('./stores/events'))
+app.use(require('./stores/provider'))
+app.use(require('./stores/wallet'))
+app.use(require('./stores/calculate'))
+app.use(require('./stores/scanner'))
 
-function balanceStore (state, emitter) {
-  const { address } = state.wallet.signingKey
 
-  const setBalance = (bal) => {
-    const etherString = ethers.utils.formatEther(bal)
-    state.wallet.balance = etherString
-    emitter.emit('render')
-  }
+// should glob the dapps folder
+app.use(require('./stores/dapps/config'))
 
-  state.provider.getBalance(address).then((b) => {
-    setBalance(b)
-  })
-  state.provider.on(address, (b) => {
-    setBalance(b)
-  })
-}
+// @todo fix
+// for (let dapp of dapps) {
+//   const path = './stores/dapps/' + dapp
+//   app.use(require(path))
+// }
 
-function txStore (state, emitter) {
-  emitter.on('sendEth', (eth) => {
-    const weiString = ethers.utils.parseEther(eth)
-    const tx = {
-      to: '0xdbb84cf59Acb7E4bE58FFCdE2e1D9b8819D1F27E',
-      value: weiString
-    }
-    state.wallet.sendTransaction(tx).then(t => {
-      console.log(t)
-    })
-  })
-}
+app.use(require('./stores/dapps/vip'))
+app.use(require('./stores/dapps/regatta'))
+app.use(require('./stores/dapps/picture-wall'))
+app.use(require('./stores/dapps/tarot'))
+app.use(require('./stores/dapps/poop'))
+app.use(require('./stores/dapps/king'))
 
-function getWallet (provider) {
-  let w = localStorage.getItem('wallet')
-  if (w) {
-    w = new ethers.Wallet(JSON.parse(w).signingKey.privateKey, provider)
-  } else  {
-    w = ethers.Wallet.createRandom()
-    localStorage.setItem('wallet', JSON.stringify(w))
-  }
-  console.log(w)
-  return w
-}
+app.route('/', require('./views/main'))
+app.route('/get', require('./views/get'))
+app.route('/send', require('./views/send'))
+app.route('/confirm', require('./views/confirm'))
+app.route('/calculate', require('./views/calculate'))
+
+// @todo remove this when we release the non-specific version
+
+// there needs to be something here which globs the `dapps` folder to grab
+// all the extra files - it should probably have a subroute too like /dapps/my-dapp
+// remove these lines if you don't want to have any custom dapps
+app.route('/dapps', require('./views/dapps/index'))
+app.route('/dapps/vip', require('./views/dapps/vip'))
+app.route('/dapps/regatta', require('./views/dapps/regatta'))
+app.route('/dapps/picture-wall', require('./views/dapps/picture-wall'))
+app.route('/dapps/tarot', require('./views/dapps/tarot'))
+app.route('/dapps/poop', require('./views/dapps/poop'))
+app.route('/dapps/king', require('./views/dapps/king'))
+
+const element = app.start()
+document.body.appendChild(element)
