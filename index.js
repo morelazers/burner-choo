@@ -34,11 +34,11 @@ app.use((state, emitter) => {
     state.assist = bnc.init({
       dappId: '6981d7c2-9e6f-420f-9772-228a8c0d4534',
       networkId: state.NETWORK_ID,
-      // web3: state.web3,
       mobileBlocked: false,
       style: {
         darkMode: true,
         notificationsPosition: 'top',
+        // you would think i enjoy using !important but i don't, promise
         css: `
           @font-face {
             font-family: 'VT323';
@@ -69,7 +69,7 @@ app.use((state, emitter) => {
           .bn-notification span,
           .bn-notification div,
           .bn-notification a {
-            margin: 0 5px !important;
+            margin: 0 !important;
           }
           .bn-notification-meta {
             display: none;
@@ -80,9 +80,11 @@ app.use((state, emitter) => {
             bottom: unset !important;
             right: unset !important;
             align-self: unset !important;
+            margin: 0 !important;
           }
           a#bn-transaction-branding {
             align-self: unset !important;
+            height: 30px !important;
           }
           .bn-status-icon {
             text-align: center;
