@@ -28,7 +28,7 @@ function store(state, emitter) {
 // starts the webcam stream to scan a thing
 function beginScan(cb) {
   const video = document.getElementById('video')
-  const canvasElement = document.getElementById('canvas')
+  const canvasElement = document.createElement('canvas')
   const canvas = canvasElement.getContext('2d')
 
   done = false
@@ -44,34 +44,37 @@ function beginScan(cb) {
       animation = requestAnimationFrame(tick)
     })
 
+  let checkInterval = setInterval(() => {
+    check(canvas, streamObj, addr => {
+      done = true
+      clearInterval(checkInterval)
+      cb(addr)
+    })
+  }, 500)
+
   function tick() {
     if (done) {
-      cancelAnimationFrame(animation)
-      return
+      return cancelAnimationFrame(animation)
     }
     if (video.readyState === video.HAVE_ENOUGH_DATA) {
-      canvasElement.hidden = true
       canvasElement.height = video.videoHeight
       canvasElement.width = video.videoWidth
-      canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height)
-      const imageData = canvas.getImageData(
-        0,
-        0,
-        canvasElement.width,
-        canvasElement.height
-      )
-      const code = jsqr(imageData.data, imageData.width, imageData.height, {
-        inversionAttempts: 'dontInvert'
-      })
-      if (code && parseResult(code.data).indexOf('0x') === 0) {
-        for (let track of streamObj.getTracks()) {
-          track.stop()
-        }
-        cb(parseResult(code.data))
-        done = true
-      }
+      canvas.drawImage(video, 0, 0, video.videoWidth, video.videoHeight)
     }
     requestAnimationFrame(tick)
+  }
+}
+
+function check(canvas, streamObj, cb) {
+  const imageData = canvas.getImageData(0, 0, 640, 480)
+  const code = jsqr(imageData.data, imageData.width, imageData.height, {
+    inversionAttempts: 'dontInvert'
+  })
+  if (code && parseResult(code.data).indexOf('0x') === 0) {
+    for (let track of streamObj.getTracks()) {
+      track.stop()
+    }
+    cb(parseResult(code.data))
   }
 }
 
