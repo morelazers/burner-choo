@@ -12,9 +12,7 @@ const DEFAULT_STATE = {
   coronation: 0
 }
 
-
-function store (state, emitter) {
-
+function store(state, emitter) {
   // set up the initial state of our dapp
   state.dapps.king = Object.assign({}, DEFAULT_STATE)
   let king = state.dapps.king
@@ -23,15 +21,16 @@ function store (state, emitter) {
   getInfo()
 
   // bind event listenerd
-  king.contract.on(king.contract.filters.NewKing(), (newKing) => {
+  king.contract.on(king.contract.filters.NewKing(), newKing => {
     king.king = newKing
     king.vacant = false
 
     if (state.wallet.address.toLowerCase() === newKing.toLowerCase()) {
-      king.waiting = false;
+      king.waiting = false
+      // don't notify here since we do it as part of the txConfirmed event
+    } else {
+      state.assist.notify('success', `New Chain of Thrones King`)
     }
-
-    state.assist.notify('success', `New Chain of Thrones King`)
     getInfo()
     emitter.emit('king.navigate')
   })
@@ -41,16 +40,26 @@ function store (state, emitter) {
   king.interval = setInterval(secondsUntilPrize, 1000)
 
   emitter.on('king.pay', () => {
+    // if (king.price > state.wallet.tokenBalance) {
+    // state.assist.notify('error', 'Balance too low')
+    // return
+    // }
     king.waiting = true
     emitter.emit('render')
+    // probably need to be able to specify a failure callback here because it
+    // currently breaks if you have no balance and you can't go back :D
     emitter.emit(
       'wallet.sendTokens',
       king.CONTRACT_ADDRESS,
       king.price,
-      "0x0",
+      '0x0',
       {
         txSent: () => `Claiming the throne`,
-        txConfirmed: () => `Claimed`
+        txConfirmed: () => `You are the new King`
+      },
+      () => {
+        king.waiting = false
+        emitter.emit('render')
       }
     )
   })
@@ -65,7 +74,7 @@ function store (state, emitter) {
     clearInterval(king.interval)
   })
 
-  async function getInfo () {
+  async function getInfo() {
     const prize = await king.contract.prize()
     king.prize = prize.toNumber()
     const coronation = await king.contract.coronation()
@@ -75,7 +84,7 @@ function store (state, emitter) {
   }
 
   function secondsUntilPrize() {
-    var remaining = ((Math.floor(Date.now() / 1000)) - (king.coronation + (5 * 60)))
+    var remaining = Math.floor(Date.now() / 1000) - (king.coronation + 5 * 60)
     if (remaining > 0) {
       remaining = 0
       king.vacant = true
@@ -87,7 +96,10 @@ function store (state, emitter) {
   }
 
   function refreshContracts() {
-    king.contract = new ethers.Contract(king.CONTRACT_ADDRESS, abi, state.provider)
+    king.contract = new ethers.Contract(
+      king.CONTRACT_ADDRESS,
+      abi,
+      state.provider
+    )
   }
-
 }

@@ -1,11 +1,11 @@
 module.exports = store
 
-function store (state, emitter) {
+function store(state, emitter) {
   state.events = {
-    DOMTITLECHANGE: 'DOMTITLECHANGE',
+    DOMTITLECHANGE: 'DOMTITLECHANGE'
   }
 
-  emitter.on(state.events.DOMTITLECHANGE, (t) => {
+  emitter.on(state.events.DOMTITLECHANGE, t => {
     state.title = t
   })
 }

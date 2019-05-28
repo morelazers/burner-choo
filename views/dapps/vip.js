@@ -5,7 +5,7 @@ const TITLE = 'VIP'
 
 module.exports = view
 
-function view (state, emit) {
+function view(state, emit) {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
   const styles = css`
@@ -14,7 +14,7 @@ function view (state, emit) {
     .bad:active span .status-icon,
     .bad:hover span .status-icon {
       background: red;
-      color: #2A333E;
+      color: #2a333e;
     }
 
     .status-icon {
@@ -23,34 +23,34 @@ function view (state, emit) {
       width: 20px;
       height: auto;
       background-image: none !important;
-      color: #A7E4AE;
+      color: #a7e4ae;
     }
 
     .status-icon.loading::after {
-      content: "⋮";
+      content: '⋮';
       animation: loading 1s infinite;
       position: relative;
       display: inherit;
     }
 
     .status-icon.ready::after {
-      content: "✓";
+      content: '✓';
       position: relative;
       display: inherit;
     }
 
     @keyframes loading {
       0% {
-        content: "⋮";
+        content: '⋮';
       }
       25% {
-        content: "⋰";
+        content: '⋰';
       }
       50% {
-        content: "⋯";
+        content: '⋯';
       }
       75% {
-        content: "⋱";
+        content: '⋱';
       }
     }
   `
@@ -63,10 +63,14 @@ function view (state, emit) {
     <section class="flex flex-column justify-between pa0">
       <div class="flex flex-column justify-start">
         ${state.vip.list.map(vip => {
-            if (vip.owner === state.wallet.address) return
-            return html`
-              <button class="flex flex-row pa1 justify-between f2 pv3 ph4 ${vip.bad ? 'bad' : ''}" onclick=${() => {
-                if (vip.protectedUntil > (Date.now() / 1000)) {
+          if (vip.owner === state.wallet.address) return
+          return html`
+            <button
+              class="flex flex-row pa1 justify-between f2 pv3 ph4 ${vip.bad
+                ? 'bad'
+                : ''}"
+              onclick=${() => {
+                if (vip.protectedUntil > Date.now() / 1000) {
                   vip.bad = true
                   emit('render')
                   emit('vip.onCooldown', vip.protectedUntil, Date.now() / 1000)
@@ -79,24 +83,26 @@ function view (state, emit) {
                   emit('vipSelected', vip.id)
                   emit('nextTx.setBeforeParams', "You're paying")
                   emit('nextTx.setPrice', vip.price)
-                  emit('nextTx.setJoiningStatement', "to replace")
-                  emit('nextTx.setParam', "VIP_" + vip.id + ',') // argh nested backticks !
-                  emit('nextTx.setAfterParams', "how rude of you.")
+                  emit('nextTx.setJoiningStatement', 'to replace')
+                  emit('nextTx.setParam', 'VIP_' + vip.id + ',') // argh nested backticks !
+                  emit('nextTx.setAfterParams', 'how rude of you.')
                   state.wallet.afterConfirm = () => {
                     emit(
                       'wallet.sendTokens',
                       state.vip.CONTRACT_ADDRESS,
                       vip.price,
-                      ("0x" + vip.id),
+                      '0x' + vip.id,
                       {
                         txSent: () => {
-                          return "Buying VIP_PASS for " +
-                          state.CURRENCY_SYMBOL +
-                          vip.price.toLocaleString()
+                          return (
+                            'Buying VIP_PASS for ' +
+                            state.CURRENCY_SYMBOL +
+                            vip.price.toLocaleString()
+                          )
                         },
                         txConfirmed: () => {
                           state.wallet.refresh()
-                          return "Welcome to the VIP_ZONE"
+                          return 'Welcome to the VIP_ZONE'
                         }
                       }
                     )
@@ -104,30 +110,36 @@ function view (state, emit) {
                   }
                   emit('pushState', '/confirm')
                 }
-              }}>
-                <span class="flex flex-row justify-center items-center">
-                  <span class="mr3 status-icon${vip.protectedUntil > (Date.now() / 1000) ? ' loading' : ' ready'}${vip.bad ? ' bad' : ''}"></span>
-                  <span class="">VIP_${vip.id}</span>
-                </span>
-                <span class="">${state.CURRENCY_SYMBOL}${vip.price.toLocaleString()}</span>
-              </button>
-            `
-          }
-        )}
+              }}
+            >
+              <span class="flex flex-row justify-center items-center">
+                <span
+                  class="mr3 status-icon${vip.protectedUntil > Date.now() / 1000
+                    ? ' loading'
+                    : ' ready'}${vip.bad ? ' bad' : ''}"
+                ></span>
+                <span class="">VIP_${vip.id}</span>
+              </span>
+              <span class=""
+                >${state.CURRENCY_SYMBOL}${vip.price.toLocaleString()}</span
+              >
+            </button>
+          `
+        })}
       </div>
       <div class="flex flex-column w-100 items-center">
         <div class="f3 tc pa4">
           ${state.vip.bottomText}
         </div>
-        <div class="actions">
-          <a onclick=${() => emit('replaceState', '/')}>BACK</a>
+        <div class="actions tc">
+          <a onclick=${() => emit('replaceState', '/dapps')}>BACK</a>
         </div>
       </div>
     </section>
   `
 }
 
-function vipView (state, emit) {
+function vipView(state, emit) {
   return html`
     <section class="flex flex-column justify-around pa0">
       <div>
@@ -135,9 +147,9 @@ function vipView (state, emit) {
         <div class="f2 tc">F L E X</div>
       </div>
       <img class="bdg w-100" src="/assets/dapps/vip/bdg.gif" />
-      <div>
+      <div class="flex flex-column w-100 items-center">
         <p class="tc">Show this to the VIP_ZONE patron to enter</p>
-        <div class="actions">
+        <div class="actions tc">
           <a onclick=${() => emit('replaceState', '/')}>BACK</a>
         </div>
       </div>

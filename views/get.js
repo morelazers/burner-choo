@@ -3,21 +3,25 @@ const css = require('sheetify')
 
 const QRCode = require('qrcode')
 
-const TITLE = 'PEASANT'
+const TITLE = 'RECEIVE'
 
 module.exports = (state, emit) => {
   if (state.title !== TITLE) emit(state.events.DOMTITLECHANGE, TITLE)
 
-  QRCode.toDataURL(state.wallet.address, {
-    margin: 1,
-    color: {
-      light: '#A7E4AE',
-      dark: '#2A333E'
+  QRCode.toDataURL(
+    state.wallet.address,
+    {
+      margin: 1,
+      color: {
+        light: '#A7E4AE',
+        dark: '#2A333E'
+      },
+      scale: 10
     },
-    scale: 10
-  }, (err, url) => {
-    state.wallet.qr = url
-  })
+    (err, url) => {
+      state.wallet.qr = url
+    }
+  )
 
   return html`
     <section class="flex flex-column justify-around items-center pa4">

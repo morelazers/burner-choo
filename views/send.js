@@ -5,7 +5,11 @@
  * wallet, and then set the state.afterScan variable from that point.
  *
  * It currently doesn't make sense to only start the scanner if the title of
- * your page is SCAN
+ * your page is SCAN.
+ *
+ * This view also SUCKS on iOS right now, and doesn't work at all as a PWA on
+ * iOS, something to do with Apple being a capitalist monolith or something like
+ * that.
  */
 
 const html = require('choo/html')
@@ -16,8 +20,8 @@ const TITLE = 'SEND'
 module.exports = (state, emit) => {
   // Set up the chain of events which should occur after scanning a QR code with
   // your browser from this page
-  state.afterScan = (addr) => {
-    state.afterCalculate = (amount) => {
+  state.afterScan = addr => {
+    state.afterCalculate = amount => {
       state.calculate.input = ''
       state.calculate.formattedInput = ''
       state.wallet.afterConfirm = () => {
@@ -52,16 +56,19 @@ module.exports = (state, emit) => {
     }
     .action-overlay a::hover,
     .action-overlay a::active {
-      background: #A7E4AE !important;
+      background: #a7e4ae !important;
     }
   `
 
-  console.log('-- PRINTING THE SCANNER VIEW --')
   return html`
     <section class="flex">
       <div id="qr-preview">
         <canvas id="canvas" hidden></canvas>
-        <video id="video" class="video h-100 w-100 position-absolute" playsinline></video>
+        <video
+          id="video"
+          class="video h-100 w-100 position-absolute"
+          playsinline
+        ></video>
         <div class="actions action-overlay">
           <a class="pa2" onclick=${() => emit('replaceState', '/')}>BACK</a>
         </div>

@@ -14,7 +14,6 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 app.use((state, emitter) => {
-
   // -- XDAI TEST CONTRACTS --
   state.JSON_RPC_URL = 'https://dai.poa.network/'
   state.TOKEN_ADDRESS = '0x5eb7e67ec2ce404ebabafed0a79bab10d030c58a'
@@ -136,7 +135,6 @@ app.use(require('./stores/wallet'))
 app.use(require('./stores/calculate'))
 app.use(require('./stores/scanner'))
 
-
 // should glob the dapps folder
 app.use(require('./stores/dapps/config'))
 
@@ -147,10 +145,6 @@ app.use(require('./stores/dapps/config'))
 // }
 
 app.use(require('./stores/dapps/vip'))
-app.use(require('./stores/dapps/regatta'))
-app.use(require('./stores/dapps/picture-wall'))
-app.use(require('./stores/dapps/tarot'))
-app.use(require('./stores/dapps/poop'))
 app.use(require('./stores/dapps/king'))
 
 app.route('/', require('./views/main'))
@@ -159,17 +153,11 @@ app.route('/send', require('./views/send'))
 app.route('/confirm', require('./views/confirm'))
 app.route('/calculate', require('./views/calculate'))
 
-// @todo remove this when we release the non-specific version
-
 // there needs to be something here which globs the `dapps` folder to grab
 // all the extra files - it should probably have a subroute too like /dapps/my-dapp
 // remove these lines if you don't want to have any custom dapps
 app.route('/dapps', require('./views/dapps/index'))
 app.route('/dapps/vip', require('./views/dapps/vip'))
-app.route('/dapps/regatta', require('./views/dapps/regatta'))
-app.route('/dapps/picture-wall', require('./views/dapps/picture-wall'))
-app.route('/dapps/tarot', require('./views/dapps/tarot'))
-app.route('/dapps/poop', require('./views/dapps/poop'))
 app.route('/dapps/king', require('./views/dapps/king'))
 
 const element = app.start()

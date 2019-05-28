@@ -1,19 +1,30 @@
+/**
+ * This is the main "state store" of the application. It attempts to contain
+ * everything which is relevant to the act of actually dealing with sending
+ * monies. "Monies" in this instance is the ERC223 token deployed for usage
+ * with this instance of the burner wallet. Any code relating to interacting
+ * with that token contract should be contained within this file.
+ *
+ * Any other contract interactions should be moved to a file which is specific
+ * to them, under the /dapps/ folder.
+ */
+
 module.exports = store
 
 const ethers = require('ethers')
 
-const abi = require('../contracts/FLEXBUXX.abi')
+const abi = require('../contracts/ERC223TOKEN.abi')
 
 const DEFAULT_STATE = {
   qr: null,
-  ethBalance: Number(-1),
+  ethBalance: Number(-1), // or xDAI
   tokenContract: null,
   tokenBalance: 0,
-  address: "0x0000000000000000000000000000000000000000",
+  address: '0x0000000000000000000000000000000000000000',
   burner: {
     signingKey: {
-      privateKey: "0x0000000000000000000000000000000000000000"
-    },
+      privateKey: '0x0000000000000000000000000000000000000000'
+    }
   },
   nextTx: {
     beforeParams: `You're sending`,
@@ -24,75 +35,89 @@ const DEFAULT_STATE = {
     cta: `Swipe to confirm`
   },
   afterConfirm: () => {},
-  afterSend: () => {},
-  refreshFuncs: []
+  afterSend: () => {}, // allow specification of a callback after send
+  refreshFuncs: [] // allow addition of functions which "refresh" the app
 }
 
-async function store (state, emitter) {
+async function store(state, emitter) {
   state.wallet = Object.assign({}, DEFAULT_STATE)
-  state.wallet.burner = getWallet(state.provider)
-  state.wallet.address = state.wallet.burner.signingKey.address // for convenience
+  let wallet = state.wallet // convenience
+  // creates a wallet if there is not already one in localstorage
+  wallet.burner = getWallet(state.provider)
+  wallet.address = wallet.burner.signingKey.address // for convenience
 
   // this is where you would stick some code that filled the user's wallet with
   // xDAI or whatever, if you were going to do it that way
+  // getSomeGas()
 
   // set this such that other parts of our application can refresh the wallet UI
-  state.wallet.refresh = () => {
-    for (let refreshFunc of state.wallet.refreshFuncs) {
+  wallet.refresh = () => {
+    for (let refreshFunc of wallet.refreshFuncs) {
       refreshFunc()
     }
   }
 
-  // @todo - rewrite this to use web3 and get rid of the ethers.js stuff
-  state.wallet.tokenContractEthers = new ethers.Contract(state.TOKEN_ADDRESS, abi, state.provider)
-  state.wallet.tokenContractEthers = state.wallet.tokenContractEthers.connect(state.wallet.burner)
-  state.wallet.tokenContractEthers.on(state.wallet.tokenContractEthers.filters.Transfer(null, null), (f, t, v) => {
-    if (t.toLowerCase() === state.wallet.address.toLowerCase()) {
-      state.assist.notify('success', `Received ${state.CURRENCY_SYMBOL}${v.toNumber().toLocaleString()}!`)
-    } else if (f.toLowerCase() === state.wallet.address.toLowerCase()) {
-      // we were the person who sent the money but we get this notification already from send function
-      // state.assist.notify('success', `Sent ${state.CURRENCY_SYMBOL}${v.toNumber().toLocaleString()}!`)
-    }
-    state.wallet.refresh()
-  })
+  // grab a contract instance attached to our burner wallet
+  wallet.tokenContract = getTokenContract(
+    state.TOKEN_ADDRESS,
+    abi,
+    state.provider,
+    wallet.burner
+  )
+
+  // set up an event listener and notifications for the transfer function
+  setupTransferNotifications(wallet, state)
+
   setTokenBalance()
-
-
 
   // a whole bunch of events for you to configure the 'confirm' screen in the
   // wallet. YOU DON'T HAVE TO USE THE CONFIRM SCREEN, this is just a handy
   // little set of helpers if you do
-  // @todo show how it looks when you set all these things
-  emitter.on('nextTx.setBeforeParams', (s) => state.wallet.nextTx.beforeParams = s)
-  emitter.on('nextTx.setPrice', (s) => state.wallet.nextTx.price = s)
-  emitter.on('nextTx.setJoiningStatement', (s) => state.wallet.nextTx.joiningStatement = s)
-  emitter.on('nextTx.setParam', (s) => state.wallet.nextTx.param = s)
-  emitter.on('nextTx.setAfterParams', (s) => state.wallet.nextTx.afterParams = s)
-  emitter.on('nextTx.setCta', (s) => state.wallet.nextTx.cta = s)
-  emitter.on('nextTx.confirm', () => state.wallet.afterConfirm())
-  emitter.on('nextTx.sent', () => state.wallet.afterSend())
+  // for an example of how this looks, set play around with the /vip dapp
+  // will probably rip this out as i don't think the confirm dialog should be a
+  // default part of the application, dapps can create one if they like
+  emitter.on('nextTx.setBeforeParams', s => (wallet.nextTx.beforeParams = s))
+  emitter.on('nextTx.setPrice', s => (wallet.nextTx.price = s))
+  emitter.on(
+    'nextTx.setJoiningStatement',
+    s => (wallet.nextTx.joiningStatement = s)
+  )
+  emitter.on('nextTx.setParam', s => (wallet.nextTx.param = s))
+  emitter.on('nextTx.setAfterParams', s => (wallet.nextTx.afterParams = s))
+  emitter.on('nextTx.setCta', s => (wallet.nextTx.cta = s))
+  emitter.on('nextTx.confirm', () => wallet.afterConfirm())
+  emitter.on('nextTx.sent', () => wallet.afterSend())
 
   // send the wallet's tokens (this is hardcoded to an ERC223 at the moment)
-  // we should probably make it a bit better and able to be configured
-  // for example i think we should probably set:
-  // state.wallet.tokens[token.address] = state.assist.Contract(token.contract)
-  // this would allow us to send the token from anywhere in the wallet that we
-  // had access to the address of the token
-  emitter.on('wallet.sendTokens', async (t, v, b = "0x", m) => {
-    // handle not enough cash here
-    if (v > state.wallet.tokenBalance) {
-      return state.assist.notify('error', `Balance too low`)
+  // @todo add a function param so that methods other than tokenFallback can be
+  // called on the receiving contract
+  emitter.on(
+    'wallet.sendTokens',
+    async (to, value, bytes = '0x', messages, error) => {
+      // handle not enough cash here
+      if (value > wallet.tokenBalance) {
+        state.assist.notify('error', `Balance too low`)
+        if (error && typeof error === 'function') error()
+        return
+      }
+      sendTokenTransaction(to, value, bytes, messages)
+      emitter.emit('nextTx.sent')
     }
-    sendTokenTransaction(t, v, b, m)
-    emitter.emit('nextTx.sent')
+  )
+
+  wallet.refreshFuncs.push(setTokenBalance, getEthbalance)
+
+  emitter.on('wallet.addRefreshFunc', f => {
+    wallet.refreshFuncs.push(f)
   })
 
-  state.wallet.refreshFuncs.push(setTokenBalance, getEthbalance)
-
   // function which gets the balance of the user in a token then renders an update
-  async function setTokenBalance () {
+  async function setTokenBalance() {
     try {
-      state.wallet.tokenBalance = await getTokenBalance(state.wallet.tokenContractEthers, state.wallet.address)
+      wallet.tokenBalance = await getTokenBalance(
+        wallet.tokenContract,
+        wallet.address
+      )
       emitter.emit('render')
     } catch (e) {
       console.log(e)
@@ -101,17 +126,17 @@ async function store (state, emitter) {
 
   // sends a token transaction (currently hardcoded to a single wallet token)
   // uses the standard token tx messages unless you pass in something as messages
-  async function sendTokenTransaction (to, value, bytes = '0x', messages = {}) {
+  async function sendTokenTransaction(to, value, bytes = '0x', messages = {}) {
     const txMessages = Object.assign(getDefaultTokenMessages(value), messages)
-    const c = state.wallet.tokenContractEthers.connect(state.wallet.burner)
-    const nonce = await state.provider.getTransactionCount(state.wallet.address)
+    const dismiss = state.assist.notify('pending', txMessages.txSent(), -1)
+    const c = wallet.tokenContract.connect(wallet.burner)
+    const nonce = await state.provider.getTransactionCount(wallet.address)
     const tx = c['transfer(address,uint256,bytes)'](to, value, bytes, {
-      gasPrice: ethers.utils.parseUnits('1', 'gwei'),
-      gasLimit: ethers.utils.bigNumberify(500000).toHexString(),
+      gasPrice: ethers.utils.parseUnits('1', 'gwei'), // default on xDAI
+      // gasLimit: ethers.utils.bigNumberify(500000).toHexString(),
       nonce: nonce
     })
-    let dismiss = state.assist.notify('pending', txMessages.txSent(), -1)
-    tx.then(async (r) => {
+    tx.then(async r => {
       await r.wait()
       dismiss()
       state.assist.notify('success', txMessages.txConfirmed())
@@ -122,38 +147,67 @@ async function store (state, emitter) {
   // symbol or something like that)
   function getDefaultTokenMessages(value) {
     return {
-      txSent: () => `Sending ${state.CURRENCY_SYMBOL}${value.toLocaleString()}`,
-      txConfirmed: () => `Sent ${state.CURRENCY_SYMBOL}${value.toLocaleString()}`,
+      txSent: () =>
+        `Sending ${state.CURRENCY_SYMBOL}${Number(value).toLocaleString()}`,
+      txConfirmed: () =>
+        `Sent ${state.CURRENCY_SYMBOL}${Number(value).toLocaleString()}`,
       txStall: () => `Something's wrong...`,
-      txConfirmed: () => `Sent ${state.CURRENCY_SYMBOL}${value.toLocaleString()}`
+      txConfirmed: () =>
+        `Sent ${state.CURRENCY_SYMBOL}${Number(value).toLocaleString()}`
     }
   }
 
-  async function getEthbalance () {
-    state.wallet.ethBalance = ethers.utils.formatEther(await state.provider.getBalance(state.wallet.address))
+  async function getEthbalance() {
+    wallet.ethBalance = ethers.utils.formatEther(
+      await state.provider.getBalance(wallet.address)
+    )
   }
 
-}
-
-// gets the balance of a given user on a given token contract
-async function getTokenBalance (contract, address) {
-  try {
-    const b = await contract.balanceOf(address)
-    return b.toNumber()
-  } catch (e) {
-    return -1
+  function getTokenContract(address, abi, provider, burner) {
+    const c = new ethers.Contract(address, abi, provider)
+    // connect our burner account with the contract so we can send txs
+    return c.connect(burner)
   }
-}
 
-// gets the burner wallet from localstorage or else creates a new one
-function getWallet (provider) {
-  let w = localStorage.getItem('wallet')
-  if (w) {
-    w = new ethers.Wallet(JSON.parse(w).signingKey.privateKey, provider)
-  } else  {
-    w = ethers.Wallet.createRandom()
-    localStorage.setItem('wallet', JSON.stringify(w))
-    w = w.connect(provider)
+  function setupTransferNotifications(
+    { tokenContract, address, refresh },
+    state // we can't pull assist off state because it's not initialised yet
+  ) {
+    tokenContract.on(tokenContract.filters.Transfer(null, null), (f, t, v) => {
+      if (t.toLowerCase() === address.toLowerCase()) {
+        state.assist.notify(
+          'success',
+          `Received ${state.CURRENCY_SYMBOL}${v.toNumber().toLocaleString()}!`
+        )
+      } else if (f.toLowerCase() === address.toLowerCase()) {
+        // we were the person who sent the money but we get this notification
+        // already from the send function
+        // state.assist.notify('success', `Sent ${state.CURRENCY_SYMBOL}${v.toNumber().toLocaleString()}!`)
+      }
+      refresh()
+    })
   }
-  return w
+
+  // gets the balance of a given user on a given token contract
+  async function getTokenBalance(contract, address) {
+    try {
+      const b = await contract.balanceOf(address)
+      return b.toNumber()
+    } catch (e) {
+      return -1
+    }
+  }
+
+  // gets the burner wallet from localstorage or else creates a new one
+  function getWallet(provider) {
+    let w = localStorage.getItem('wallet')
+    if (w) {
+      w = new ethers.Wallet(JSON.parse(w).signingKey.privateKey, provider)
+    } else {
+      w = ethers.Wallet.createRandom()
+      localStorage.setItem('wallet', JSON.stringify(w))
+      w = w.connect(provider)
+    }
+    return w
+  }
 }

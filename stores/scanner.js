@@ -1,3 +1,7 @@
+/**
+ * This file is pretty gross - I'm not sure that I've started & stopped the
+ * video stream in the correct way, and it's slow as fuaaark on iOS right now
+ */
 module.exports = store
 
 const jsqr = require('jsqr')
@@ -6,9 +10,9 @@ let streamObj
 let animation
 let done = false
 
-function store (state, emitter) {
-  emitter.on(state.events.DOMTITLECHANGE, function () {
-    if (state.title === "SEND") {
+function store(state, emitter) {
+  emitter.on(state.events.DOMTITLECHANGE, function() {
+    if (state.title === 'SEND') {
       setTimeout(() => {
         beginScan(addr => {
           endScan()
@@ -22,21 +26,23 @@ function store (state, emitter) {
 }
 
 // starts the webcam stream to scan a thing
-function beginScan (cb) {
-  const video = document.getElementById("video")
-  const canvasElement = document.getElementById("canvas")
-  const canvas = canvasElement.getContext("2d")
+function beginScan(cb) {
+  const video = document.getElementById('video')
+  const canvasElement = document.getElementById('canvas')
+  const canvas = canvasElement.getContext('2d')
 
   done = false
 
   // Use facingMode: environment to attemt to get the front camera on phones
-  navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } }).then(function(stream) {
-    streamObj = stream
-    video.srcObject = stream
-    video.setAttribute("playsinline", true) // required to tell iOS safari we don't want fullscreen
-    video.play()
-    animation = requestAnimationFrame(tick)
-  })
+  navigator.mediaDevices
+    .getUserMedia({ video: { facingMode: 'environment' } })
+    .then(function(stream) {
+      streamObj = stream
+      video.srcObject = stream
+      video.setAttribute('playsinline', true) // required to tell iOS safari we don't want fullscreen
+      video.play()
+      animation = requestAnimationFrame(tick)
+    })
 
   function tick() {
     if (done) {
@@ -48,9 +54,14 @@ function beginScan (cb) {
       canvasElement.height = video.videoHeight
       canvasElement.width = video.videoWidth
       canvas.drawImage(video, 0, 0, canvasElement.width, canvasElement.height)
-      const imageData = canvas.getImageData(0, 0, canvasElement.width, canvasElement.height)
+      const imageData = canvas.getImageData(
+        0,
+        0,
+        canvasElement.width,
+        canvasElement.height
+      )
       const code = jsqr(imageData.data, imageData.width, imageData.height, {
-        inversionAttempts: "dontInvert",
+        inversionAttempts: 'dontInvert'
       })
       if (code && parseResult(code.data).indexOf('0x') === 0) {
         for (let track of streamObj.getTracks()) {
@@ -64,7 +75,7 @@ function beginScan (cb) {
   }
 }
 
-function endScan () {
+function endScan() {
   try {
     cancelAnimationFrame(animation)
     done = true
@@ -76,7 +87,7 @@ function endScan () {
   }
 }
 
-function parseResult (c) {
+function parseResult(c) {
   if (c.indexOf('ethereum:') === 0) {
     return c.substring('ethereum:'.length, c.length)
   }

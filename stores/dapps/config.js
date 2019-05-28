@@ -1,30 +1,12 @@
 module.exports = store
 
-function store (state, emitter) {
-
-  // the initial config for your dapp
-
+function store(state) {
   state.dapps = {
     list: [
       {
         name: 'VIP_ZONE',
         link: 'vip',
         icon: '/assets/dapps/vip/icon.png'
-      },
-      {
-        name: 'Regatta',
-        link: 'regatta',
-        icon: '/assets/dapps/regatta/regattalogo.gif'
-      },
-      {
-        name: 'Tarot',
-        link: 'tarot',
-        icon: '/assets/dapps/tarot/icon.png'
-      },
-      {
-        name: 'Poop Noise',
-        link: 'poop',
-        icon: '/assets/dapps/poop/icon.png'
       },
       {
         name: 'Chain of Thrones',
